@@ -1,0 +1,31 @@
+{
+    "list": [
+        {
+            "name": "task1",
+            "id": 1,
+            "status": "registered",
+            "link": "",
+            "dateCreated": "1/1/2025",
+            "dateDue": "2/2/2025",
+            "description": "This is task 1"
+        },
+        {
+            "name": "task2",
+            "id": 2,
+            "status": "unregistered",
+            "link": "",
+            "dateCreated": "1/1/2025",
+            "dateDue": "2/2/2025",
+            "description": "This is task 2"
+        },
+        {
+            "name": "task3",
+            "id": 3,
+            "status": "completed",
+            "link": "",
+            "dateCreated": "1/1/2025",
+            "dateDue": "2/2/2025",
+            "description": "This is task 3"
+        }
+    ]
+}
