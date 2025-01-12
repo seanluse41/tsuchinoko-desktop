@@ -11,16 +11,13 @@
         RefreshOutline,
         BadgeCheckOutline,
     } from "flowbite-svelte-icons";
-    import { page } from "$app/stores";
 
-    let activeUrl = $state($page.url.pathname);
     const sidebarUI = uiHelpers();
     let isOpen = $state(true);
     const closeSidebar = sidebarUI.close;
 
     $effect(() => {
-        isOpen = true;
-        activeUrl = $page.url.pathname;
+        isOpen = sidebarUI.isOpen;
     });
 
     const filter = () => console.log("filtering");
@@ -28,38 +25,55 @@
     const selectAll = () => console.log("Select All");
 </script>
 
-<div class="relative h-full">
+<div class="relative">
+    <SidebarButton onclick={sidebarUI.toggle} class="mb-2" />
     <Sidebar
-        {activeUrl}
         isSingle={false}
         backdrop={false}
-        isOpen={true}
+        {isOpen}
         {closeSidebar}
-        position="absolute"
-        activeClass="p-2"
-        class="z-50 h-full bg-thistle min-h-screen"
+        class="bg-thistle z-10 h-full border-r-2 border-ebony"
+        divClass="bg-transparent px-6 py-20 overflow-y-auto"
     >
         <SidebarGroup>
-            <SidebarItem label="Filter" onclick={filter}>
+            <SidebarItem 
+                label="Filter" 
+                onclick={filter} 
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+            >
                 {#snippet iconSlot()}
                     <SearchOutline
-                        class="h-5 w-5 text-ebony-600 transition duration-75 group-hover:text-moss_green-600"
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
                     />
                 {/snippet}
             </SidebarItem>
 
-            <SidebarItem label="Sync" onclick={sync}>
+            <SidebarItem 
+                label="Sync" 
+                onclick={sync} 
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+            >
                 {#snippet iconSlot()}
                     <RefreshOutline
-                        class="h-5 w-5 text-ebony-600 transition duration-75 group-hover:text-moss_green-600"
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
                     />
                 {/snippet}
             </SidebarItem>
 
-            <SidebarItem label="Select All" onclick={selectAll}>
+            <SidebarItem 
+                label="Select All" 
+                onclick={selectAll} 
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+            >
                 {#snippet iconSlot()}
                     <BadgeCheckOutline
-                        class="h-5 w-5 text-ebony-600 transition duration-75 group-hover:text-moss_green-600"
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
                     />
                 {/snippet}
             </SidebarItem>

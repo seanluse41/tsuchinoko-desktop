@@ -3,11 +3,11 @@
     import TaskList from "../../components/TaskList.svelte";
 </script>
 
-<div class="flex flex-row gap-x-2">
-    <div class="w-1/4 flex-grow">
+<div class="flex flex-row h-full w-full">
+    <div class="w-64 flex-shrink-0">
         <TaskCommands />
     </div>
-    <div class="w-3/4 flex-grow">
+    <div class="w-full overflow-y-auto p-4 max-w-screen">
         <TaskList />
     </div>
 </div>

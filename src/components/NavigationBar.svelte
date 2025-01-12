@@ -33,7 +33,7 @@
   {closeNav}
   {navStatus}
   breakPoint="md"
-  navClass="bg-thistle"
+  navClass="bg-thistle border-b-2 border-ebony z-50"
 >
   {#snippet brand()}
     <NavBrand siteName="Tsuchinoko" class="text-ebony-800"></NavBrand>
