@@ -36,7 +36,7 @@
   navClass="bg-thistle border-b-2 border-ebony z-50"
 >
   {#snippet brand()}
-    <NavBrand siteName="Tsuchinoko" class="text-ebony-800"></NavBrand>
+    <NavBrand siteName="Tsuuchinoko" class="text-ebony-800"></NavBrand>
   {/snippet}
 
   <NavUl {activeUrl} class="text-ebony-800">
