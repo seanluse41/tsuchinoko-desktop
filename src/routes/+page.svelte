@@ -1,10 +1,10 @@
 <script>
   import { onMount } from "svelte";
-  import { invoke } from '@tauri-apps/api/core';
-  import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
-  import { open } from '@tauri-apps/plugin-shell';
+  import { invoke } from "@tauri-apps/api/core";
+  import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
+  import { open } from "@tauri-apps/plugin-shell";
   import { Card, Heading, P, Img, Button, Spinner } from "svelte-5-ui-lib";
-  import ParticleBackground from '../components/ParticleBackground.svelte';
+  import ParticleBackground from "../components/ParticleBackground.svelte";
 
   let test = $state("nothing");
   let accessToken = $state(null);
@@ -14,14 +14,16 @@
   const config = {
     clientId: "l.1.4b3hnz7sl7hn1zax2xhilc8p0qtp6rq1",
     authEndpoint: "https://sean.kintone.com/oauth2/authorization",
-    redirectUri: "https://seanbase.com/tsuuchinoko-auth",  // Changed to use custom protocol
+    redirectUri: "https://seanbase.com/tsuuchinoko-auth",
     scope: "k:app_settings:read k:app_settings:write",
   };
 
   function generateState() {
     const array = new Uint8Array(32);
     window.crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+      "",
+    );
   }
 
   async function initiateKintoneLogin() {
@@ -29,7 +31,7 @@
       console.log("Login button clicked");
       isLoading = true;
       error = null;
-      
+
       const state = generateState();
       localStorage.setItem("kintone_state", state);
 
@@ -42,7 +44,6 @@
 
       console.log("Opening URL:", authUrl.toString());
       await open(authUrl.toString());
-      
     } catch (err) {
       console.error("Failed to open browser:", err);
       error = "Failed to open login page. Please try again.";
@@ -81,7 +82,6 @@
 
       accessToken = tokenResponse.access_token;
       console.log("Successfully authenticated with Kintone");
-      
     } catch (err) {
       console.error("Authentication error:", err);
       error = err.message || "Authentication failed. Please try again.";
@@ -150,16 +150,13 @@
         size="xl"
       >
         {#if isLoading}
-          <span class="absolute inset-0 flex items-center justify-center">
-            <Spinner size="sm" />
-          </span>
-          <span class="opacity-0">Login with Kintone</span>
+          <Spinner class="me-3" size="8" color="teal" /><P class="text-xl">Loading ...</P>
         {:else}
-          Login with Kintone
+          <P class="text-xl">Login with Kintone</P>
         {/if}
       </Button>
     </div>
-    
+
     {#if accessToken}
       <Card class="mt-6 bg-green-50 p-4">
         <div class="flex">
