@@ -1,81 +1,110 @@
 <script>
   import { onMount } from "svelte";
-  import { invoke } from "@tauri-apps/api/core";
-  import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
-  import { openUrl } from "@tauri-apps/plugin-opener";
+  import { invoke } from '@tauri-apps/api/core';
+  import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
+  import { open } from '@tauri-apps/plugin-shell';
   import { Card, Heading, P, Img, Button, Spinner } from "svelte-5-ui-lib";
   import ParticleBackground from '../components/ParticleBackground.svelte';
 
   let test = $state("nothing");
   let accessToken = $state(null);
   let isLoading = $state(false);
+  let error = $state(null);
 
   const config = {
     clientId: "l.1.4b3hnz7sl7hn1zax2xhilc8p0qtp6rq1",
     authEndpoint: "https://sean.kintone.com/oauth2/authorization",
-    redirectUri: "https://seanbase.com/tsuuchinoko-auth",
+    redirectUri: "https://seanbase.com/tsuuchinoko-auth",  // Changed to use custom protocol
     scope: "k:app_settings:read k:app_settings:write",
   };
 
   function generateState() {
-    return Math.random().toString(36).substring(7);
+    const array = new Uint8Array(32);
+    window.crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
   }
 
   async function initiateKintoneLogin() {
-    isLoading = true;
-    const state = generateState();
-    localStorage.setItem("kintone_state", state);
-
-    const authUrl = new URL(config.authEndpoint);
-    authUrl.searchParams.append("response_type", "code");
-    authUrl.searchParams.append("client_id", config.clientId);
-    authUrl.searchParams.append("redirect_uri", config.redirectUri);
-    authUrl.searchParams.append("state", state);
-    authUrl.searchParams.append("scope", config.scope);
-
     try {
-      await openUrl(authUrl.toString());
-      console.log("Opened browser for Kintone login");
+      console.log("Login button clicked");
+      isLoading = true;
+      error = null;
+      
+      const state = generateState();
+      localStorage.setItem("kintone_state", state);
+
+      const authUrl = new URL(config.authEndpoint);
+      authUrl.searchParams.append("response_type", "code");
+      authUrl.searchParams.append("client_id", config.clientId);
+      authUrl.searchParams.append("redirect_uri", config.redirectUri);
+      authUrl.searchParams.append("state", state);
+      authUrl.searchParams.append("scope", config.scope);
+
+      console.log("Opening URL:", authUrl.toString());
+      await open(authUrl.toString());
+      
     } catch (err) {
       console.error("Failed to open browser:", err);
-      isLoading = false;
+      error = "Failed to open login page. Please try again.";
     }
   }
 
   async function handleAuthCallback(url) {
-    const parsedUrl = new URL(url);
-    const code = parsedUrl.searchParams.get("code");
-    const state = parsedUrl.searchParams.get("state");
+    try {
+      console.log("Handling auth callback with URL:", url);
+      const parsedUrl = new URL(url);
+      const code = parsedUrl.searchParams.get("code");
+      const state = parsedUrl.searchParams.get("state");
+      const authError = parsedUrl.searchParams.get("error");
 
-    const savedState = localStorage.getItem("kintone_state");
-    if (state !== savedState) {
-      console.error("State mismatch - possible CSRF attack");
-      isLoading = false;
-      return;
-    }
-
-    if (code) {
-      try {
-        const tokenResponse = await invoke("kintone_exchange_token", {
-          code,
-          redirectUri: config.redirectUri,
-        });
-
-        accessToken = tokenResponse.access_token;
-        console.log("Successfully authenticated with Kintone");
-      } catch (error) {
-        console.error("Error exchanging code for token:", error);
+      if (authError) {
+        throw new Error(`Authentication error: ${authError}`);
       }
+
+      const savedState = localStorage.getItem("kintone_state");
+      if (!savedState || state !== savedState) {
+        throw new Error("State mismatch - possible CSRF attack");
+      }
+
+      if (!code) {
+        throw new Error("No authorization code received");
+      }
+
+      const tokenResponse = await invoke("kintone_exchange_token", {
+        code,
+        redirectUri: config.redirectUri,
+      });
+
+      if (!tokenResponse || !tokenResponse.access_token) {
+        throw new Error("Invalid token response");
+      }
+
+      accessToken = tokenResponse.access_token;
+      console.log("Successfully authenticated with Kintone");
+      
+    } catch (err) {
+      console.error("Authentication error:", err);
+      error = err.message || "Authentication failed. Please try again.";
+      accessToken = null;
+    } finally {
+      isLoading = false;
     }
-    isLoading = false;
   }
 
   onMount(async () => {
-    await onOpenUrl((urls) => {
-      console.log("deep link:", urls);
-      test = urls[0];
-      handleAuthCallback(urls[0]);
-    });
+    try {
+      const unsubscribe = await onOpenUrl((url) => {
+        console.log("Received URL:", url);
+        handleAuthCallback(url);
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    } catch (err) {
+      console.error("Failed to setup deep link handler:", err);
+      error = "Failed to initialize app. Please restart.";
+    }
   });
 </script>
 
@@ -99,9 +128,24 @@
         Connect with your Kintone workspace to get started
       </P>
 
+      {#if error}
+        <div class="mb-4 w-full rounded-md bg-red-50 p-4">
+          <div class="flex">
+            <div class="ml-3">
+              <P class="text-sm font-medium text-red-800">
+                {error}
+              </P>
+            </div>
+          </div>
+        </div>
+      {/if}
+
       <Button
         class="w-3/4 rounded-lg bg-amber px-8 py-8 text-black hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-thistle focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        onClick={initiateKintoneLogin}
+        onclick={() => {
+          console.log("Raw button click");
+          initiateKintoneLogin();
+        }}
         disabled={isLoading}
         size="xl"
       >
@@ -115,6 +159,7 @@
         {/if}
       </Button>
     </div>
+    
     {#if accessToken}
       <Card class="mt-6 bg-green-50 p-4">
         <div class="flex">

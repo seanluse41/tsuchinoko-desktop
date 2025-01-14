@@ -8,6 +8,17 @@
   "permissions": [
     "core:default",
     "opener:default",
-    "deep-link:default"
+    "deep-link:default",
+    {
+      "identifier": "shell:allow-open",
+      "allow": [{
+        "name": "open-browser",
+        "cmd": "open",
+        "args": [
+          "https://sean.kintone.com/**",
+          "https://seanbase.com/**"
+        ]
+      }]
+    }
   ]
 }

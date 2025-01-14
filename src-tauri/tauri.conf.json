@@ -47,6 +47,9 @@
           "tsuuchinoko"
         ]
       }
+    },
+    "shell": {
+      "open": true
     }
   }
 }

@@ -10,14 +10,20 @@ pub struct TokenResponse {
 }
 
 #[tauri::command]
-pub async fn kintone_exchange_token(code: String, redirect_uri: String) -> Result<TokenResponse, String> {
+pub async fn kintone_exchange_token(
+    code: String,
+    redirect_uri: String,
+) -> Result<TokenResponse, String> {
     let client = Client::new();
-    
+
     let params = [
         ("grant_type", "authorization_code"),
         ("code", &code),
         ("client_id", "l.1.4b3hnz7sl7hn1zax2xhilc8p0qtp6rq1"),
-        ("client_secret", "46kxqy2gqkt3gle0zk6eit8dl3llfmlgtrhpybbx4d128yw0og61i6q5yzqp1sb3"),
+        (
+            "client_secret",
+            "46kxqy2gqkt3gle0zk6eit8dl3llfmlgtrhpybbx4d128yw0og61i6q5yzqp1sb3",
+        ),
         ("redirect_uri", &redirect_uri),
     ];
 
