@@ -72,6 +72,11 @@
             onclick={closeDropdown}
             class="hover:bg-thistle-700 text-ebony-800">About</DropdownLi
           >
+          <DropdownLi
+          href="/logout"
+          onclick={closeDropdown}
+          class="hover:bg-thistle-700 text-ebony-800">Logout</DropdownLi
+        >
         </DropdownUl>
       </Dropdown>
     </div>
