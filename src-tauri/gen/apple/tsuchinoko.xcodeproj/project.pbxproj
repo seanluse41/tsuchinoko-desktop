@@ -31,14 +31,14 @@
 		7B802C098DC5D3D6C25A80D0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8C029D0399B849D305AB0693 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
 		8E629E414F52E97178F75F44 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		93B18C9A4FB03CC4A16FEDE0 /* tsuchinoko_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tsuchinoko_iOS.entitlements; sourceTree = "<group>"; };
+		93B18C9A4FB03CC4A16FEDE0 /* tsuuchinoko_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = tsuuchinoko_iOS.entitlements; sourceTree = "<group>"; };
 		95D8EE9552C3EEBE764AD182 /* main.rs */ = {isa = PBXFileReference; path = main.rs; sourceTree = "<group>"; };
 		9F05B0D47EADAB1E5E1B184A /* lib.rs */ = {isa = PBXFileReference; path = lib.rs; sourceTree = "<group>"; };
 		A7C6392E580D6C9519A3A9CC /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		D0BF46F8E06704C7CF414308 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		D20561073513B7CD363AD817 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		D9AE214E94095AA2ECEB7977 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		E6FF6A2E8E289622EFB7AF17 /* tsuchinoko_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = tsuchinoko_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6FF6A2E8E289622EFB7AF17 /* tsuuchinoko_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = tsuuchinoko_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC8E483C341617DE88BA7313 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -64,7 +64,7 @@
 		541E742886B7C007BFDC40CC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E6FF6A2E8E289622EFB7AF17 /* tsuchinoko_iOS.app */,
+				E6FF6A2E8E289622EFB7AF17 /* tsuuchinoko_iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,7 +72,7 @@
 		737BA04485DF7B09AC21095D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				8F29CF1F9D5D1B50EBEAB05E /* tsuchinoko */,
+				8F29CF1F9D5D1B50EBEAB05E /* tsuuchinoko */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -99,22 +99,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		8F29CF1F9D5D1B50EBEAB05E /* tsuchinoko */ = {
+		8F29CF1F9D5D1B50EBEAB05E /* tsuuchinoko */ = {
 			isa = PBXGroup;
 			children = (
 				D20561073513B7CD363AD817 /* main.mm */,
 				C853FB5FE7342353EBD2A4C5 /* bindings */,
 			);
-			path = tsuchinoko;
+			path = tsuuchinoko;
 			sourceTree = "<group>";
 		};
-		98DCD1FE5BFE2B896E8DD31A /* tsuchinoko_iOS */ = {
+		98DCD1FE5BFE2B896E8DD31A /* tsuuchinoko_iOS */ = {
 			isa = PBXGroup;
 			children = (
 				5E9EF39F1C3D60111171BE4D /* Info.plist */,
-				93B18C9A4FB03CC4A16FEDE0 /* tsuchinoko_iOS.entitlements */,
+				93B18C9A4FB03CC4A16FEDE0 /* tsuuchinoko_iOS.entitlements */,
 			);
-			path = tsuchinoko_iOS;
+			path = tsuuchinoko_iOS;
 			sourceTree = "<group>";
 		};
 		9F50E1F90685CE5A6FC2FB4C /* src */ = {
@@ -136,7 +136,7 @@
 				7A42E15027A24785BCBC1C7D /* Externals */,
 				737BA04485DF7B09AC21095D /* Sources */,
 				9F50E1F90685CE5A6FC2FB4C /* src */,
-				98DCD1FE5BFE2B896E8DD31A /* tsuchinoko_iOS */,
+				98DCD1FE5BFE2B896E8DD31A /* tsuuchinoko_iOS */,
 				7AEFB50FBADEBAF7E9E6AD06 /* Frameworks */,
 				541E742886B7C007BFDC40CC /* Products */,
 			);
@@ -153,9 +153,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		95BDA804E67B53B0900A7007 /* tsuchinoko_iOS */ = {
+		95BDA804E67B53B0900A7007 /* tsuuchinoko_iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FA51D3290F5F1AF7FBB9E9CD /* Build configuration list for PBXNativeTarget "tsuchinoko_iOS" */;
+			buildConfigurationList = FA51D3290F5F1AF7FBB9E9CD /* Build configuration list for PBXNativeTarget "tsuuchinoko_iOS" */;
 			buildPhases = (
 				76786D43C4B3028BE598E764 /* Build Rust Code */,
 				D014CA99390A7FC4D5AC31A6 /* Sources */,
@@ -166,9 +166,9 @@
 			);
 			dependencies = (
 			);
-			name = tsuchinoko_iOS;
-			productName = tsuchinoko_iOS;
-			productReference = E6FF6A2E8E289622EFB7AF17 /* tsuchinoko_iOS.app */;
+			name = tsuuchinoko_iOS;
+			productName = tsuuchinoko_iOS;
+			productReference = E6FF6A2E8E289622EFB7AF17 /* tsuuchinoko_iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -182,7 +182,7 @@
 				TargetAttributes = {
 				};
 			};
-			buildConfigurationList = 1BCA5553B74CD078E29CBF42 /* Build configuration list for PBXProject "tsuchinoko" */;
+			buildConfigurationList = 1BCA5553B74CD078E29CBF42 /* Build configuration list for PBXProject "tsuuchinoko" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -194,7 +194,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				95BDA804E67B53B0900A7007 /* tsuchinoko_iOS */,
+				95BDA804E67B53B0900A7007 /* tsuuchinoko_iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -314,7 +314,7 @@
 					"arm64-sim",
 				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = tsuchinoko_iOS/tsuchinoko_iOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = tsuuchinoko_iOS/tsuuchinoko_iOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "arm64-sim x86_64";
@@ -323,7 +323,7 @@
 					"$(inherited)",
 					"\".\"",
 				);
-				INFOPLIST_FILE = tsuchinoko_iOS/Info.plist;
+				INFOPLIST_FILE = tsuuchinoko_iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -331,8 +331,8 @@
 				"LIBRARY_SEARCH_PATHS[arch=arm64-sim]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64-sim/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
 				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
 				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.tsuchinoko.app;
-				PRODUCT_NAME = tsuchinoko;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tsuuchinoko.app;
+				PRODUCT_NAME = tsuuchinoko;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64  arm64-sim";
@@ -348,7 +348,7 @@
 					"arm64-sim",
 				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = tsuchinoko_iOS/tsuchinoko_iOS.entitlements;
+				CODE_SIGN_ENTITLEMENTS = tsuuchinoko_iOS/tsuuchinoko_iOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphoneos*]" = "arm64-sim x86_64";
@@ -357,7 +357,7 @@
 					"$(inherited)",
 					"\".\"",
 				);
-				INFOPLIST_FILE = tsuchinoko_iOS/Info.plist;
+				INFOPLIST_FILE = tsuuchinoko_iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -365,8 +365,8 @@
 				"LIBRARY_SEARCH_PATHS[arch=arm64-sim]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64-sim/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
 				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
 				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.tsuchinoko.app;
-				PRODUCT_NAME = tsuchinoko;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tsuuchinoko.app;
+				PRODUCT_NAME = tsuuchinoko;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64  arm64-sim";
@@ -439,7 +439,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1BCA5553B74CD078E29CBF42 /* Build configuration list for PBXProject "tsuchinoko" */ = {
+		1BCA5553B74CD078E29CBF42 /* Build configuration list for PBXProject "tsuuchinoko" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8EB10E72FBDE03C520141E10 /* debug */,
@@ -448,7 +448,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = debug;
 		};
-		FA51D3290F5F1AF7FBB9E9CD /* Build configuration list for PBXNativeTarget "tsuchinoko_iOS" */ = {
+		FA51D3290F5F1AF7FBB9E9CD /* Build configuration list for PBXNativeTarget "tsuuchinoko_iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4CBF4932A8C8282583C441D4 /* debug */,

@@ -13,7 +13,7 @@
   const config = {
     clientId: "l.1.4b3hnz7sl7hn1zax2xhilc8p0qtp6rq1",
     authEndpoint: "https://sean.kintone.com/oauth2/authorization",
-    redirectUri: "https://redirectmeto.com/tsuchinoko://",
+    redirectUri: "https://seanbase.com/tsuuchinoko-auth",
     scope: "k:app_settings:read k:app_settings:write",
   };
 

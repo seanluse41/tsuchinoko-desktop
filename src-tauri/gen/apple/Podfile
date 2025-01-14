@@ -1,13 +1,13 @@
 # Uncomment the next line to define a global platform for your project
 
-target 'tsuchinoko_iOS' do
+target 'tsuuchinoko_iOS' do
 platform :ios, '13.0'
-  # Pods for tsuchinoko_iOS
+  # Pods for tsuuchinoko_iOS
 end
 
-target 'tsuchinoko_macOS' do
+target 'tsuuchinoko_macOS' do
 platform :osx, '11.0'
-  # Pods for tsuchinoko_macOS
+  # Pods for tsuuchinoko_macOS
 end
 
 # Delete the deployment target for iOS and macOS, causing it to be inherited from the Podfile

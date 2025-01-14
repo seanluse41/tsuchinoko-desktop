@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "95BDA804E67B53B0900A7007"
-               BuildableName = "tsuchinoko_iOS.app"
-               BlueprintName = "tsuchinoko_iOS"
-               ReferencedContainer = "container:tsuchinoko.xcodeproj">
+               BuildableName = "tsuuchinoko_iOS.app"
+               BlueprintName = "tsuuchinoko_iOS"
+               ReferencedContainer = "container:tsuuchinoko.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "95BDA804E67B53B0900A7007"
-            BuildableName = "tsuchinoko_iOS.app"
-            BlueprintName = "tsuchinoko_iOS"
-            ReferencedContainer = "container:tsuchinoko.xcodeproj">
+            BuildableName = "tsuuchinoko_iOS.app"
+            BlueprintName = "tsuuchinoko_iOS"
+            ReferencedContainer = "container:tsuuchinoko.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "95BDA804E67B53B0900A7007"
-            BuildableName = "tsuchinoko_iOS.app"
-            BlueprintName = "tsuchinoko_iOS"
-            ReferencedContainer = "container:tsuchinoko.xcodeproj">
+            BuildableName = "tsuuchinoko_iOS.app"
+            BlueprintName = "tsuuchinoko_iOS"
+            ReferencedContainer = "container:tsuuchinoko.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -101,9 +101,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "95BDA804E67B53B0900A7007"
-            BuildableName = "tsuchinoko_iOS.app"
-            BlueprintName = "tsuchinoko_iOS"
-            ReferencedContainer = "container:tsuchinoko.xcodeproj">
+            BuildableName = "tsuuchinoko_iOS.app"
+            BlueprintName = "tsuuchinoko_iOS"
+            ReferencedContainer = "container:tsuuchinoko.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "tsuchinoko",
+  "productName": "tsuuchinoko",
   "version": "0.1.0",
-  "identifier": "com.tsuchinoko.app",
+  "identifier": "com.tsuuchinoko.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "tsuchinoko",
+        "title": "tsuuchinoko",
         "width": 800,
         "height": 600
       }
@@ -36,7 +36,7 @@
     "deep-link": {
       "mobile": [
         {
-          "host": "tsuchinoko.com",
+          "host": "seanbase.com/tsuuchinoko-auth",
           "pathPrefix": [
             "/open"
           ]
@@ -44,7 +44,7 @@
       ],
       "desktop": {
         "schemes": [
-          "tsuchinoko"
+          "tsuuchinoko"
         ]
       }
     }
