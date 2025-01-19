@@ -11,14 +11,17 @@
     "deep-link:default",
     {
       "identifier": "shell:allow-open",
-      "allow": [{
-        "name": "open-browser",
-        "cmd": "open",
-        "args": [
-          "https://sean.kintone.com/**",
-          "https://seanbase.com/**"
-        ]
-      }]
-    }
+      "allow": [
+        {
+          "name": "open-browser",
+          "cmd": "open",
+          "args": [
+            "https://sean.kintone.com/**",
+            "https://seanbase.com/**"
+          ]
+        }
+      ]
+    },
+    "stronghold:default"
   ]
 }

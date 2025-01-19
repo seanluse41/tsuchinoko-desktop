@@ -140,21 +140,33 @@
         </div>
       {/if}
 
-      <Button
-        class="w-3/4 rounded-lg bg-amber px-8 py-8 text-black hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-thistle focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        onclick={() => {
-          console.log("Raw button click");
-          initiateKintoneLogin();
-        }}
-        disabled={isLoading}
-        size="xl"
-      >
-        {#if isLoading}
-          <Spinner class="me-3" size="8" color="teal" /><P class="text-xl">Loading ...</P>
-        {:else}
-          <P class="text-xl">Login with Kintone</P>
-        {/if}
-      </Button>
+      <div class="flex flex-col gap-4 w-full justify-center items-center">
+        <Button
+          class="lg:w-3/4 rounded-lg bg-amber px-8 py-8 text-black hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-thistle focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          onclick={() => {
+            console.log("Raw button click");
+            initiateKintoneLogin();
+          }}
+          disabled={isLoading}
+          size="xl"
+        >
+          {#if isLoading}
+            <Spinner class="me-3" size="8" color="teal" /><P class="text-xl"
+              >Loading ...</P
+            >
+          {:else}
+            <P class="text-xl">Login with Kintone</P>
+          {/if}
+        </Button>
+
+        <Button
+          class="lg:w-3/4 rounded-lg bg-thistle px-8 py-8 text-black hover:bg-thistle-700 focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
+          href="/setup"
+          size="xl"
+        >
+          <P class="text-xl">First Time Setup</P>
+        </Button>
+      </div>
     </div>
 
     {#if accessToken}
