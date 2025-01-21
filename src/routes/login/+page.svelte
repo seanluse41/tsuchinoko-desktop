@@ -4,7 +4,7 @@
     import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
     import { open } from "@tauri-apps/plugin-shell";
     import { Card, Heading, P, Img, Button, Spinner } from "svelte-5-ui-lib";
-    import ParticleBackground from "../components/ParticleBackground.svelte";
+    import ParticleBackground from "../../components/ParticleBackground.svelte";
   
     let test = $state("nothing");
     let accessToken = $state(null);
