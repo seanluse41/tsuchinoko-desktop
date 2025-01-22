@@ -1,3 +1,5 @@
+<!-- src/routes/setup/+page.svelte -->
+
 <script>
     import { Input, Button, Card, P, Heading, List, Li } from "svelte-5-ui-lib";
     import { ArrowRightOutline, InfoCircleOutline } from "flowbite-svelte-icons";
@@ -5,7 +7,7 @@
     import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
     import { invoke } from "@tauri-apps/api/core";
     import { onMount } from "svelte";
-    import { secretManager } from "../../requests/appSecretManager";
+    import { secretManager } from "../../../requests/appSecretManager";
     
     let subdomain = $state("");
     let clientId = $state("");
