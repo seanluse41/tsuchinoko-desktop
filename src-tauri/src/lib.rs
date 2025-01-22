@@ -1,6 +1,9 @@
 mod commands;
 use tauri::Manager;
+// Only import DeepLinkExt on Linux and Windows
+#[cfg(any(target_os = "linux", windows))]
 use tauri_plugin_deep_link::DeepLinkExt;
+use std::fs;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -24,15 +27,24 @@ pub fn run() {
 
     builder
         .setup(|app| {
-            let salt_path = app
+            // Get the app local data directory and ensure it exists
+            let app_local_dir = app
                 .path()
                 .app_local_data_dir()
-                .expect("could not resolve app local data path")
-                .join("salt.txt");
+                .expect("could not resolve app local data path");
+            
+            // Create the directory if it doesn't exist
+            fs::create_dir_all(&app_local_dir)
+                .expect("failed to create app local data directory");
+            
+            let salt_path = app_local_dir.join("salt.txt");
             app.handle().plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
             
-            #[cfg(desktop)]
-            app.deep_link().register("tsuuchinoko")?;
+            // Only register deep-link on Linux and Windows
+            #[cfg(any(target_os = "linux", windows))]
+            {
+                app.deep_link().register("tsuuchinoko")?;
+            }
             Ok(())
         })
         .plugin(tauri_plugin_deep_link::init())
