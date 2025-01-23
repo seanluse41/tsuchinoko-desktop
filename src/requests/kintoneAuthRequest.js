@@ -1,4 +1,6 @@
-// /src/requests/kintoneAuth.js
+// /src/requests/kintoneAuthRequest.js
+import { secretManager } from './appSecretManager';
+
 export function generateState() {
   const array = new Uint8Array(32);
   window.crypto.getRandomValues(array);
@@ -11,6 +13,15 @@ export function buildAuthUrl(subdomain, clientId) {
   authUrl.searchParams.append("client_id", clientId);
   authUrl.searchParams.append("redirect_uri", "https://seanbase.com/tsuuchinoko-auth");
   authUrl.searchParams.append("state", generateState());
+  // Required scopes for app settings access
   authUrl.searchParams.append("scope", "k:app_settings:read k:app_settings:write");
   return authUrl;
+}
+
+export async function validateState(receivedState) {
+  const savedState = localStorage.getItem("kintone_state");
+  if (!savedState || receivedState !== savedState) {
+    throw new Error("State mismatch - possible CSRF attack");
+  }
+  return true;
 }

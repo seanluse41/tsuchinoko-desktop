@@ -52,7 +52,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             greet,
-            commands::kintone_exchange_token
+            commands::kintone_exchange_token,
+            commands::kintone_refresh_token
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -4,18 +4,21 @@
     import { secretManager } from "../../../requests/appSecretManager";
 
     $effect(async () => {
-        try {
-            await Promise.all([
-                secretManager.storeSecret('kintone_access_token', ''),
-                secretManager.storeSecret('kintone_state', ''),
-                secretManager.storeSecret('kintone_subdomain', '')
-            ]);
-            goto('/login');
-        } catch (error) {
-            console.error('Logout error:', error);
-            goto('/login');
-        }
-    });
+    try {
+        await Promise.all([
+            secretManager.remove('kintone_access_token'),
+            secretManager.remove('kintone_refresh_token'),
+            secretManager.remove('kintone_state'), 
+            secretManager.remove('kintone_subdomain'),
+            secretManager.remove('kintone_client_id'),
+            secretManager.remove('kintone_client_secret')
+        ]);
+        goto('/login');
+    } catch (error) {
+        console.error('Logout error:', error);
+        goto('/login');
+    }
+});
 </script>
 
 <div class="flex items-center justify-center min-h-screen">

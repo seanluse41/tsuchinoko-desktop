@@ -10,20 +10,23 @@ class SecretManager {
     }
 
     async initialize() {
-        if (this.isReady) {
-            return;
-        }
-
+        if (this.isReady) return;
+    
         try {
             const vaultPath = `${await appDataDir()}/vault.hold`;
-            this.stronghold = await Stronghold.load(vaultPath, VAULT_PASSWORD);
-            
+            try {
+                this.stronghold = await Stronghold.load(vaultPath, VAULT_PASSWORD);
+            } catch (e) {
+                // Create new vault if it doesn't exist
+                this.stronghold = await Stronghold.create(vaultPath, VAULT_PASSWORD);
+            }
+
             try {
                 this.client = await this.stronghold.loadClient(CLIENT_NAME);
             } catch {
                 this.client = await this.stronghold.createClient(CLIENT_NAME);
             }
-            
+
             this.store = this.client.getStore();
             this.isReady = true;
             return this.store;
@@ -57,6 +60,20 @@ class SecretManager {
                 return null;
             }
             throw error;
+        }
+    }
+
+    async remove(key) {
+        if (!this.isReady) {
+            await this.initialize();
+        }
+    
+        try {
+            await this.store.remove(key);
+            await this.stronghold.save();
+            return true;
+        } catch {
+            return false;
         }
     }
 }
