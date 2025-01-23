@@ -22,6 +22,7 @@
         }
       ]
     },
-    "stronghold:default"
+    "stronghold:default",
+    "stronghold:allow-remove-store-record"
   ]
 }

@@ -1,6 +1,11 @@
 <script>
   import TaskCommands from "../../../components/TaskCommands.svelte";
   import TaskList from "../../../components/TaskList.svelte";
+  import { authState } from "$lib/appLoginManager.svelte";
+
+  $effect(() => {
+    $inspect(authState)
+	});
 </script>
 
 <div class="flex flex-row h-full w-full">

@@ -1,30 +1,20 @@
 <!-- src/routes/(auth)/setup/+page.svelte -->
-
 <script>
-    import { Input, Button, Card, P, Heading, List, Li } from "svelte-5-ui-lib";
-    import {
-        ArrowRightOutline,
-        InfoCircleOutline,
-        EyeOutline,
-        EyeSlashOutline,
-    } from "flowbite-svelte-icons";
+    import { Input, Button, Card, P, Heading, List, Li, Spinner } from "svelte-5-ui-lib";
+    import { ArrowRightOutline, InfoCircleOutline, EyeOutline, EyeSlashOutline } from "flowbite-svelte-icons";
     import { open } from "@tauri-apps/plugin-shell";
     import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
-    import { invoke } from "@tauri-apps/api/core";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
-    import { secretManager } from "../../../requests/appSecretManager";
+    import { buildAuthUrl, validateState } from "../../../lib/kintoneAuthRequest";
+    import { exchangeToken } from "../../../lib/kintoneAccessRequest";
+    import { authState } from "../../../lib/appLoginManager.svelte.js";
 
-    let subdomain = $state("");
-    let clientId = $state("");
-    let clientSecret = $state("");
+    let { subdomain, clientId, clientSecret } = $state(authState.user);
     let showSecret = $state(false);
-    let error = $state(null);
-    let isLoading = $state(false);
-    let authToken = $state(null);
 
     let adminUrl = $derived(
-        `https://${subdomain}.kintone.com/admin/integrations/oauth/list`,
+        `https://${subdomain}.kintone.com/admin/integrations/oauth/list`
     );
 
     async function openKintoneAdmin() {
@@ -33,126 +23,61 @@
                 await open(adminUrl);
             } catch (err) {
                 console.error("Failed to open browser:", err);
-                error = "Failed to open Kintone admin page. Please try again.";
+                authState.error = "Failed to open Kintone admin page. Please try again.";
             }
         }
     }
 
     async function handleAuthCallback(url) {
-        try {
-            const parsedUrl = new URL(url);
-            const code = parsedUrl.searchParams.get("code");
-            const state = parsedUrl.searchParams.get("state");
-            const authError = parsedUrl.searchParams.get("error");
+    try {
+        const parsedUrl = new URL(url);
+        const code = parsedUrl.searchParams.get("code");
+        const state = parsedUrl.searchParams.get("state");
+        const authError = parsedUrl.searchParams.get("error");
 
-            if (authError) {
-                throw new Error(`Authentication error: ${authError}`);
-            }
+        if (authError) throw new Error(`Authentication error: ${authError}`);
+        if (!code) throw new Error("No authorization code received");
+        
+        validateState(state);
+        
+        // Set user credentials BEFORE token exchange
+        authState.user = { subdomain, clientId, clientSecret };
+        console.log('Auth state before exchange:', authState); // Debug
 
-            const savedState = localStorage.getItem("kintone_state");
-            if (!savedState || state !== savedState) {
-                throw new Error("State mismatch - possible CSRF attack");
-            }
+        const tokenResponse = await exchangeToken(code);
+        authState.token = tokenResponse.access_token;
+        authState.refreshToken = tokenResponse.refresh_token;
+        authState.isAuthenticated = true;
 
-            // Clear the state immediately to prevent reuse
-            localStorage.removeItem("kintone_state");
-
-            if (!code) {
-                throw new Error("No authorization code received");
-            }
-
-            const config = {
-                client_id: await secretManager.getSecret("kintone_client_id"),
-                client_secret: await secretManager.getSecret(
-                    "kintone_client_secret",
-                ),
-                subdomain: await secretManager.getSecret("kintone_subdomain"),
-            };
-
-            const tokenResponse = await invoke("kintone_exchange_token", {
-                code,
-                redirectUri: "https://seanbase.com/tsuuchinoko-auth",
-                config,
-            });
-
-            if (!tokenResponse || !tokenResponse.access_token) {
-                throw new Error("Invalid token response");
-            }
-
-            await secretManager.storeSecret(
-                "kintone_access_token",
-                tokenResponse.access_token,
-            );
-            if (tokenResponse.refresh_token) {
-                await secretManager.storeSecret(
-                    "kintone_refresh_token",
-                    tokenResponse.refresh_token,
-                );
-            }
-
-            // Remove the deep link listener
-            window.removeEventListener("tauri://deep-link", handleAuthCallback);
-
-            authToken = tokenResponse.access_token;
-            await goto("/home");
-        } catch (err) {
-            console.error("Authentication error:", err);
-            error = err.message || "Authentication failed. Please try again.";
-            authToken = null;
-        } finally {
-            isLoading = false;
-        }
+        await goto("/home");
+    } catch (err) {
+        authState.error = err.message;
+        authState.token = null;
+        authState.isAuthenticated = false;
+        console.error("Authentication error:", err);
     }
+}
 
     async function handleSubmit() {
         try {
             if (!subdomain || !clientId || !clientSecret) {
-                error = "Please fill in all fields";
+                authState.error = "Please fill in all fields";
                 return;
             }
 
-            isLoading = true;
-            error = null;
-
-            await Promise.all([
-                secretManager.storeSecret("kintone_client_id", clientId),
-                secretManager.storeSecret(
-                    "kintone_client_secret",
-                    clientSecret,
-                ),
-                secretManager.storeSecret("kintone_subdomain", subdomain),
-            ]);
-
-            const state = generateState();
-            localStorage.setItem("kintone_state", state);
-
-            const authUrl = new URL(
-                `https://${subdomain}.kintone.com/oauth2/authorization`,
-            );
-            authUrl.searchParams.append("response_type", "code");
-            authUrl.searchParams.append("client_id", clientId);
-            authUrl.searchParams.append(
-                "redirect_uri",
-                "https://seanbase.com/tsuuchinoko-auth",
-            );
-            authUrl.searchParams.append("state", state);
-            authUrl.searchParams.append(
-                "scope",
-                "k:app_settings:read k:app_settings:write",
-            );
-
+            authState.isLoading = true;
+            authState.error = null;
+            
+            const authUrl = buildAuthUrl(subdomain, clientId);
             await open(authUrl.toString());
         } catch (err) {
-            error = err.message || "Setup failed. Please try again.";
+            authState.error = err.message || "Setup failed. Please try again.";
+            authState.isLoading = false;
         }
     }
 
-    function generateState() {
-        const array = new Uint8Array(32);
-        window.crypto.getRandomValues(array);
-        return Array.from(array, (byte) =>
-            byte.toString(16).padStart(2, "0"),
-        ).join("");
+    function toggleSecretVisibility() {
+        showSecret = !showSecret;
     }
 
     onMount(async () => {
@@ -160,13 +85,9 @@
             const unsubscribe = await onOpenUrl(handleAuthCallback);
             return () => unsubscribe();
         } catch (err) {
-            error = "Failed to initialize app. Please restart.";
+            authState.error = "Failed to initialize app. Please restart.";
         }
     });
-
-    function toggleSecretVisibility() {
-        showSecret = !showSecret;
-    }
 </script>
 
 <main class="flex min-h-screen w-full p-8 bg-amber-900">
@@ -175,15 +96,15 @@
             First Time Setup
         </Heading>
 
-        {#if error}
+        {#if authState.error}
             <div
                 class="mb-4 p-4 bg-redwood-100 border border-redwood-300 rounded-md"
             >
-                <P class="text-redwood-800">{error}</P>
+                <P class="text-redwood-800">{authState.error}</P>
             </div>
         {/if}
 
-        {#if authToken}
+        {#if authState.token}
             <div
                 class="mb-4 p-4 bg-moss_green-100 border border-moss_green-300 rounded-md"
             >
@@ -278,31 +199,16 @@
         <div class="flex flex-col gap-4 items-center">
             <Button
                 onclick={handleSubmit}
-                disabled={!subdomain || !clientId || !clientSecret || isLoading}
+                disabled={!subdomain ||
+                    !clientId ||
+                    !clientSecret ||
+                    authState.isLoading}
                 class="w-1/2 bg-amber hover:bg-amber-700"
                 size="xl"
             >
-                {#if isLoading}
+                {#if authState.isLoading}
                     <span class="inline-flex items-center">
-                        <svg
-                            class="animate-spin h-5 w-5 mr-3"
-                            viewBox="0 0 24 24"
-                        >
-                            <circle
-                                class="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                stroke-width="4"
-                                fill="none"
-                            />
-                            <path
-                                class="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                        </svg>
+                        <Spinner />
                         Processing...
                     </span>
                 {:else}

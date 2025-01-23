@@ -5,30 +5,20 @@
   import { open } from "@tauri-apps/plugin-shell";
   import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
   import { Card, Heading, P, Img, Button, Spinner } from "svelte-5-ui-lib";
-  import ParticleBackground from "../../../components/ParticleBackground.svelte";
-  import { secretManager } from "../../../requests/appSecretManager";
-  import { buildAuthUrl, validateState } from "../../../requests/kintoneAuthRequest";
-  import { exchangeToken } from "../../../requests/kintoneAccessRequest";
-
-  let isLoading = $state(false);
-  let error = $state(null);
+  import { buildAuthUrl, validateState } from "../../../lib/kintoneAuthRequest";
+  import { exchangeToken } from "../../../lib/kintoneAccessRequest";
+  import { authState } from "../../../lib/appLoginManager.svelte.js";
 
   async function initiateKintoneLogin() {
     try {
-      isLoading = true;
-      error = null;
-      
-      const [subdomain, clientId] = await Promise.all([
-        secretManager.getSecret("kintone_subdomain"),
-        secretManager.getSecret("kintone_client_id")
-      ]);
-      
-      const authUrl = await buildAuthUrl(subdomain, clientId);
+      authState.isLoading = true;
+      authState.error = null;
+      const authUrl = buildAuthUrl(authState.user.subdomain, authState.user.clientId);
       await open(authUrl.toString());
     } catch (err) {
       console.error("Failed to open browser:", err);
-      error = "Failed to open login page. Please try again.";
-      isLoading = false;
+      authState.error = "Failed to open login page. Please try again.";
+      authState.isLoading = false;
     }
   }
 
@@ -48,12 +38,12 @@
 
       if (!stateValid) throw new Error("State mismatch");
 
-      await secretManager.storeSecret("kintone_access_token", tokenResponse.access_token);
+      authState.isAuthenticated = true;
       await goto('/home');
     } catch (err) {
-      error = err.message || "Authentication failed";
+      authState.error = err.message || "Authentication failed";
     } finally {
-      isLoading = false;
+      authState.isLoading = false;
     }
   }
 
@@ -61,12 +51,10 @@
     try {
       return await onOpenUrl(handleAuthCallback);
     } catch (err) {
-      error = "Failed to initialize app. Please restart.";
+      authState.error = "Failed to initialize app. Please restart.";
     }
   });
 </script>
-
-<ParticleBackground />
 
 <main class="flex min-h-screen w-full items-center justify-center bg-amber-900">
   <Card class="max-w-none w-3/4 p-8 z-10">
@@ -78,11 +66,11 @@
         Tsuuchinoko
       </Heading>
       
-      {#if error}
+      {#if authState.error}
         <div class="mb-4 w-full rounded-md bg-red-50 p-4">
           <div class="flex">
             <div class="ml-3">
-              <P class="text-sm font-medium text-red-800">{error}</P>
+              <P class="text-sm font-medium text-red-800">{authState.error}</P>
             </div>
           </div>
         </div>
@@ -92,10 +80,10 @@
         <Button
           class="lg:w-3/4 rounded-lg bg-amber px-8 py-8 text-black hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-thistle focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           onclick={initiateKintoneLogin}
-          disabled={isLoading}
+          disabled={authState.isLoading}
           size="xl"
         >
-          {#if isLoading}
+          {#if authState.isLoading}
             <Spinner class="me-3" size="8" color="teal" />
             <P class="text-xl">Loading ...</P>
           {:else}
