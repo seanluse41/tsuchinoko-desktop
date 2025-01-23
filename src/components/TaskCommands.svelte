@@ -39,9 +39,9 @@
             <SidebarItem 
                 label="Filter" 
                 onclick={filter} 
-                class="cursor-pointer mb-3"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+                class="cursor-pointer mb-3 bg-white"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
             >
                 {#snippet iconSlot()}
                     <SearchOutline
@@ -53,9 +53,9 @@
             <SidebarItem 
                 label="Sync" 
                 onclick={sync} 
-                class="cursor-pointer mb-3"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+                class="cursor-pointer mb-3 bg-white"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
             >
                 {#snippet iconSlot()}
                     <RefreshOutline
@@ -67,9 +67,9 @@
             <SidebarItem 
                 label="Select All" 
                 onclick={selectAll} 
-                class="cursor-pointer mb-3"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-400"
+                class="cursor-pointer mb-3 bg-white"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
             >
                 {#snippet iconSlot()}
                     <BadgeCheckOutline

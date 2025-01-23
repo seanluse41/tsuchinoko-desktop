@@ -1,4 +1,4 @@
-<!-- src/routes/setup/+page.svelte -->
+<!-- src/routes/(auth)/setup/+page.svelte -->
 
 <script>
     import { Input, Button, Card, P, Heading, List, Li } from "svelte-5-ui-lib";
