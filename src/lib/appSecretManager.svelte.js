@@ -5,6 +5,8 @@ import { authState } from './appLoginManager.svelte.js';
 
 const VAULT_PASSWORD = 'tsuuchinoko_vault_2024';
 const CLIENT_NAME = 'tsuuchinoko_client';
+const SETUP_KEY = 'setup_credentials';
+const AUTH_KEY = 'auth_credentials';
 
 export const secretManagerState = $state({
     isInitialized: false,
@@ -30,11 +32,8 @@ async function initialize() {
     if (secretManagerState.isInitialized || secretManagerState.isInitializing) return;
     
     try {
-        Object.assign(secretManagerState, {
-            isInitializing: true,
-            error: null
-        });
-        console.log('Secret manager state updated:', secretManagerState);
+        Object.assign(secretManagerState, { isInitializing: true, error: null });
+        console.log('Initializing secret manager...');
         
         const vaultPath = `${await appDataDir()}/vault.hold`;
         
@@ -53,12 +52,8 @@ async function initialize() {
 
         store = client.getStore();
         
-        Object.assign(secretManagerState, {
-            isInitialized: true,
-            isInitializing: false,
-            error: null
-        });
-        console.log('Secret manager state updated:', secretManagerState);
+        Object.assign(secretManagerState, { isInitialized: true, isInitializing: false, error: null });
+        console.log('Secret manager initialization complete');
         
         await loadStoredCredentials();
     } catch (error) {
@@ -67,7 +62,7 @@ async function initialize() {
             isInitializing: false,
             error: error.message
         });
-        console.log('Secret manager state updated:', secretManagerState);
+        console.log('Secret manager initialization failed');
         throw error;
     }
 }
@@ -76,38 +71,45 @@ async function storeCredentials() {
     if (!store || !secretManagerState.isInitialized) {
         await initialize();
     }
-    if (!store) {
-        throw new Error('Store not initialized');
-    }
     
-    const credentials = {
-        token: authState.token,
-        refreshToken: authState.refreshToken,
-        user: authState.user
+    const setupCredentials = {
+        subdomain: authState.user.subdomain,
+        clientId: authState.user.clientId,
+        clientSecret: authState.user.clientSecret
     };
 
-    await insertRecord('credentials', credentials);
+    const authCredentials = {
+        token: authState.token,
+        refreshToken: authState.refreshToken
+    };
+
+    await insertRecord(SETUP_KEY, setupCredentials);
+    await insertRecord(AUTH_KEY, authCredentials);
 }
 
 async function loadStoredCredentials() {
     if (!store || !secretManagerState.isInitialized) {
         await initialize();
     }
-    if (!store) {
-        throw new Error('Store not initialized');
-    }
     
     try {
-        const credentials = await getRecord('credentials');
+        const setupCreds = await getRecord(SETUP_KEY);
+        console.log('Found stored setup credentials:');
+        console.log(setupCreds)
+        const authCreds = await getRecord(AUTH_KEY);
         
         Object.assign(authState, {
-            token: credentials.token,
-            refreshToken: credentials.refreshToken,
-            user: credentials.user,
-            isAuthenticated: !!credentials.token,
+            token: authCreds?.token || null,
+            refreshToken: authCreds?.refreshToken || null,
+            user: {
+                subdomain: setupCreds?.subdomain || null,
+                clientId: setupCreds?.clientId || null,
+                clientSecret: setupCreds?.clientSecret || null
+            },
+            isAuthenticated: !!authCreds?.token,
             error: null
         });
-        console.log('Auth state updated from stored credentials:', authState);
+        console.log('Loading stored credentials...');
     } catch {
         return null;
     }
@@ -118,31 +120,31 @@ async function clearCredentials() {
         await initialize();
     }
     
-    if (!store) {
-        throw new Error('Store not initialized');
-    }
-    
     try {
-        await store.remove('credentials');
+        // Only remove auth tokens, keep setup credentials
+        await store.remove(AUTH_KEY);
         await stronghold.save();
+        
+        // Keep the existing setup info but clear auth state
+        const currentSubdomain = authState.user.subdomain;
+        const currentClientId = authState.user.clientId;
+        const currentClientSecret = authState.user.clientSecret;
         
         Object.assign(authState, {
             token: null,
             refreshToken: null,
             user: {
-                subdomain: null,
-                clientId: null,
-                clientSecret: null
+                subdomain: currentSubdomain,
+                clientId: currentClientId,
+                clientSecret: currentClientSecret
             },
             isAuthenticated: false,
             error: null
         });
-        console.log('Auth state cleared:', authState);
+        console.log('Cleared authentication credentials while preserving setup info');
     } catch (error) {
-        Object.assign(secretManagerState, {
-            error: error.message
-        });
-        console.log('Secret manager state updated:', secretManagerState);
+        Object.assign(secretManagerState, { error: error.message });
+        console.log('Failed to clear credentials');
         throw error;
     }
 }
