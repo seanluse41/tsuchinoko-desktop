@@ -30,8 +30,11 @@ async function initialize() {
     if (secretManagerState.isInitialized || secretManagerState.isInitializing) return;
     
     try {
-        secretManagerState.isInitializing = true;
-        secretManagerState.error = null;
+        Object.assign(secretManagerState, {
+            isInitializing: true,
+            error: null
+        });
+        console.log('Secret manager state updated:', secretManagerState);
         
         const vaultPath = `${await appDataDir()}/vault.hold`;
         
@@ -49,14 +52,23 @@ async function initialize() {
         }
 
         store = client.getStore();
-        secretManagerState.isInitialized = true;
+        
+        Object.assign(secretManagerState, {
+            isInitialized: true,
+            isInitializing: false,
+            error: null
+        });
+        console.log('Secret manager state updated:', secretManagerState);
         
         await loadStoredCredentials();
     } catch (error) {
-        secretManagerState.error = error.message;
+        Object.assign(secretManagerState, {
+            isInitialized: false,
+            isInitializing: false,
+            error: error.message
+        });
+        console.log('Secret manager state updated:', secretManagerState);
         throw error;
-    } finally {
-        secretManagerState.isInitializing = false;
     }
 }
 
@@ -88,10 +100,14 @@ async function loadStoredCredentials() {
     try {
         const credentials = await getRecord('credentials');
         
-        authState.token = credentials.token;
-        authState.refreshToken = credentials.refreshToken;
-        authState.user = credentials.user;
-        authState.isAuthenticated = !!credentials.token;
+        Object.assign(authState, {
+            token: credentials.token,
+            refreshToken: credentials.refreshToken,
+            user: credentials.user,
+            isAuthenticated: !!credentials.token,
+            error: null
+        });
+        console.log('Auth state updated from stored credentials:', authState);
     } catch {
         return null;
     }
@@ -110,16 +126,23 @@ async function clearCredentials() {
         await store.remove('credentials');
         await stronghold.save();
         
-        authState.token = null;
-        authState.refreshToken = null;
-        authState.user = {
-            subdomain: null,
-            clientId: null,
-            clientSecret: null
-        };
-        authState.isAuthenticated = false;
+        Object.assign(authState, {
+            token: null,
+            refreshToken: null,
+            user: {
+                subdomain: null,
+                clientId: null,
+                clientSecret: null
+            },
+            isAuthenticated: false,
+            error: null
+        });
+        console.log('Auth state cleared:', authState);
     } catch (error) {
-        secretManagerState.error = error.message;
+        Object.assign(secretManagerState, {
+            error: error.message
+        });
+        console.log('Secret manager state updated:', secretManagerState);
         throw error;
     }
 }

@@ -25,30 +25,36 @@
     }
 
     async function handleSubmit() {
-        try {
-            if (!subdomain || !clientId || !clientSecret) {
-                authState.error = "Please fill in all fields";
-                return;
-            }
-
-            authState.isLoading = true;
-            authState.error = null;
-            authState.user = { subdomain, clientId, clientSecret };
-            
-            await open(buildAuthUrl(subdomain, clientId).toString());
-        } catch (err) {
-            authState.error = err.message || "Setup failed. Please try again.";
-            authState.isLoading = false;
+    try {
+        if (!subdomain || !clientId || !clientSecret) {
+            Object.assign(authState, {
+                error: "Please fill in all fields",
+                isLoading: false
+            });
+            console.log('Auth state updated:', authState);
+            return;
         }
+
+        Object.assign(authState, {
+            isLoading: true,
+            error: null,
+            user: { subdomain, clientId, clientSecret }
+        });
+        console.log('Auth state updated:', authState);
+        
+        await open(buildAuthUrl(subdomain, clientId).toString());
+    } catch (err) {
+        Object.assign(authState, {
+            error: err.message || "Setup failed. Please try again.",
+            isLoading: false
+        });
+        console.log('Auth state updated:', authState);
     }
+}
 
     $effect(() => {
+        console.log("auth state from setup page")
         $inspect(authState)
-        onOpenUrl(handleAuthCallback).then(unsub => {
-            return () => unsub?.();
-        }).catch(err => {
-            authState.error = "Failed to initialize app. Please restart.";
-        });
     });
 </script>
 

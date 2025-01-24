@@ -7,28 +7,31 @@
   import { handleAuthCallback } from "../../../lib/authCallbackHandler.svelte.js";
   import { authState } from "../../../lib/appLoginManager.svelte.js";
 
-  let isButtonDisabled = $derived(authState.isLoading);
+  let isButtonDisabled = $derived(authState.isLoading || !authState.user.subdomain);
   let buttonText = $derived(authState.isLoading ? "Loading ..." : "Login with Kintone");
 
   async function initiateKintoneLogin() {
-    try {
-      authState.isLoading = true;
-      authState.error = null;
-      const authUrl = buildAuthUrl(authState.user.subdomain, authState.user.clientId);
-      await open(authUrl.toString());
-    } catch (err) {
-      authState.error = "Failed to open login page. Please try again.";
-      authState.isLoading = false;
-    }
+  try {
+    Object.assign(authState, {
+      isLoading: true,
+      error: null
+    });
+    console.log('Auth state updated:', authState);
+
+    const authUrl = buildAuthUrl(authState.user.subdomain, authState.user.clientId);
+    await open(authUrl.toString());
+  } catch (err) {
+    Object.assign(authState, {
+      error: "Failed to open login page. Please try again.",
+      isLoading: false
+    });
+    console.log('Auth state updated:', authState);
   }
+}
 
   $effect(() => {
+    console.log("authstate from login page")
     $inspect(authState)
-    onOpenUrl(handleAuthCallback).then(unsub => {
-      return () => unsub?.();
-    }).catch(err => {
-      authState.error = "Failed to initialize app. Please restart.";
-    });
   });
 </script>
 
@@ -46,6 +49,14 @@
         <div class="mb-4 w-full rounded-md bg-red-50 p-4">
           <div class="ml-3">
             <P class="text-sm font-medium text-red-800">{authState.error}</P>
+          </div>
+        </div>
+      {/if}
+
+      {#if !authState.user.subdomain}
+        <div class="mb-4 w-full rounded-md bg-amber-50 p-4">
+          <div class="ml-3">
+            <P class="text-sm font-medium text-center text-ebony">Please complete the First Time Setup to configure your Kintone subdomain.</P>
           </div>
         </div>
       {/if}

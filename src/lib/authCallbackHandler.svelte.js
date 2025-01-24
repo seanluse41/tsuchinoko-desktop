@@ -6,6 +6,7 @@ import { exchangeToken } from "./kintoneAccessRequest";
 import { authState } from "./appLoginManager.svelte.js";
 
 export async function handleAuthCallback(url) {
+    console.log("callback happened.")
     try {
         const parsedUrl = new URL(url);
         const code = parsedUrl.searchParams.get("code");
@@ -18,17 +19,23 @@ export async function handleAuthCallback(url) {
         validateState(state);
         const tokenResponse = await exchangeToken(code);
         
-        authState.token = tokenResponse.access_token;
-        authState.refreshToken = tokenResponse.refresh_token;
-        authState.isAuthenticated = true;
+        Object.assign(authState, {
+            token: tokenResponse.access_token,
+            refreshToken: tokenResponse.refresh_token,
+            isAuthenticated: true,
+            error: null,
+            isLoading: false
+        });
 
         await goto("/home");
     } catch (err) {
-        authState.error = err.message;
-        authState.token = null;
-        authState.isAuthenticated = false;
+        Object.assign(authState, {
+            token: null,
+            refreshToken: null,
+            isAuthenticated: false,
+            error: err.message,
+            isLoading: false
+        });
         console.error("Authentication error:", err);
-    } finally {
-        authState.isLoading = false;
     }
 }
