@@ -1,13 +1,14 @@
 <!-- src/routes/(auth)/login/+page.svelte -->
 <script>
-  import { onMount } from "svelte";
-  import { goto } from "$app/navigation";
   import { open } from "@tauri-apps/plugin-shell";
   import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
   import { Card, Heading, P, Img, Button, Spinner } from "svelte-5-ui-lib";
-  import { buildAuthUrl, validateState } from "../../../lib/kintoneAuthRequest";
-  import { exchangeToken } from "../../../lib/kintoneAccessRequest";
+  import { buildAuthUrl } from "../../../lib/kintoneAuthRequest";
+  import { handleAuthCallback } from "../../../lib/authCallbackHandler.svelte.js";
   import { authState } from "../../../lib/appLoginManager.svelte.js";
+
+  let isButtonDisabled = $derived(authState.isLoading);
+  let buttonText = $derived(authState.isLoading ? "Loading ..." : "Login with Kintone");
 
   async function initiateKintoneLogin() {
     try {
@@ -16,43 +17,18 @@
       const authUrl = buildAuthUrl(authState.user.subdomain, authState.user.clientId);
       await open(authUrl.toString());
     } catch (err) {
-      console.error("Failed to open browser:", err);
       authState.error = "Failed to open login page. Please try again.";
       authState.isLoading = false;
     }
   }
 
-  async function handleAuthCallback(url) {
-    try {
-      const parsedUrl = new URL(url);
-      const code = parsedUrl.searchParams.get("code");
-      const state = parsedUrl.searchParams.get("state");
-      const authError = parsedUrl.searchParams.get("error");
-
-      if (authError) throw new Error(`Authentication error: ${authError}`);
-      
-      const [stateValid, tokenResponse] = await Promise.all([
-        validateState(state),
-        code ? exchangeToken(code) : Promise.reject(new Error("No authorization code received"))
-      ]);
-
-      if (!stateValid) throw new Error("State mismatch");
-
-      authState.isAuthenticated = true;
-      await goto('/home');
-    } catch (err) {
-      authState.error = err.message || "Authentication failed";
-    } finally {
-      authState.isLoading = false;
-    }
-  }
-
-  onMount(async () => {
-    try {
-      return await onOpenUrl(handleAuthCallback);
-    } catch (err) {
+  $effect(() => {
+    $inspect(authState)
+    onOpenUrl(handleAuthCallback).then(unsub => {
+      return () => unsub?.();
+    }).catch(err => {
       authState.error = "Failed to initialize app. Please restart.";
-    }
+    });
   });
 </script>
 
@@ -68,10 +44,8 @@
       
       {#if authState.error}
         <div class="mb-4 w-full rounded-md bg-red-50 p-4">
-          <div class="flex">
-            <div class="ml-3">
-              <P class="text-sm font-medium text-red-800">{authState.error}</P>
-            </div>
+          <div class="ml-3">
+            <P class="text-sm font-medium text-red-800">{authState.error}</P>
           </div>
         </div>
       {/if}
@@ -80,15 +54,13 @@
         <Button
           class="lg:w-3/4 rounded-lg bg-amber px-8 py-8 text-black hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-thistle focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           onclick={initiateKintoneLogin}
-          disabled={authState.isLoading}
+          disabled={isButtonDisabled}
           size="xl"
         >
           {#if authState.isLoading}
             <Spinner class="me-3" size="8" color="teal" />
-            <P class="text-xl">Loading ...</P>
-          {:else}
-            <P class="text-xl">Login with Kintone</P>
           {/if}
+          <P class="text-xl">{buttonText}</P>
         </Button>
 
         <Button

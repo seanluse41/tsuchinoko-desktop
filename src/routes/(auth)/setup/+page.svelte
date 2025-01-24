@@ -4,59 +4,25 @@
     import { ArrowRightOutline, InfoCircleOutline, EyeOutline, EyeSlashOutline } from "flowbite-svelte-icons";
     import { open } from "@tauri-apps/plugin-shell";
     import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
-    import { onMount } from "svelte";
-    import { goto } from "$app/navigation";
-    import { buildAuthUrl, validateState } from "../../../lib/kintoneAuthRequest";
-    import { exchangeToken } from "../../../lib/kintoneAccessRequest";
+    import { buildAuthUrl } from "../../../lib/kintoneAuthRequest";
+    import { handleAuthCallback } from "../../../lib/authCallbackHandler.svelte.js";
     import { authState } from "../../../lib/appLoginManager.svelte.js";
 
     let { subdomain, clientId, clientSecret } = $state(authState.user);
     let showSecret = $state(false);
-
-    let adminUrl = $derived(
-        `https://${subdomain}.kintone.com/admin/integrations/oauth/list`
-    );
+    
+    let adminUrl = $derived(`https://${subdomain}.kintone.com/admin/integrations/oauth/list`);
+    let isButtonDisabled = $derived(!subdomain || !clientId || !clientSecret || authState.isLoading);
+    let buttonText = $derived(authState.isLoading ? "Processing..." : "Complete Setup");
 
     async function openKintoneAdmin() {
-        if (subdomain) {
-            try {
-                await open(adminUrl);
-            } catch (err) {
-                console.error("Failed to open browser:", err);
-                authState.error = "Failed to open Kintone admin page. Please try again.";
-            }
+        if (!subdomain) return;
+        try {
+            await open(adminUrl);
+        } catch (err) {
+            authState.error = "Failed to open Kintone admin page. Please try again.";
         }
     }
-
-    async function handleAuthCallback(url) {
-    try {
-        const parsedUrl = new URL(url);
-        const code = parsedUrl.searchParams.get("code");
-        const state = parsedUrl.searchParams.get("state");
-        const authError = parsedUrl.searchParams.get("error");
-
-        if (authError) throw new Error(`Authentication error: ${authError}`);
-        if (!code) throw new Error("No authorization code received");
-        
-        validateState(state);
-        
-        // Set user credentials BEFORE token exchange
-        authState.user = { subdomain, clientId, clientSecret };
-        console.log('Auth state before exchange:', authState); // Debug
-
-        const tokenResponse = await exchangeToken(code);
-        authState.token = tokenResponse.access_token;
-        authState.refreshToken = tokenResponse.refresh_token;
-        authState.isAuthenticated = true;
-
-        await goto("/home");
-    } catch (err) {
-        authState.error = err.message;
-        authState.token = null;
-        authState.isAuthenticated = false;
-        console.error("Authentication error:", err);
-    }
-}
 
     async function handleSubmit() {
         try {
@@ -67,26 +33,22 @@
 
             authState.isLoading = true;
             authState.error = null;
+            authState.user = { subdomain, clientId, clientSecret };
             
-            const authUrl = buildAuthUrl(subdomain, clientId);
-            await open(authUrl.toString());
+            await open(buildAuthUrl(subdomain, clientId).toString());
         } catch (err) {
             authState.error = err.message || "Setup failed. Please try again.";
             authState.isLoading = false;
         }
     }
 
-    function toggleSecretVisibility() {
-        showSecret = !showSecret;
-    }
-
-    onMount(async () => {
-        try {
-            const unsubscribe = await onOpenUrl(handleAuthCallback);
-            return () => unsubscribe();
-        } catch (err) {
+    $effect(() => {
+        $inspect(authState)
+        onOpenUrl(handleAuthCallback).then(unsub => {
+            return () => unsub?.();
+        }).catch(err => {
             authState.error = "Failed to initialize app. Please restart.";
-        }
+        });
     });
 </script>
 
@@ -97,20 +59,14 @@
         </Heading>
 
         {#if authState.error}
-            <div
-                class="mb-4 p-4 bg-redwood-100 border border-redwood-300 rounded-md"
-            >
+            <div class="mb-4 p-4 bg-redwood-100 border border-redwood-300 rounded-md">
                 <P class="text-redwood-800">{authState.error}</P>
             </div>
         {/if}
 
         {#if authState.token}
-            <div
-                class="mb-4 p-4 bg-moss_green-100 border border-moss_green-300 rounded-md"
-            >
-                <P class="text-moss_green-800 font-bold"
-                    >Authentication Successful!</P
-                >
+            <div class="mb-4 p-4 bg-moss_green-100 border border-moss_green-300 rounded-md">
+                <P class="text-moss_green-800 font-bold">Authentication Successful!</P>
             </div>
         {/if}
 
@@ -120,11 +76,7 @@
                     <P class="font-bold">1. Enter your Kintone subdomain:</P>
                     <div class="flex items-center gap-2">
                         <P>https://</P>
-                        <Input
-                            bind:value={subdomain}
-                            placeholder="your-subdomain"
-                            class="w-48"
-                        />
+                        <Input bind:value={subdomain} placeholder="your-subdomain" class="w-48" />
                         <P>.kintone.com</P>
                     </div>
                 </div>
@@ -132,14 +84,8 @@
 
             <Li>
                 <div class="flex flex-col gap-2">
-                    <P class="font-bold"
-                        >2. Visit your Kintone OAuth settings:</P
-                    >
-                    <Button
-                        onclick={openKintoneAdmin}
-                        disabled={!subdomain}
-                        class="w-fit bg-thistle hover:bg-thistle-600"
-                    >
+                    <P class="font-bold">2. Visit your Kintone OAuth settings:</P>
+                    <Button onclick={openKintoneAdmin} disabled={!subdomain} class="w-fit bg-thistle hover:bg-thistle-600">
                         <P>Open OAuth Settings</P>
                         <ArrowRightOutline class="ml-2 h-5 w-5 text-ebony" />
                     </Button>
@@ -150,24 +96,15 @@
                 <P class="font-bold">3. Click "Add OAuth Client" and enter:</P>
                 <div class="ml-4 mt-2 space-y-2">
                     <P>• Client Name: Tsuuchinoko</P>
-                    <P
-                        >• Redirect Endpoint:
-                        https://seanbase.com/tsuuchinoko-auth</P
-                    >
+                    <P>• Redirect Endpoint: https://seanbase.com/tsuuchinoko-auth</P>
                 </div>
             </Li>
 
             <Li>
                 <div class="flex flex-col gap-2">
-                    <P class="font-bold"
-                        >4. After registering, copy your credentials:</P
-                    >
+                    <P class="font-bold">4. After registering, copy your credentials:</P>
                     <div class="space-y-4">
-                        <Input
-                            bind:value={clientId}
-                            placeholder="Enter your Client ID"
-                            class="w-full"
-                        />
+                        <Input bind:value={clientId} placeholder="Enter your Client ID" class="w-full" />
                         <div class="relative">
                             <Input
                                 bind:value={clientSecret}
@@ -177,17 +114,13 @@
                             />
                             <button
                                 type="button"
-                                onclick={toggleSecretVisibility}
+                                onclick={() => showSecret = !showSecret}
                                 class="absolute right-2 top-1/2 -translate-y-1/2"
                             >
                                 {#if showSecret}
-                                    <EyeSlashOutline
-                                        class="h-5 w-5 text-ebony-600"
-                                    />
+                                    <EyeSlashOutline class="h-5 w-5 text-ebony-600" />
                                 {:else}
-                                    <EyeOutline
-                                        class="h-5 w-5 text-ebony-600"
-                                    />
+                                    <EyeOutline class="h-5 w-5 text-ebony-600" />
                                 {/if}
                             </button>
                         </div>
@@ -199,21 +132,14 @@
         <div class="flex flex-col gap-4 items-center">
             <Button
                 onclick={handleSubmit}
-                disabled={!subdomain ||
-                    !clientId ||
-                    !clientSecret ||
-                    authState.isLoading}
+                disabled={isButtonDisabled}
                 class="w-1/2 bg-amber hover:bg-amber-700"
                 size="xl"
             >
                 {#if authState.isLoading}
-                    <span class="inline-flex items-center">
-                        <Spinner />
-                        Processing...
-                    </span>
-                {:else}
-                    Complete Setup
+                    <Spinner />
                 {/if}
+                {buttonText}
             </Button>
 
             <div class="flex items-center gap-2 text-ebony-600">
