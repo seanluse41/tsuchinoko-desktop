@@ -1,12 +1,11 @@
-// /src/lib/kintoneAuthRequest.js
-
+// src/lib/kintoneAuthRequest.js
 import { authState } from './appLoginManager.svelte.js';
 
-export function buildAuthUrl(subdomain, clientId) {
+export function buildAuthUrl(subdomain, clientId, domain = 'kintone.com') {
   const state = crypto.randomUUID();
   authState.state = state;
 
-  const authUrl = new URL(`https://${subdomain}.kintone.com/oauth2/authorization`);
+  const authUrl = new URL(`https://${subdomain}.${domain}/oauth2/authorization`);
   authUrl.searchParams.append("response_type", "code");
   authUrl.searchParams.append("client_id", clientId);
   authUrl.searchParams.append("redirect_uri", "https://seanbase.com/tsuuchinoko-auth");

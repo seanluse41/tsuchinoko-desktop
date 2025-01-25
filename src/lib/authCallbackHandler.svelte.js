@@ -1,12 +1,12 @@
 // src/lib/authCallbackHandler.svelte.js
-
 import { goto } from "$app/navigation";
 import { validateState } from "./kintoneAuthRequest";
 import { exchangeToken } from "./kintoneAccessRequest";
 import { authState } from "./appLoginManager.svelte.js";
+import { secretManager } from "./appSecretManager.svelte.js";
 
 export async function handleAuthCallback(url) {
-    console.log("callback happened.")
+    console.log("Processing auth callback...");
     try {
         const parsedUrl = new URL(url);
         const code = parsedUrl.searchParams.get("code");
@@ -27,7 +27,10 @@ export async function handleAuthCallback(url) {
             isLoading: false
         });
 
-        await goto("/home");
+        await secretManager.storeCredentials();
+        console.log("Credentials stored after successful auth");
+       
+        goto("/home");
     } catch (err) {
         Object.assign(authState, {
             token: null,

@@ -38,7 +38,7 @@
 <main class="flex min-h-screen w-full items-center justify-center bg-amber-900">
   <Card class="max-w-none w-3/4 p-8 z-10">
     <div class="mb-8 flex justify-center">
-      <Img src="logo_kintone_mark_rgb.png" alt="Kintone Logo" class="h-16 w-auto" />
+      <Img src="logo_kintone_mark_rgb.png" alt="Kintone Logo" class="h-12 w-auto" size="md" />
     </div>
     <div class="flex flex-col items-center gap-8">
       <Heading level={1} class="mb-6 text-center text-ebony-200">

@@ -1,61 +1,75 @@
 <!-- src/routes/(auth)/setup/+page.svelte -->
+<!-- src/routes/(auth)/setup/+page.svelte -->
 <script>
-    import { Input, Button, Card, P, Heading, List, Li, Spinner } from "svelte-5-ui-lib";
-    import { ArrowRightOutline, InfoCircleOutline, EyeOutline, EyeSlashOutline } from "flowbite-svelte-icons";
+    import {
+        Input,
+        Button,
+        Card,
+        P,
+        Heading,
+        List,
+        Li,
+        Spinner,
+        Radio,
+    } from "svelte-5-ui-lib";
+    import {
+        ArrowRightOutline,
+        InfoCircleOutline,
+        EyeOutline,
+        EyeSlashOutline,
+    } from "flowbite-svelte-icons";
     import { open } from "@tauri-apps/plugin-shell";
-    import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
     import { buildAuthUrl } from "../../../lib/kintoneAuthRequest";
-    import { handleAuthCallback } from "../../../lib/authCallbackHandler.svelte.js";
     import { authState } from "../../../lib/appLoginManager.svelte.js";
 
-    let { subdomain, clientId, clientSecret } = $state(authState.user);
+    let {
+        subdomain,
+        domain = "kintone.com",
+        clientId,
+        clientSecret,
+    } = $state(authState.user);
     let showSecret = $state(false);
-    
-    let adminUrl = $derived(`https://${subdomain}.kintone.com/admin/integrations/oauth/list`);
-    let isButtonDisabled = $derived(!subdomain || !clientId || !clientSecret || authState.isLoading);
-    let buttonText = $derived(authState.isLoading ? "Processing..." : "Complete Setup");
+
+    let adminUrl = $derived(
+        `https://${subdomain}.${domain}/admin/integrations/oauth/list`,
+    );
+    let isButtonDisabled = $derived(
+        !subdomain || !clientId || !clientSecret || authState.isLoading,
+    );
+    let buttonText = $derived(
+        authState.isLoading ? "Processing..." : "Complete Setup",
+    );
 
     async function openKintoneAdmin() {
         if (!subdomain) return;
         try {
             await open(adminUrl);
         } catch (err) {
-            authState.error = "Failed to open Kintone admin page. Please try again.";
+            authState.error =
+                "Failed to open Kintone admin page. Please try again.";
         }
     }
 
     async function handleSubmit() {
-    try {
-        if (!subdomain || !clientId || !clientSecret) {
+        try {
+            if (!subdomain || !clientId || !clientSecret) {
+                authState.error = "Please fill in all fields";
+                authState.isLoading = false;
+                return;
+            }
+
             Object.assign(authState, {
-                error: "Please fill in all fields",
-                isLoading: false
+                isLoading: true,
+                error: null,
+                user: { subdomain, domain, clientId, clientSecret },
             });
-            console.log('Auth state updated:', authState);
-            return;
+
+            await open(buildAuthUrl(subdomain, clientId, domain).toString());
+        } catch (err) {
+            authState.error = err.message || "Setup failed. Please try again.";
+            authState.isLoading = false;
         }
-
-        Object.assign(authState, {
-            isLoading: true,
-            error: null,
-            user: { subdomain, clientId, clientSecret }
-        });
-        console.log('Auth state updated:', authState);
-        
-        await open(buildAuthUrl(subdomain, clientId).toString());
-    } catch (err) {
-        Object.assign(authState, {
-            error: err.message || "Setup failed. Please try again.",
-            isLoading: false
-        });
-        console.log('Auth state updated:', authState);
     }
-}
-
-    $effect(() => {
-        console.log("auth state from setup page")
-        $inspect(authState)
-    });
 </script>
 
 <main class="flex min-h-screen w-full p-8 bg-amber-900">
@@ -65,14 +79,10 @@
         </Heading>
 
         {#if authState.error}
-            <div class="mb-4 p-4 bg-redwood-100 border border-redwood-300 rounded-md">
+            <div
+                class="mb-4 p-4 bg-redwood-100 border border-redwood-300 rounded-md"
+            >
                 <P class="text-redwood-800">{authState.error}</P>
-            </div>
-        {/if}
-
-        {#if authState.token}
-            <div class="mb-4 p-4 bg-moss_green-100 border border-moss_green-300 rounded-md">
-                <P class="text-moss_green-800 font-bold">Authentication Successful!</P>
             </div>
         {/if}
 
@@ -80,18 +90,51 @@
             <Li>
                 <div class="flex flex-col gap-2">
                     <P class="font-bold">1. Enter your Kintone subdomain:</P>
-                    <div class="flex items-center gap-2">
-                        <P>https://</P>
-                        <Input bind:value={subdomain} placeholder="your-subdomain" class="w-48" />
-                        <P>.kintone.com</P>
+                    <div class="flex gap-8">
+                        <div class="flex items-center gap-2">
+                            <P>https://</P>
+                            <Input
+                                bind:value={subdomain}
+                                placeholder="your-subdomain"
+                                class="w-48"
+                            />
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="rounded border border-ebony-200 p-2">
+                                <Radio
+                                    name="domain"
+                                    bind:group={domain}
+                                    value="cybozu.com"
+                                    labelClass="p-2"
+                                >
+                                    .cybozu.com
+                                </Radio>
+                            </div>
+                            <div class="rounded border border-ebony-200 p-2">
+                                <Radio
+                                    name="domain"
+                                    bind:group={domain}
+                                    value="kintone.com"
+                                    labelClass="p-2"
+                                >
+                                    .kintone.com
+                                </Radio>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </Li>
 
             <Li>
                 <div class="flex flex-col gap-2">
-                    <P class="font-bold">2. Visit your Kintone OAuth settings:</P>
-                    <Button onclick={openKintoneAdmin} disabled={!subdomain} class="w-fit bg-thistle hover:bg-thistle-600">
+                    <P class="font-bold"
+                        >2. Visit your Kintone OAuth settings:</P
+                    >
+                    <Button
+                        onclick={openKintoneAdmin}
+                        disabled={!subdomain}
+                        class="w-fit bg-thistle hover:bg-thistle-600"
+                    >
                         <P>Open OAuth Settings</P>
                         <ArrowRightOutline class="ml-2 h-5 w-5 text-ebony" />
                     </Button>
@@ -102,15 +145,24 @@
                 <P class="font-bold">3. Click "Add OAuth Client" and enter:</P>
                 <div class="ml-4 mt-2 space-y-2">
                     <P>• Client Name: Tsuuchinoko</P>
-                    <P>• Redirect Endpoint: https://seanbase.com/tsuuchinoko-auth</P>
+                    <P
+                        >• Redirect Endpoint:
+                        https://seanbase.com/tsuuchinoko-auth</P
+                    >
                 </div>
             </Li>
 
             <Li>
                 <div class="flex flex-col gap-2">
-                    <P class="font-bold">4. After registering, copy your credentials:</P>
+                    <P class="font-bold"
+                        >4. After registering, copy your credentials:</P
+                    >
                     <div class="space-y-4">
-                        <Input bind:value={clientId} placeholder="Enter your Client ID" class="w-full" />
+                        <Input
+                            bind:value={clientId}
+                            placeholder="Enter your Client ID"
+                            class="w-full"
+                        />
                         <div class="relative">
                             <Input
                                 bind:value={clientSecret}
@@ -120,13 +172,17 @@
                             />
                             <button
                                 type="button"
-                                onclick={() => showSecret = !showSecret}
+                                onclick={() => (showSecret = !showSecret)}
                                 class="absolute right-2 top-1/2 -translate-y-1/2"
                             >
                                 {#if showSecret}
-                                    <EyeSlashOutline class="h-5 w-5 text-ebony-600" />
+                                    <EyeSlashOutline
+                                        class="h-5 w-5 text-ebony-600"
+                                    />
                                 {:else}
-                                    <EyeOutline class="h-5 w-5 text-ebony-600" />
+                                    <EyeOutline
+                                        class="h-5 w-5 text-ebony-600"
+                                    />
                                 {/if}
                             </button>
                         </div>

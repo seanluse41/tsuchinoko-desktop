@@ -16,6 +16,7 @@ pub struct AuthConfig {
     client_id: String,
     client_secret: String,
     subdomain: String,
+    domain: String,
 }
 
 #[tauri::command]
@@ -36,7 +37,7 @@ pub async fn kintone_exchange_token(
     ];
 
     let response = client
-        .post(format!("https://{}.kintone.com/oauth2/token", config.subdomain))
+        .post(format!("https://{}.{}/oauth2/token", config.subdomain, config.domain))
         .header("Authorization", auth_header)
         .header("Content-Type", "application/x-www-form-urlencoded")
         .form(&form_data)
@@ -66,7 +67,7 @@ pub async fn kintone_refresh_token(
     let auth_header = format!("Basic {}", base64.encode(auth_str.as_bytes()));
 
     let response = client
-        .post(format!("https://{}.kintone.com/oauth2/token", config.subdomain))
+        .post(format!("https://{}.{}/oauth2/token", config.subdomain, config.domain))
         .header("Authorization", auth_header)
         .header("Content-Type", "application/x-www-form-urlencoded")
         .form(&[

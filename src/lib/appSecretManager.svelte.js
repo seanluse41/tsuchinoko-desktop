@@ -18,14 +18,32 @@ let stronghold = null;
 let store = null;
 
 async function insertRecord(key, value) {
-    const data = Array.from(new TextEncoder().encode(JSON.stringify(value)));
-    await store.insert(key, data);
-    await stronghold.save();
+    try {
+        const data = Array.from(new TextEncoder().encode(JSON.stringify(value)));
+        await store.insert(key, data);
+        await stronghold.save();
+    } catch (error) {
+        console.error(`Failed to insert record for key ${key}:`, error);
+        throw error;
+    }
 }
 
 async function getRecord(key) {
-    const data = await store.get(key);
-    return JSON.parse(new TextDecoder().decode(new Uint8Array(data)));
+    try {
+        const data = await store.get(key);
+        if (!data || data.length === 0) {
+            console.log(`No data found for key: ${key}`);
+            return null;
+        }
+        return JSON.parse(new TextDecoder().decode(new Uint8Array(data)));
+    } catch (error) {
+        if (error.message?.includes('NoSuchRecord')) {
+            console.log(`Record not found for key: ${key}`);
+            return null;
+        }
+        console.error(`Error retrieving record for key ${key}:`, error);
+        throw error;
+    }
 }
 
 async function initialize() {
@@ -40,17 +58,18 @@ async function initialize() {
         try {
             stronghold = await Stronghold.load(vaultPath, VAULT_PASSWORD);
         } catch {
+            console.log('Creating new stronghold vault');
             stronghold = await Stronghold.create(vaultPath, VAULT_PASSWORD);
         }
 
-        let client;
         try {
-            client = await stronghold.loadClient(CLIENT_NAME);
+            const client = await stronghold.loadClient(CLIENT_NAME);
+            store = client.getStore();
         } catch {
-            client = await stronghold.createClient(CLIENT_NAME);
+            console.log('Creating new stronghold client');
+            const client = await stronghold.createClient(CLIENT_NAME);
+            store = client.getStore();
         }
-
-        store = client.getStore();
         
         Object.assign(secretManagerState, { isInitialized: true, isInitializing: false, error: null });
         console.log('Secret manager initialization complete');
@@ -62,8 +81,44 @@ async function initialize() {
             isInitializing: false,
             error: error.message
         });
-        console.log('Secret manager initialization failed');
+        console.error('Secret manager initialization failed:', error);
         throw error;
+    }
+}
+
+async function loadStoredCredentials() {
+    if (!store || !secretManagerState.isInitialized) {
+        await initialize();
+    }
+    
+    try {
+        const setupCreds = await getRecord(SETUP_KEY);
+        const authCreds = await getRecord(AUTH_KEY);
+        
+        if (!setupCreds && !authCreds) {
+            console.log('No stored credentials found');
+            return;
+        }
+
+        console.log('Found stored credentials:', { 
+            hasSetupCreds: !!setupCreds, 
+            hasAuthCreds: !!authCreds 
+        });
+        
+        Object.assign(authState, {
+            token: authCreds?.token || null,
+            refreshToken: authCreds?.refreshToken || null,
+            user: {
+                subdomain: setupCreds?.subdomain || null,
+                domain: setupCreds?.domain || 'kintone.com',
+                clientId: setupCreds?.clientId || null,
+                clientSecret: setupCreds?.clientSecret || null
+            },
+            isAuthenticated: !!authCreds?.token,
+            error: null
+        });
+    } catch (error) {
+        console.error('Error loading stored credentials:', error);
     }
 }
 
@@ -74,6 +129,7 @@ async function storeCredentials() {
     
     const setupCredentials = {
         subdomain: authState.user.subdomain,
+        domain: authState.user.domain,
         clientId: authState.user.clientId,
         clientSecret: authState.user.clientSecret
     };
@@ -85,34 +141,7 @@ async function storeCredentials() {
 
     await insertRecord(SETUP_KEY, setupCredentials);
     await insertRecord(AUTH_KEY, authCredentials);
-}
-
-async function loadStoredCredentials() {
-    if (!store || !secretManagerState.isInitialized) {
-        await initialize();
-    }
-    
-    try {
-        const setupCreds = await getRecord(SETUP_KEY);
-        console.log('Found stored setup credentials:');
-        console.log(setupCreds)
-        const authCreds = await getRecord(AUTH_KEY);
-        
-        Object.assign(authState, {
-            token: authCreds?.token || null,
-            refreshToken: authCreds?.refreshToken || null,
-            user: {
-                subdomain: setupCreds?.subdomain || null,
-                clientId: setupCreds?.clientId || null,
-                clientSecret: setupCreds?.clientSecret || null
-            },
-            isAuthenticated: !!authCreds?.token,
-            error: null
-        });
-        console.log('Loading stored credentials...');
-    } catch {
-        return null;
-    }
+    console.log('Credentials stored successfully');
 }
 
 async function clearCredentials() {
@@ -121,12 +150,11 @@ async function clearCredentials() {
     }
     
     try {
-        // Only remove auth tokens, keep setup credentials
         await store.remove(AUTH_KEY);
         await stronghold.save();
         
-        // Keep the existing setup info but clear auth state
         const currentSubdomain = authState.user.subdomain;
+        const currentDomain = authState.user.domain;
         const currentClientId = authState.user.clientId;
         const currentClientSecret = authState.user.clientSecret;
         
@@ -135,16 +163,17 @@ async function clearCredentials() {
             refreshToken: null,
             user: {
                 subdomain: currentSubdomain,
+                domain: currentDomain,
                 clientId: currentClientId,
                 clientSecret: currentClientSecret
             },
             isAuthenticated: false,
             error: null
         });
-        console.log('Cleared authentication credentials while preserving setup info');
+        console.log('Auth credentials cleared');
     } catch (error) {
+        console.error('Failed to clear credentials:', error);
         Object.assign(secretManagerState, { error: error.message });
-        console.log('Failed to clear credentials');
         throw error;
     }
 }
