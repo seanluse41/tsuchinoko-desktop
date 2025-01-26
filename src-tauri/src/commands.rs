@@ -1,6 +1,7 @@
 use base64::{engine::general_purpose::STANDARD as base64, Engine};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use crate::kintone::{get_records, GetRecordsConfig, KintoneResponse};
 
 #[derive(Serialize, Deserialize)]
 pub struct TokenResponse {
@@ -45,14 +46,13 @@ pub async fn kintone_exchange_token(
         .await
         .map_err(|e| format!("Token exchange request failed: {}", e))?;
 
-    let status = response.status();
-    let text = response.text().await.map_err(|e| e.to_string())?;
-
-    if !status.is_success() {
+    if !response.status().is_success() {
+        let text = response.text().await.map_err(|e| e.to_string())?;
         return Err(format!("Token exchange failed: {}", text));
     }
 
-    serde_json::from_str(&text)
+    response.json::<TokenResponse>()
+        .await
         .map_err(|e| format!("Failed to parse token response: {}", e))
 }
 
@@ -86,4 +86,13 @@ pub async fn kintone_refresh_token(
     response.json::<TokenResponse>()
         .await
         .map_err(|e| format!("Failed to parse refresh response: {}", e))
+}
+
+#[tauri::command]
+pub async fn kintone_get_records(
+    app_id: String,
+    query: String,
+    config: GetRecordsConfig,
+) -> Result<KintoneResponse, String> {
+    get_records(app_id, query, config).await
 }

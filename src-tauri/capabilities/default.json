@@ -16,7 +16,8 @@
           "name": "open-browser",
           "cmd": "open",
           "args": [
-            "https://sean.kintone.com/**",
+            "https://**.kintone.com/**",
+            "https://**.cybozu.com/**",
             "https://seanbase.com/**"
           ]
         }

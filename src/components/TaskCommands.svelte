@@ -11,6 +11,8 @@
         RefreshOutline,
         BadgeCheckOutline,
     } from "flowbite-svelte-icons";
+    import { authState } from "$lib/appLoginManager.svelte";
+    import { getRecords } from "$lib/kintoneGetRecords.svelte";
 
     const sidebarUI = uiHelpers();
     let isOpen = $state(true);
@@ -21,7 +23,12 @@
     });
 
     const filter = () => console.log("filtering");
-    const sync = () => console.log("syncing");
+    const sync = async () => {
+        console.log("syncing");
+        let records = await getRecords("16")
+        console.log(records)
+
+    };
     const selectAll = () => console.log("Select All");
 </script>
 
@@ -36,9 +43,9 @@
         divClass="bg-transparent px-6 py-20 overflow-y-auto"
     >
         <SidebarGroup>
-            <SidebarItem 
-                label="Filter" 
-                onclick={filter} 
+            <SidebarItem
+                label="Filter"
+                onclick={filter}
                 class="cursor-pointer mb-3 bg-white"
                 activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
@@ -50,9 +57,9 @@
                 {/snippet}
             </SidebarItem>
 
-            <SidebarItem 
-                label="Sync" 
-                onclick={sync} 
+            <SidebarItem
+                label="Sync"
+                onclick={sync}
                 class="cursor-pointer mb-3 bg-white"
                 activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
@@ -64,9 +71,9 @@
                 {/snippet}
             </SidebarItem>
 
-            <SidebarItem 
-                label="Select All" 
-                onclick={selectAll} 
+            <SidebarItem
+                label="Select All"
+                onclick={selectAll}
                 class="cursor-pointer mb-3 bg-white"
                 activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"

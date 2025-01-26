@@ -1,0 +1,11 @@
+taskID - the record number of the task
+notificationDateTime - the date time of the original notification
+taskCreationDateTime - the date time the notification was turned into a task
+taskPriority - a radio button with values of normal, high and urgent
+taskDeadline - a date time for the task's deadline
+taskHolder - a user select field for the task
+taskStatus - a radio button with values of unregistered, registered, overdue, and completed
+notificationTitle - a text field for the original notification's title
+notificationSubtitle - a text field for the original notification's subtitle
+notificationContent - a text field for the original notification's text content
+taskMemo - a text field for extra memos the user added when converting to a task

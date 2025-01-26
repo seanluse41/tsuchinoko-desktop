@@ -1,7 +1,7 @@
 // src/lib/kintoneAuthRequest.js
 import { authState } from './appLoginManager.svelte.js';
 
-export function buildAuthUrl(subdomain, clientId, domain = 'kintone.com') {
+export function buildAuthUrl(subdomain, clientId, domain = 'cybozu.com') {
   const state = crypto.randomUUID();
   authState.state = state;
 
@@ -10,7 +10,7 @@ export function buildAuthUrl(subdomain, clientId, domain = 'kintone.com') {
   authUrl.searchParams.append("client_id", clientId);
   authUrl.searchParams.append("redirect_uri", "https://seanbase.com/tsuuchinoko-auth");
   authUrl.searchParams.append("state", state);
-  authUrl.searchParams.append("scope", "k:app_settings:read k:app_settings:write");
+  authUrl.searchParams.append("scope", "k:app_record:read");
   return authUrl;
 }
 

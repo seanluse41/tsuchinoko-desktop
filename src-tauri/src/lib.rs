@@ -1,14 +1,10 @@
 mod commands;
+mod kintone;
 use tauri::Manager;
 // Only import DeepLinkExt on Linux and Windows
 #[cfg(any(target_os = "linux", windows))]
 use tauri_plugin_deep_link::DeepLinkExt;
 use std::fs;
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -51,9 +47,9 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            greet,
             commands::kintone_exchange_token,
-            commands::kintone_refresh_token
+            commands::kintone_refresh_token,
+            commands::kintone_get_records
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

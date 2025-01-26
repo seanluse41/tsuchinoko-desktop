@@ -24,7 +24,7 @@
 
     let {
         subdomain,
-        domain = "kintone.com",
+        domain = "cybozu.com",
         clientId,
         clientSecret,
     } = $state(authState.user);

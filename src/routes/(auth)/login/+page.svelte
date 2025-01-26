@@ -18,7 +18,7 @@
     });
     console.log('Auth state updated:', authState);
 
-    const authUrl = buildAuthUrl(authState.user.subdomain, authState.user.clientId);
+    const authUrl = buildAuthUrl(authState.user.subdomain, authState.user.clientId, authState.user.domain);
     await open(authUrl.toString());
   } catch (err) {
     Object.assign(authState, {

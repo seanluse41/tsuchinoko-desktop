@@ -110,7 +110,7 @@ async function loadStoredCredentials() {
             refreshToken: authCreds?.refreshToken || null,
             user: {
                 subdomain: setupCreds?.subdomain || null,
-                domain: setupCreds?.domain || 'kintone.com',
+                domain: setupCreds?.domain || 'cybozu.com',
                 clientId: setupCreds?.clientId || null,
                 clientSecret: setupCreds?.clientSecret || null
             },
