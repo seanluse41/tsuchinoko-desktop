@@ -1,3 +1,4 @@
+<!-- src/components/TaskCommands.svelte -->
 <script>
     import {
         Sidebar,
@@ -10,9 +11,9 @@
         SearchOutline,
         RefreshOutline,
         BadgeCheckOutline,
+        SortOutline,
     } from "flowbite-svelte-icons";
-    import { authState } from "$lib/appLoginManager.svelte";
-    import { loadTasks } from "$lib/appTaskManager.svelte";
+    import { taskState, loadTasks } from "$lib/appTaskManager.svelte";
 
     const sidebarUI = uiHelpers();
     let isOpen = $state(true);
@@ -23,10 +24,9 @@
     });
 
     const filter = () => console.log("filtering");
-    const sync = () => {
-        loadTasks();
-    };
+    const sync = () => loadTasks();
     const selectAll = () => console.log("Select All");
+    const sort = () => console.log("sorting");
 </script>
 
 <div class="relative">
@@ -49,6 +49,20 @@
             >
                 {#snippet iconSlot()}
                     <SearchOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                    />
+                {/snippet}
+            </SidebarItem>
+
+            <SidebarItem
+                label="Sort"
+                onclick={sort}
+                class="cursor-pointer mb-3 bg-white"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+            >
+                {#snippet iconSlot()}
+                    <SortOutline
                         class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
                     />
                 {/snippet}
