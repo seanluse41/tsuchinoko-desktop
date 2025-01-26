@@ -23,9 +23,28 @@
         isOpen = sidebarUI.isOpen;
     });
 
+    // filter
     const filter = () => console.log("filtering");
+
+    // sync
     const sync = () => loadTasks();
-    const selectAll = () => console.log("Select All");
+
+    // select all
+    let selectAllText = $derived(
+        taskState.selectedTasks.length === taskState.tasks.length
+            ? "Deselect All"
+            : "Select All",
+    );
+
+    function toggleSelectAll() {
+        if (taskState.selectedTasks.length === taskState.tasks.length) {
+            taskState.selectedTasks = [];
+        } else {
+            taskState.selectedTasks = taskState.tasks.map((task) => task.id);
+        }
+    }
+
+    // sort
     const sort = () => console.log("sorting");
 </script>
 
@@ -83,8 +102,8 @@
             </SidebarItem>
 
             <SidebarItem
-                label="Select All"
-                onclick={selectAll}
+                label={selectAllText}
+                onclick={toggleSelectAll}
                 class="cursor-pointer mb-3 bg-white"
                 activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
