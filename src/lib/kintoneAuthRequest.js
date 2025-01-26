@@ -6,11 +6,15 @@ export function buildAuthUrl(subdomain, clientId, domain = 'cybozu.com') {
   authState.state = state;
 
   const authUrl = new URL(`https://${subdomain}.${domain}/oauth2/authorization`);
-  authUrl.searchParams.append("response_type", "code");
-  authUrl.searchParams.append("client_id", clientId);
-  authUrl.searchParams.append("redirect_uri", "https://seanbase.com/tsuuchinoko-auth");
-  authUrl.searchParams.append("state", state);
-  authUrl.searchParams.append("scope", "k:app_record:read,k:app_record:write");
+  const scope = "k:app_record:read k:app_record:write";
+  
+  authUrl.searchParams.set("response_type", "code");
+  authUrl.searchParams.set("client_id", clientId);
+  authUrl.searchParams.set("redirect_uri", "https://seanbase.com/tsuuchinoko-auth");
+  authUrl.searchParams.set("state", state);
+  authUrl.searchParams.set("scope", scope);
+
+  console.log('Full URL:', authUrl.toString());
   return authUrl;
 }
 

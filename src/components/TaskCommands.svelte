@@ -4,6 +4,7 @@
         Sidebar,
         SidebarGroup,
         SidebarItem,
+        SidebarDropdownWrapper,
         SidebarButton,
         uiHelpers,
     } from "svelte-5-ui-lib";
@@ -23,8 +24,15 @@
         isOpen = sidebarUI.isOpen;
     });
 
-    // filter
-    const filter = () => console.log("filtering");
+    // filter actions
+    const filterOverdue = () => console.log("filtering overdue");
+    const filterCompleted = () => console.log("filtering completed");
+    const filterRegistered = () => console.log("filtering registered");
+    const filterUnregistered = () => console.log("filtering unregistered");
+
+    // sort actions
+    const sortByCreated = () => console.log("sorting by date created");
+    const sortByDue = () => console.log("sorting by due date");
 
     // sync
     const sync = () => loadTasks();
@@ -43,9 +51,6 @@
             taskState.selectedTasks = taskState.tasks.map((task) => task.id);
         }
     }
-
-    // sort
-    const sort = () => console.log("sorting");
 </script>
 
 <div class="relative">
@@ -59,33 +64,27 @@
         divClass="bg-transparent px-6 py-20 overflow-y-auto"
     >
         <SidebarGroup>
-            <SidebarItem
-                label="Filter"
-                onclick={filter}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-            >
+            <SidebarDropdownWrapper label="Filter" btnClass="cursor-pointer mb-3 bg-white flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800">
                 {#snippet iconSlot()}
                     <SearchOutline
                         class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
                     />
                 {/snippet}
-            </SidebarItem>
+                <SidebarItem label="Overdue Tasks" onclick={filterOverdue} />
+                <SidebarItem label="Completed Tasks" onclick={filterCompleted} />
+                <SidebarItem label="Registered Tasks" onclick={filterRegistered} />
+                <SidebarItem label="Unregistered Tasks" onclick={filterUnregistered} />
+            </SidebarDropdownWrapper>
 
-            <SidebarItem
-                label="Sort"
-                onclick={sort}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-            >
+            <SidebarDropdownWrapper label="Sort" btnClass="cursor-pointer mb-3 bg-white flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800">
                 {#snippet iconSlot()}
                     <SortOutline
                         class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
                     />
                 {/snippet}
-            </SidebarItem>
+                <SidebarItem label="Date Created" onclick={sortByCreated} />
+                <SidebarItem label="Due Date" onclick={sortByDue} />
+            </SidebarDropdownWrapper>
 
             <SidebarItem
                 label="Sync"
