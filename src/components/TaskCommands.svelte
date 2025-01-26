@@ -12,7 +12,7 @@
         BadgeCheckOutline,
     } from "flowbite-svelte-icons";
     import { authState } from "$lib/appLoginManager.svelte";
-    import { getRecords } from "$lib/kintoneGetRecords.svelte";
+    import { loadTasks } from "$lib/appTaskManager.svelte";
 
     const sidebarUI = uiHelpers();
     let isOpen = $state(true);
@@ -23,11 +23,8 @@
     });
 
     const filter = () => console.log("filtering");
-    const sync = async () => {
-        console.log("syncing");
-        let records = await getRecords("16", "")
-        console.log(records)
-
+    const sync = () => {
+        loadTasks();
     };
     const selectAll = () => console.log("Select All");
 </script>

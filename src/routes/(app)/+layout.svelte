@@ -4,9 +4,9 @@
     let { children } = $props();
 </script>
 
-<div class="bg-ebony-900 flex flex-col h-full">
+<div class="flex flex-col h-screen">
     <NavigationBar />
-    <main class="flex-1 flex overflow-hidden">
+    <main class="flex-1 overflow-hidden">
         {@render children?.()}
     </main>
 </div>
