@@ -25,7 +25,7 @@
     const filter = () => console.log("filtering");
     const sync = async () => {
         console.log("syncing");
-        let records = await getRecords("16")
+        let records = await getRecords("16", "")
         console.log(records)
 
     };

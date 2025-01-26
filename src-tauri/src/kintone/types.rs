@@ -12,17 +12,17 @@ pub struct GetRecordsConfig {
 pub struct KintoneRecord {
     #[serde(rename = "$id")]
     pub id: Value,
-    pub task_id: Value,
-    pub notification_date_time: Value,
-    pub task_creation_date_time: Value,
-    pub task_priority: Value,
-    pub task_deadline: Value,
-    pub task_holder: Value,
-    pub task_status: Value,
-    pub notification_title: Value,
-    pub notification_subtitle: Value,
-    pub notification_content: Value,
-    pub task_memo: Value,
+    pub taskID: Value,
+    pub notificationDateTime: Value,
+    pub taskCreationDateTime: Value,
+    pub taskPriority: Value,
+    pub taskDeadline: Value,
+    pub taskHolder: Value,
+    pub taskStatus: Value,
+    pub notificationTitle: Value,
+    pub notificationSubtitle: Value,
+    pub notificationContent: Value,
+    pub taskMemo: Value,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
