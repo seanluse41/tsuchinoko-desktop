@@ -1,6 +1,8 @@
+<!-- src/components/TaskItem.svelte -->
+
 <script>
     import { Card, P, Heading } from 'svelte-5-ui-lib';
-    let { name, id, status, description, link, dateCreated, dateDue } = $props();
+    let { name, id, status, description, dateCreated, dateDue } = $props();
 
     let bgColor = $state(getBackgroundColor(status));
     let hoverColor = $state(getHoverColor(status));
@@ -21,7 +23,7 @@
 </script>
 
 <Card 
-    href={link} 
+    href="/task/{id}" 
     padding="none" 
     size="lg" 
     class="flex flex-col {bgColor} {hoverColor} mb-3 max-w-none border border-ebony-200 rounded-lg cursor-pointer"
