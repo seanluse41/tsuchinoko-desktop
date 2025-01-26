@@ -10,7 +10,7 @@ export function buildAuthUrl(subdomain, clientId, domain = 'cybozu.com') {
   authUrl.searchParams.append("client_id", clientId);
   authUrl.searchParams.append("redirect_uri", "https://seanbase.com/tsuuchinoko-auth");
   authUrl.searchParams.append("state", state);
-  authUrl.searchParams.append("scope", "k:app_record:read");
+  authUrl.searchParams.append("scope", "k:app_record:read,k:app_record:write");
   return authUrl;
 }
 
