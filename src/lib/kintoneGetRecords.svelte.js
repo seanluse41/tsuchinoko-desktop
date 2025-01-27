@@ -38,6 +38,7 @@ export async function getRecords(appId, query = '') {
 }
 
 function transformRecords(records, appId) {
+    console.log(records)
     return {
         list: records.map(record => ({
             name: record.notificationTitle.value,
@@ -46,7 +47,9 @@ function transformRecords(records, appId) {
             link: `https://${authState.user.subdomain}.${authState.user.domain}/k/${appId}/show#record=${record.taskID.value}`,
             dateCreated: record.taskCreationDateTime.value,
             dateDue: record.taskDeadline.value,
-            description: record.notificationContent.value
+            description: record.notificationContent.value,
+            memo: record.taskMemo.value,
+            priority: record.taskPriority.value
         }))
     };
 }

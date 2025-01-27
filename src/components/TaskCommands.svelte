@@ -16,10 +16,16 @@
         TrashBinOutline,
     } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
-    import { taskState, loadTasks, allTasksCompleted } from "$lib/appTaskManager.svelte";
+    import {
+        taskState,
+        loadTasks,
+        allTasksCompleted,
+    } from "$lib/appTaskManager.svelte";
     import { updateTaskStatus } from "$lib/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "$lib/kintoneDeleteRecords.svelte.js";
-    import ConfirmationModal from "./ConfirmationModal.svelte";
+    import ConfirmDeleteModal from "./ConfirmDeleteModal.svelte";
+    import ConfirmCompleteModal from "./ConfirmCompleteModal.svelte";
+    import NoticeModal from "./NoticeModal.svelte";
 
     const sidebarUI = uiHelpers();
     const deleteModalUI = uiHelpers();
@@ -245,16 +251,16 @@
     </Sidebar>
 </div>
 
-<ConfirmationModal 
-    modalUI={deleteModalUI}
-    action="delete"
-    onConfirm={handleDelete}
-/>
+<ConfirmDeleteModal modalUI={deleteModalUI} onConfirm={handleDelete} />
 
-<ConfirmationModal 
-    modalUI={completeModalUI}
-    action="complete"
-    onConfirm={handleComplete}
-    isConfirmation={!allTasksCompleted(taskState.selectedTasks, taskState.tasks)}
-    message={allTasksCompleted(taskState.selectedTasks, taskState.tasks) ? "All selected tasks are already completed." : ""}
-/>
+{#if allTasksCompleted(taskState.selectedTasks, taskState.tasks)}
+    <NoticeModal
+        modalUI={completeModalUI}
+        message="All selected tasks are already completed."
+    />
+{:else}
+    <ConfirmCompleteModal
+        modalUI={completeModalUI}
+        onConfirm={handleComplete}
+    />
+{/if}

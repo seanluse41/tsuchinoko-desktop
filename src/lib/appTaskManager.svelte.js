@@ -20,13 +20,10 @@ export async function loadTasks() {
 export function toggleTaskSelection(taskId) {
     const index = taskState.selectedTasks.indexOf(taskId);
     if (index > -1) {
-        console.log("unselecting", taskId);
         taskState.selectedTasks = taskState.selectedTasks.filter(id => id !== taskId);
     } else {
-        console.log("selecting", taskId);
         taskState.selectedTasks = [...taskState.selectedTasks, taskId];
     }
-    console.log("current selected:", taskState.selectedTasks);
 }
 
 export function allTasksCompleted(selectedIds, tasks) {

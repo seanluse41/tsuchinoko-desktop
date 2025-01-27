@@ -2,6 +2,7 @@
 <script>
     import { page } from "$app/state";
     import { taskState } from "$lib/appTaskManager.svelte";
+    import { formatDate, getDueText } from "$lib/appDateHelpers.js";
     import TaskDetailsCommands from "../../../../components/TaskDetailsCommands.svelte";
     
     $effect(() => {
@@ -20,12 +21,14 @@
     {#if task}
         <div class="flex-1 overflow-y-auto p-8">
             <h1 class="text-2xl font-bold mb-4">{task.name}</h1>
-            <div class="space-y-4">
+            <div class="space-y-4 max-w-full">
                 <p><strong>ID:</strong> {task.id}</p>
                 <p><strong>Status:</strong> {task.status}</p>
-                <p><strong>Created:</strong> {task.dateCreated}</p>
-                <p><strong>Due:</strong> {task.dateDue}</p>
-                <p><strong>Description:</strong> {task.description}</p>
+                <p><strong>Created:</strong> {formatDate(task.dateCreated)}</p>
+                <p><strong>Due:</strong> {formatDate(task.dateDue)}</p>
+                <p><strong>Due in:</strong> {getDueText(task.dateDue)}</p>
+                <p class="break-words"><strong>Description:</strong> {task.description}</p>
+                <p class="break-words"><strong>Memo:</strong> {task.memo}</p>
             </div>
         </div>
     {:else}

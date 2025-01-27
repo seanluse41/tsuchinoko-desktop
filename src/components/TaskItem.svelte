@@ -1,12 +1,20 @@
 <!-- src/components/TaskItem.svelte -->
 <script>
-    import { Card, P, Heading } from "svelte-5-ui-lib";
+    import { Card, P, Heading, Listgroup, Hr } from "svelte-5-ui-lib";
     import { CheckCircleOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
     import { taskState, toggleTaskSelection } from "$lib/appTaskManager.svelte";
+    import { formatDate, getDueText } from "$lib/appDateHelpers.js";
 
-    let { name, id, status, description, dateCreated, dateDue } = $props();
+    let { name, id, status, description, memo, dateCreated, dateDue } = $props();
     let isSelected = $derived(taskState.selectedTasks.includes(id));
+
+    let statusItems = $derived([
+        `Status: ${status}`,
+        `Created: ${formatDate(dateCreated)}`,
+        `Due: ${formatDate(dateDue)}`,
+        getDueText(dateDue)
+    ]);
 
     function handleClick(event) {
         if (event.ctrlKey || event.metaKey) {
@@ -37,7 +45,7 @@
         }
         switch (status) {
             case "completed":
-                return "bg-moss_green";
+                return "bg-moss_green-700";
             case "registered":
                 return "bg-thistle";
             case "overdue":
@@ -62,7 +70,7 @@
         }
         switch (status) {
             case "completed":
-                return "hover:bg-moss_green-400";
+                return "hover:bg-moss_green-500";
             case "registered":
                 return "hover:bg-thistle-400";
             case "overdue":
@@ -78,11 +86,11 @@
         onclick={handleClick}
         padding="none"
         size="xl"
-        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-pointer px-4 py-8"
+        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-pointer px-4 py-6"
     >
         <div class="flex gap-12">
             <div
-                class="flex items-center justify-center h-10 w-10 min-w-8 rounded-full border border-ebony-200 bg-white"
+                class="flex items-center justify-center h-10 w-10 min-w-8 mt-1 rounded-full border border-ebony-200 bg-white"
             >
                 {#if isSelected}
                     <CheckCircleOutline class="h-8 w-8 text-moss_green-600" />
@@ -94,24 +102,23 @@
             <div class="flex-1 min-w-0">
                 <Heading
                     tag="h3"
-                    class="text-4xl font-bold mb-1 truncate {isSelected
+                    class="text-5xl font-bold mb-8 truncate {isSelected
                         ? 'text-stone-200'
                         : 'text-slate-700'}">{name}</Heading
                 >
-                <P class="truncate mt-4 {isSelected ? 'text-stone-200' : ''}"
+                <P class="truncate mt-4 text-slate-700 {isSelected ? 'text-stone-200' : ''}"
                     >{description}</P
                 >
+                <Hr hrClass="mt-6 mb-2" />
+                <P class="text-slate-700 {isSelected ? 'text-stone-200' : ''} p-0 m-0">Memo:</P>
+                <P class="text-slate-700 truncate {isSelected ? 'text-stone-200' : ''} p-0 m-0">{memo}</P>
             </div>
 
-            <div
-                class="flex flex-col items-end text-sm py-8 {isSelected
-                    ? 'text-white'
-                    : ''}"
-            >
-                <P class="m-0">Status: {status}</P>
-                <P class="m-0">Created: {dateCreated}</P>
-                <P class="m-0">Due: {dateDue}</P>
-            </div>
+            <Listgroup
+                items={statusItems}
+                class={isSelected ? 'text-slate-700' : ''}
+                itemClass="border bg-transparent hover:bg-transparent p-4 font-bold"
+            />
         </div>
     </Card>
 </div>
