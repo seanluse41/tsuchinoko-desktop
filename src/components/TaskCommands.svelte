@@ -16,6 +16,7 @@
         TrashBinOutline,
     } from "flowbite-svelte-icons";
     import { taskState, loadTasks } from "$lib/appTaskManager.svelte";
+    import { updateTaskStatus } from "$lib/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "$lib/kintoneDeleteRecords.svelte.js";
 
     const sidebarUI = uiHelpers();
@@ -51,6 +52,14 @@
             taskState.selectedTasks = [];
         } else {
             taskState.selectedTasks = taskState.tasks.map((task) => task.id);
+        }
+    }
+
+    const completeTask = async () => {
+        try {
+            await updateTaskStatus("16");
+        } catch (err) {
+            console.error("failed to complete task", err)
         }
     }
 
@@ -169,6 +178,29 @@
                 {/snippet}
             </SidebarItem>
             <SidebarItem
+                label="Mark Complete"
+                onclick={taskState.selectedTasks.length > 0
+                    ? completeTask
+                    : undefined}
+                class="cursor-pointer mb-3 {taskState.selectedTasks.length === 0
+                    ? 'opacity-50'
+                    : ''}"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 bg-white {taskState
+                    .selectedTasks.length > 0
+                    ? 'hover:bg-moss_green-700'
+                    : 'cursor-not-allowed'}"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 bg-white {taskState
+                    .selectedTasks.length > 0
+                    ? 'hover:bg-moss_green-700'
+                    : 'cursor-not-allowed'}"
+            >
+                {#snippet iconSlot()}
+                    <BadgeCheckOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors"
+                    />
+                {/snippet}
+            </SidebarItem>
+            <SidebarItem
                 label="Delete Selected"
                 onclick={taskState.selectedTasks.length > 0
                     ? deleteTask
@@ -179,11 +211,11 @@
                 activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 bg-white {taskState
                     .selectedTasks.length > 0
                     ? 'hover:bg-red-500'
-                    : ''}"
+                    : 'cursor-not-allowed'}"
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 bg-white {taskState
                     .selectedTasks.length > 0
                     ? 'hover:bg-red-500'
-                    : ''}"
+                    : 'cursor-not-allowed'}"
             >
                 {#snippet iconSlot()}
                     <TrashBinOutline

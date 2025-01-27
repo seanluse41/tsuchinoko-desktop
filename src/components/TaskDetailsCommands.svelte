@@ -19,6 +19,7 @@
     import { open } from "@tauri-apps/plugin-shell";
     import { authState } from "$lib/appLoginManager.svelte";
     import { deleteRecords } from "$lib/kintoneDeleteRecords.svelte.js";
+    import { updateTaskStatus } from "$lib/kintoneUpdateRecords.svelte";
 
     const sidebarUI = uiHelpers();
     let isOpen = $state(true);
@@ -31,11 +32,20 @@
     });
 
     const addToGroup = () => console.log("add to group");
-    const markComplete = () => console.log("mark complete");
+
+    const completeTask = async () => {
+        try {
+            await updateTaskStatus("16");
+        } catch (err) {
+            console.error("failed to complete task", err);
+        }
+    };
+
     const viewInKintone = async () => {
         const url = `https://${authState.user.subdomain}.${authState.user.domain}/k/16/show#record=${taskId}`;
         await open(url);
     };
+
     const viewNotification = () => console.log("view notification");
     const copyToClipboard = () => console.log("copy to clipboard");
     const deleteTask = async () => {
@@ -77,7 +87,7 @@
 
             <SidebarItem
                 label="Mark Complete"
-                onclick={markComplete}
+                onclick={completeTask}
                 class="cursor-pointer mb-3"
                 activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"

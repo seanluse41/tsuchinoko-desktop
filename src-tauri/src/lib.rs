@@ -50,7 +50,8 @@ pub fn run() {
             commands::kintone_exchange_token,
             commands::kintone_refresh_token,
             commands::kintone_get_records,
-            commands::kintone_delete_records
+            commands::kintone_delete_records,
+            commands::kintone_update_records
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
