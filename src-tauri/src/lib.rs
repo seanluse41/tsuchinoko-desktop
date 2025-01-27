@@ -49,7 +49,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::kintone_exchange_token,
             commands::kintone_refresh_token,
-            commands::kintone_get_records
+            commands::kintone_get_records,
+            commands::kintone_delete_records
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

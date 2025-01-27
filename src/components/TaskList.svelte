@@ -7,7 +7,7 @@
     let alertStatus = $derived(!!taskState.error);
 </script>
 
-<div class="flex flex-col flex-grow w-full">
+<div class="flex flex-col flex-grow w-full p-8 gap-2">
     <Task404Alert {alertStatus} />
     
     {#each taskState.tasks as task}

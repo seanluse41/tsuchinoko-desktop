@@ -22,76 +22,95 @@
         toggleTaskSelection(id);
     }
 
-    let bgColor = $derived(
-        isSelected
-            ? status === "completed"
-                ? "bg-moss_green-300"
-                : status === "registered"
-                  ? "bg-thistle-300"
-                  : status === "overdue"
-                    ? "bg-redwood-300"
-                    : "bg-amber-300"
-            : status === "completed"
-              ? "bg-moss_green"
-              : status === "registered"
-                ? "bg-thistle"
-                : status === "overdue"
-                  ? "bg-redwood"
-                  : "bg-amber",
-    );
+    let bgColor = $derived.by(() => {
+        if (isSelected) {
+            switch (status) {
+                case "completed":
+                    return "bg-moss_green-300";
+                case "registered":
+                    return "bg-thistle-300";
+                case "overdue":
+                    return "bg-redwood-300";
+                default:
+                    return "bg-amber-300";
+            }
+        }
+        switch (status) {
+            case "completed":
+                return "bg-moss_green";
+            case "registered":
+                return "bg-thistle";
+            case "overdue":
+                return "bg-redwood";
+            default:
+                return "bg-amber";
+        }
+    });
 
-    let hoverColor = $derived(
-        isSelected
-            ? status === "completed"
-                ? "hover:bg-moss_green-200"
-                : status === "registered"
-                  ? "hover:bg-thistle-200"
-                  : status === "overdue"
-                    ? "hover:bg-redwood-200"
-                    : "hover:bg-amber-200"
-            : status === "completed"
-              ? "hover:bg-moss_green-400"
-              : status === "registered"
-                ? "hover:bg-thistle-400"
-                : status === "overdue"
-                  ? "hover:bg-redwood-400"
-                  : "hover:bg-amber-400",
-    );
+    let hoverColor = $derived.by(() => {
+        if (isSelected) {
+            switch (status) {
+                case "completed":
+                    return "hover:bg-moss_green-200";
+                case "registered":
+                    return "hover:bg-thistle-200";
+                case "overdue":
+                    return "hover:bg-redwood-200";
+                default:
+                    return "hover:bg-amber-200";
+            }
+        }
+        switch (status) {
+            case "completed":
+                return "hover:bg-moss_green-400";
+            case "registered":
+                return "hover:bg-thistle-400";
+            case "overdue":
+                return "hover:bg-redwood-400";
+            default:
+                return "hover:bg-amber-400";
+        }
+    });
 </script>
 
 <div role="listitem" oncontextmenu={handleRightClick}>
     <Card
         onclick={handleClick}
         padding="none"
-        size="lg"
-        class="flex flex-col {bgColor} {hoverColor} mb-3 max-w-none border border-ebony-200 rounded-lg cursor-pointer"
+        size="xl"
+        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-pointer px-4 py-8"
     >
-        <div class="p-4">
-            <div class="flex gap-6">
-                <div
-                    class="flex items-center justify-center h-8 w-8 min-w-8 rounded-full border border-ebony-200 bg-white"
+        <div class="flex gap-12">
+            <div
+                class="flex items-center justify-center h-8 w-8 min-w-8 rounded-full border border-ebony-200 bg-white"
+            >
+                {#if isSelected}
+                    <CheckCircleOutline class="h-5 w-5 text-moss_green-600" />
+                {:else}
+                    {id}
+                {/if}
+            </div>
+
+            <div class="flex-1 min-w-0">
+                <Heading
+                    tag="h3"
+                    class="text-4xl font-bold mb-1 truncate {isSelected
+                        ? 'text-stone-200'
+                        : 'text-slate-700'}">{name}</Heading
                 >
-                    {#if isSelected}
-                        <CheckCircleOutline
-                            class="h-5 w-5 text-moss_green-600"
-                        />
-                    {:else}
-                        {id}
-                    {/if}
-                </div>
+                <P class="truncate mt-4 {isSelected ? 'text-stone-200' : ''}"
+                    >{description}</P
+                >
+            </div>
 
-                <div class="flex-1">
-                    <Heading tag="h3" class="text-2xl font-bold mb-1"
-                        >{name}</Heading
-                    >
-                    <P class="truncate">{description}</P>
-                </div>
-
-                <div class="flex flex-col items-end text-sm">
-                    <P class="m-0">Status: {status}</P>
-                    <P class="m-0">Created: {dateCreated}</P>
-                    <P class="m-0">Due: {dateDue}</P>
-                </div>
+            <div
+                class="flex flex-col items-end text-sm py-8 {isSelected
+                    ? 'text-white'
+                    : ''}"
+            >
+                <P class="m-0">Status: {status}</P>
+                <P class="m-0">Created: {dateCreated}</P>
+                <P class="m-0">Due: {dateDue}</P>
             </div>
         </div>
     </Card>

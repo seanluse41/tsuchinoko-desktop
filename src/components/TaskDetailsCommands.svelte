@@ -15,8 +15,10 @@
         FileCopyOutline,
         TrashBinOutline,
     } from "flowbite-svelte-icons";
+    import { goto } from "$app/navigation";
     import { open } from "@tauri-apps/plugin-shell";
     import { authState } from "$lib/appLoginManager.svelte";
+    import { deleteRecords } from "$lib/kintoneDeleteRecords.svelte.js";
 
     const sidebarUI = uiHelpers();
     let isOpen = $state(true);
@@ -36,7 +38,16 @@
     };
     const viewNotification = () => console.log("view notification");
     const copyToClipboard = () => console.log("copy to clipboard");
-    const deleteTask = () => console.log("delete task");
+    const deleteTask = async () => {
+        try {
+            await deleteRecords("16"); // Using app ID 16 as shown in other files
+            if (window.location.pathname.includes("/task/")) {
+                goto("/home");
+            }
+        } catch (err) {
+            console.error("Failed to delete tasks:", err);
+        }
+    };
 </script>
 
 <div class="relative">
@@ -58,7 +69,9 @@
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
-                    <FolderPlusOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
+                    <FolderPlusOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                    />
                 {/snippet}
             </SidebarItem>
 
@@ -70,7 +83,9 @@
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
-                    <BadgeCheckOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
+                    <BadgeCheckOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                    />
                 {/snippet}
             </SidebarItem>
 
@@ -82,7 +97,9 @@
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
-                    <LinkOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
+                    <LinkOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                    />
                 {/snippet}
             </SidebarItem>
 
@@ -94,7 +111,9 @@
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
-                    <BellRingOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
+                    <BellRingOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                    />
                 {/snippet}
             </SidebarItem>
 
@@ -106,7 +125,9 @@
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
-                    <FileCopyOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
+                    <FileCopyOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                    />
                 {/snippet}
             </SidebarItem>
 
@@ -118,7 +139,9 @@
                 nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-red-500 bg-white"
             >
                 {#snippet iconSlot()}
-                    <TrashBinOutline class="h-5 w-5 text-ebony-600 transition-colors" />
+                    <TrashBinOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors"
+                    />
                 {/snippet}
             </SidebarItem>
         </SidebarGroup>

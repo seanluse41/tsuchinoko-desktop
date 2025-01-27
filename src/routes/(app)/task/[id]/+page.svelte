@@ -4,6 +4,12 @@
     import { taskState } from "$lib/appTaskManager.svelte";
     import TaskDetailsCommands from "../../../../components/TaskDetailsCommands.svelte";
     
+    $effect(() => {
+        if (page.params.id) {
+            taskState.selectedTasks = [page.params.id];
+        }
+    });
+    
     let task = $derived(taskState.tasks.find(t => t.id === page.params.id));
 </script>
 

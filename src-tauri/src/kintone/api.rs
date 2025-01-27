@@ -45,3 +45,42 @@ pub async fn get_records(
         .await
         .map_err(|e| format!("Failed to parse response: {}", e))
 }
+
+pub async fn delete_records(
+    app_id: String,
+    ids: Vec<String>,
+    config: GetRecordsConfig,
+) -> Result<(), String> {
+    let client = Client::new();
+    
+    let url = format!(
+        "https://{}.{}/k/v1/records.json", 
+        config.subdomain,
+        config.domain
+    );
+
+    let body = serde_json::json!({
+        "app": app_id,
+        "ids": ids
+    });
+
+    let response = client
+        .delete(&url)
+        .header("Authorization", format!("Bearer {}", config.access_token))
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to delete records: {}", e))?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.map_err(|e| e.to_string())?;
+        
+        if status == 401 {
+            return Err("token_expired".to_string());
+        }
+        return Err(format!("API request failed: {}", text));
+    }
+
+    Ok(())
+}
