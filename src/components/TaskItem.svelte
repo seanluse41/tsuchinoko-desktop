@@ -82,10 +82,10 @@
     >
         <div class="flex gap-12">
             <div
-                class="flex items-center justify-center h-8 w-8 min-w-8 rounded-full border border-ebony-200 bg-white"
+                class="flex items-center justify-center h-10 w-10 min-w-8 rounded-full border border-ebony-200 bg-white"
             >
                 {#if isSelected}
-                    <CheckCircleOutline class="h-5 w-5 text-moss_green-600" />
+                    <CheckCircleOutline class="h-8 w-8 text-moss_green-600" />
                 {:else}
                     {id}
                 {/if}

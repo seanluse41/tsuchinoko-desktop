@@ -15,11 +15,15 @@
         SortOutline,
         TrashBinOutline,
     } from "flowbite-svelte-icons";
-    import { taskState, loadTasks } from "$lib/appTaskManager.svelte";
+    import { goto } from "$app/navigation";
+    import { taskState, loadTasks, allTasksCompleted } from "$lib/appTaskManager.svelte";
     import { updateTaskStatus } from "$lib/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "$lib/kintoneDeleteRecords.svelte.js";
+    import ConfirmationModal from "./ConfirmationModal.svelte";
 
     const sidebarUI = uiHelpers();
+    const deleteModalUI = uiHelpers();
+    const completeModalUI = uiHelpers();
     let isOpen = $state(true);
     const closeSidebar = sidebarUI.close;
 
@@ -55,17 +59,31 @@
         }
     }
 
-    const completeTask = async () => {
-        try {
-            await updateTaskStatus("16");
-        } catch (err) {
-            console.error("failed to complete task", err)
+    const completeTask = () => {
+        if (taskState.selectedTasks.length > 0) {
+            completeModalUI.toggle();
         }
-    }
+    };
 
-    const deleteTask = async () => {
+    const handleComplete = async () => {
+        if (!allTasksCompleted(taskState.selectedTasks, taskState.tasks)) {
+            try {
+                await updateTaskStatus("16");
+            } catch (err) {
+                console.error("failed to complete task", err);
+            }
+        }
+    };
+
+    const deleteTask = () => {
+        if (taskState.selectedTasks.length > 0) {
+            deleteModalUI.toggle();
+        }
+    };
+
+    const handleDelete = async () => {
         try {
-            await deleteRecords("16"); // Using app ID 16 as shown in other files
+            await deleteRecords("16");
             if (window.location.pathname.includes("/task/")) {
                 goto("/home");
             }
@@ -226,3 +244,17 @@
         </SidebarGroup>
     </Sidebar>
 </div>
+
+<ConfirmationModal 
+    modalUI={deleteModalUI}
+    action="delete"
+    onConfirm={handleDelete}
+/>
+
+<ConfirmationModal 
+    modalUI={completeModalUI}
+    action="complete"
+    onConfirm={handleComplete}
+    isConfirmation={!allTasksCompleted(taskState.selectedTasks, taskState.tasks)}
+    message={allTasksCompleted(taskState.selectedTasks, taskState.tasks) ? "All selected tasks are already completed." : ""}
+/>

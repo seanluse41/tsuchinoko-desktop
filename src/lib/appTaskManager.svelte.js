@@ -28,3 +28,9 @@ export function toggleTaskSelection(taskId) {
     }
     console.log("current selected:", taskState.selectedTasks);
 }
+
+export function allTasksCompleted(selectedIds, tasks) {
+    return selectedIds.every(id => 
+        tasks.find(task => task.id === id)?.status === 'completed'
+    );
+}

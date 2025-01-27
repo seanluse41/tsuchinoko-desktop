@@ -20,8 +20,13 @@
     import { authState } from "$lib/appLoginManager.svelte";
     import { deleteRecords } from "$lib/kintoneDeleteRecords.svelte.js";
     import { updateTaskStatus } from "$lib/kintoneUpdateRecords.svelte";
+    import { taskState, allTasksCompleted } from "$lib/appTaskManager.svelte";
+    import ConfirmationModal from "./ConfirmationModal.svelte";
 
     const sidebarUI = uiHelpers();
+    const deleteModalUI = uiHelpers();
+    const completeModalUI = uiHelpers();
+    
     let isOpen = $state(true);
     const closeSidebar = sidebarUI.close;
 
@@ -29,15 +34,25 @@
 
     $effect(() => {
         isOpen = sidebarUI.isOpen;
+        if (taskId) {
+            taskState.selectedTasks = [taskId];
+        }
     });
 
     const addToGroup = () => console.log("add to group");
 
-    const completeTask = async () => {
-        try {
-            await updateTaskStatus("16");
-        } catch (err) {
-            console.error("failed to complete task", err);
+    const completeTask = () => {
+        completeModalUI.toggle();
+    };
+
+    const handleComplete = async () => {
+        if (!allTasksCompleted(taskState.selectedTasks, taskState.tasks)) {
+            try {
+                await updateTaskStatus("16");
+                goto("/home");
+            } catch (err) {
+                console.error("failed to complete task", err);
+            }
         }
     };
 
@@ -48,12 +63,15 @@
 
     const viewNotification = () => console.log("view notification");
     const copyToClipboard = () => console.log("copy to clipboard");
-    const deleteTask = async () => {
+    
+    const deleteTask = () => {
+        deleteModalUI.toggle();
+    };
+
+    const handleDelete = async () => {
         try {
-            await deleteRecords("16"); // Using app ID 16 as shown in other files
-            if (window.location.pathname.includes("/task/")) {
-                goto("/home");
-            }
+            await deleteRecords("16");
+            goto("/home");
         } catch (err) {
             console.error("Failed to delete tasks:", err);
         }
@@ -157,3 +175,17 @@
         </SidebarGroup>
     </Sidebar>
 </div>
+
+<ConfirmationModal 
+    modalUI={deleteModalUI}
+    action="delete"
+    onConfirm={handleDelete}
+/>
+
+<ConfirmationModal 
+    modalUI={completeModalUI}
+    action="complete"
+    onConfirm={handleComplete}
+    isConfirmation={!allTasksCompleted(taskState.selectedTasks, taskState.tasks)}
+    message={allTasksCompleted(taskState.selectedTasks, taskState.tasks) ? "This task is already completed." : ""}
+/>
