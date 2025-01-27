@@ -4,7 +4,6 @@
         Sidebar,
         SidebarGroup,
         SidebarItem,
-        SidebarDropdownWrapper,
         SidebarButton,
         uiHelpers,
     } from "svelte-5-ui-lib";
@@ -24,24 +23,13 @@
         isOpen = sidebarUI.isOpen;
     });
 
-    // filter actions
-    const filterOverdue = () => console.log("filtering overdue");
-    const filterCompleted = () => console.log("filtering completed");
-    const filterRegistered = () => console.log("filtering registered");
-    const filterUnregistered = () => console.log("filtering unregistered");
-
-    // sort actions
-    const sortByCreated = () => console.log("sorting by date created");
-    const sortByDue = () => console.log("sorting by due date");
-
-    // sync
+    const filter = () => console.log("filtering");
     const sync = () => loadTasks();
 
-    // select all
     let selectAllText = $derived(
         taskState.selectedTasks.length === taskState.tasks.length
             ? "Deselect All"
-            : "Select All",
+            : "Select All"
     );
 
     function toggleSelectAll() {
@@ -51,6 +39,8 @@
             taskState.selectedTasks = taskState.tasks.map((task) => task.id);
         }
     }
+
+    const sort = () => console.log("sorting");
 </script>
 
 <div class="relative">
@@ -64,34 +54,40 @@
         divClass="bg-transparent px-6 py-20 overflow-y-auto"
     >
         <SidebarGroup>
-            <SidebarDropdownWrapper label="Filter" btnClass="cursor-pointer mb-3 bg-white flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800">
+            <SidebarItem
+                label="Filter"
+                onclick={filter}
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+            >
                 {#snippet iconSlot()}
                     <SearchOutline
                         class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
                     />
                 {/snippet}
-                <SidebarItem label="Overdue Tasks" onclick={filterOverdue} />
-                <SidebarItem label="Completed Tasks" onclick={filterCompleted} />
-                <SidebarItem label="Registered Tasks" onclick={filterRegistered} />
-                <SidebarItem label="Unregistered Tasks" onclick={filterUnregistered} />
-            </SidebarDropdownWrapper>
+            </SidebarItem>
 
-            <SidebarDropdownWrapper label="Sort" btnClass="cursor-pointer mb-3 bg-white flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800">
+            <SidebarItem
+                label="Sort"
+                onclick={sort}
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+            >
                 {#snippet iconSlot()}
                     <SortOutline
                         class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
                     />
                 {/snippet}
-                <SidebarItem label="Date Created" onclick={sortByCreated} />
-                <SidebarItem label="Due Date" onclick={sortByDue} />
-            </SidebarDropdownWrapper>
+            </SidebarItem>
 
             <SidebarItem
                 label="Sync"
                 onclick={sync}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
                     <RefreshOutline
@@ -103,9 +99,9 @@
             <SidebarItem
                 label={selectAllText}
                 onclick={toggleSelectAll}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
                     <BadgeCheckOutline

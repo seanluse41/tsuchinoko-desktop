@@ -9,17 +9,12 @@ export const taskState = $state({
 });
 
 export async function loadTasks() {
-    try {
-        taskState.isLoading = true;
-        taskState.error = null;
-        const response = await getRecords("16", "");
-        taskState.tasks = response.list;
-        taskState.selectedTasks = [];
-    } catch (error) {
-        taskState.error = error.message;
-    } finally {
-        taskState.isLoading = false;
-    }
+    taskState.isLoading = true;
+    taskState.error = null;
+    const response = await getRecords("16", "");
+    taskState.tasks = response.list;
+    taskState.selectedTasks = [];
+    taskState.isLoading = false;
 }
 
 export function toggleTaskSelection(taskId) {

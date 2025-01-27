@@ -53,9 +53,9 @@
             <SidebarItem
                 label="Add to Group"
                 onclick={addToGroup}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
                     <FolderPlusOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
@@ -65,9 +65,9 @@
             <SidebarItem
                 label="Mark Complete"
                 onclick={markComplete}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
                     <BadgeCheckOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
@@ -77,9 +77,9 @@
             <SidebarItem
                 label="View in Kintone"
                 onclick={viewInKintone}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
                     <LinkOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
@@ -89,9 +89,9 @@
             <SidebarItem
                 label="View Notification"
                 onclick={viewNotification}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
                     <BellRingOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
@@ -101,9 +101,9 @@
             <SidebarItem
                 label="Copy to Clipboard"
                 onclick={copyToClipboard}
-                class="cursor-pointer mb-3 bg-white"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800"
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
             >
                 {#snippet iconSlot()}
                     <FileCopyOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
@@ -113,9 +113,9 @@
             <SidebarItem
                 label="Delete Task"
                 onclick={deleteTask}
-                class="cursor-pointer mb-3 bg-white hover:bg-red-500"
-                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3"
-                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3"
+                class="cursor-pointer mb-3"
+                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-red-500 bg-white"
+                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-red-500 bg-white"
             >
                 {#snippet iconSlot()}
                     <TrashBinOutline class="h-5 w-5 text-ebony-600 transition-colors" />

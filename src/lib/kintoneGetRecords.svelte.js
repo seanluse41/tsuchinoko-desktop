@@ -2,11 +2,13 @@
 import { invoke } from "@tauri-apps/api/core";
 import { authState } from './appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
+import { taskState } from "./appTaskManager.svelte.js";
 
 export async function getRecords(appId, query = '') {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
+
     try {
         const response = await invoke("kintone_get_records", {
             appId,
@@ -23,7 +25,15 @@ export async function getRecords(appId, query = '') {
             const newTokens = await refreshToken();
             return await getRecords(appId, query);
         }
-        throw error;
+
+        // If the error includes the Kintone error response, parse it
+        if (error.includes('GAIA_AP01')) {
+            taskState.error = "No tasks found";
+            return { list: [] };
+        }
+        
+        taskState.error = error;
+        return { list: [] };
     }
 }
 
