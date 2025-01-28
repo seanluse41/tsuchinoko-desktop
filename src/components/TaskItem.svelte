@@ -103,12 +103,12 @@
             <div class="flex-1 min-w-0">
                 <Heading
                     tag="h3"
-                    class="text-5xl font-bold mb-8 truncate {isSelected
+                    class="text-5xl font-bold mb-8 line-clamp-1 {isSelected
                         ? 'text-stone-200'
                         : 'text-slate-700'}">{name}</Heading
                 >
                 <P
-                    class="truncate mt-4 text-slate-700 {isSelected
+                    class="mt-4 text-slate-700 line-clamp-1 {isSelected
                         ? 'text-stone-200'
                         : ''}">{description}</P
                 >
@@ -119,7 +119,7 @@
                         : ''} p-0 m-0">Memo:</P
                 >
                 <P
-                    class="text-slate-700 truncate {isSelected
+                    class="text-slate-700 line-clamp-1 {isSelected
                         ? 'text-stone-200'
                         : ''} p-0 m-0">{memo}</P
                 >

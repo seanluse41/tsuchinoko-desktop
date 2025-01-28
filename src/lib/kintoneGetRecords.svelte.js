@@ -38,7 +38,6 @@ export async function getRecords(appId, query = '') {
 }
 
 function transformRecords(records, appId) {
-    console.log(records)
     return {
         list: records.map(record => ({
             name: record.notificationTitle.value,
