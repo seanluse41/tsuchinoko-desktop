@@ -51,7 +51,6 @@
         if (!allTasksCompleted(taskState.selectedTasks, taskState.tasks)) {
             try {
                 await updateTaskStatus("16");
-                goto("/home");
             } catch (err) {
                 console.error("failed to complete task", err);
             }

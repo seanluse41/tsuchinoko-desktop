@@ -1,17 +1,20 @@
-<!-- src/routes/(app)/task/[id]/+page.svelte -->
+<!-- src/routes/(app)/task/+page.svelte -->
 <script>
     import { page } from "$app/state";
     import { taskState } from "$lib/appTaskManager.svelte";
     import { formatDate, getDueText } from "$lib/appDateHelpers.js";
-    import TaskDetailsCommands from "../../../../components/TaskDetailsCommands.svelte";
+    import TaskDetailsCommands from "../../../components/TaskDetailsCommands.svelte";
+    
+    // Get taskId from query parameter instead of route param
+    let taskId = $derived(page.url.searchParams.get('id'));
     
     $effect(() => {
-        if (page.params.id) {
-            taskState.selectedTasks = [page.params.id];
+        if (taskId) {
+            taskState.selectedTasks = [taskId];
         }
     });
     
-    let task = $derived(taskState.tasks.find(t => t.id === page.params.id));
+    let task = $derived(taskState.tasks.find(t => t.id === taskId));
 </script>
 
 <div class="flex h-full">

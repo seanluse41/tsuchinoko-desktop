@@ -6,14 +6,15 @@
     import { taskState, toggleTaskSelection } from "$lib/appTaskManager.svelte";
     import { formatDate, getDueText } from "$lib/appDateHelpers.js";
 
-    let { name, id, status, description, memo, dateCreated, dateDue } = $props();
+    let { name, id, status, description, memo, dateCreated, dateDue } =
+        $props();
     let isSelected = $derived(taskState.selectedTasks.includes(id));
 
     let statusItems = $derived([
         `Status: ${status}`,
         `Created: ${formatDate(dateCreated)}`,
         `Due: ${formatDate(dateDue)}`,
-        getDueText(dateDue)
+        getDueText(dateDue),
     ]);
 
     function handleClick(event) {
@@ -21,7 +22,7 @@
             toggleTaskSelection(id);
         } else {
             taskState.selectedTasks = [];
-            goto(`/task/${id}`);
+            goto(`/task?id=${id}`);
         }
     }
 
@@ -106,17 +107,27 @@
                         ? 'text-stone-200'
                         : 'text-slate-700'}">{name}</Heading
                 >
-                <P class="truncate mt-4 text-slate-700 {isSelected ? 'text-stone-200' : ''}"
-                    >{description}</P
+                <P
+                    class="truncate mt-4 text-slate-700 {isSelected
+                        ? 'text-stone-200'
+                        : ''}">{description}</P
                 >
                 <Hr hrClass="mt-6 mb-2" />
-                <P class="text-slate-700 {isSelected ? 'text-stone-200' : ''} p-0 m-0">Memo:</P>
-                <P class="text-slate-700 truncate {isSelected ? 'text-stone-200' : ''} p-0 m-0">{memo}</P>
+                <P
+                    class="text-slate-700 {isSelected
+                        ? 'text-stone-200'
+                        : ''} p-0 m-0">Memo:</P
+                >
+                <P
+                    class="text-slate-700 truncate {isSelected
+                        ? 'text-stone-200'
+                        : ''} p-0 m-0">{memo}</P
+                >
             </div>
 
             <Listgroup
                 items={statusItems}
-                class={isSelected ? 'text-slate-700' : ''}
+                class={isSelected ? "text-slate-700" : ""}
                 itemClass="border bg-transparent hover:bg-transparent p-4 font-bold"
             />
         </div>
