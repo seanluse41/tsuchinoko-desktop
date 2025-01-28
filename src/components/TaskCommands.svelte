@@ -14,6 +14,7 @@
         BadgeCheckOutline,
         SortOutline,
         TrashBinOutline,
+        FolderOutline
     } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
     import {
@@ -21,6 +22,7 @@
         loadTasks,
         allTasksCompleted,
     } from "$lib/appTaskManager.svelte";
+
     import { updateTaskStatus } from "$lib/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "$lib/kintoneDeleteRecords.svelte.js";
     import ConfirmDeleteModal from "./ConfirmDeleteModal.svelte";
@@ -44,8 +46,13 @@
     const filterUnregistered = () => console.log("filtering unregistered");
 
     // sort actions
-    const sortByCreated = () => console.log("sorting by date created");
-    const sortByDue = () => console.log("sorting by due date");
+    import {
+        sortByCreationDate,
+        sortByDueDate,
+        sortState,
+    } from "$lib/appTaskSort.svelte.js";
+    const sortByCreated = () => sortByCreationDate();
+    const sortByDue = () => sortByDueDate();
 
     // sync
     const sync = () => loadTasks();
@@ -159,14 +166,15 @@
                     />
                 {/snippet}
                 <SidebarItem
-                    label="Date Created"
+                    label={`Date Created ${sortState.currentSort === "created" ? (sortState.direction === "asc" ? "↑" : "↓") : ""}`}
                     onclick={sortByCreated}
                     class="cursor-pointer"
                     activeClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
                     nonActiveClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
                 />
+
                 <SidebarItem
-                    label="Due Date"
+                    label={`Due Date ${sortState.currentSort === "due" ? (sortState.direction === "asc" ? "↑" : "↓") : ""}`}
                     onclick={sortByDue}
                     class="cursor-pointer"
                     activeClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
@@ -187,7 +195,8 @@
                     />
                 {/snippet}
             </SidebarItem>
-
+        </SidebarGroup>
+        <SidebarGroup border>
             <SidebarItem
                 label={selectAllText}
                 onclick={toggleSelectAll}
@@ -247,6 +256,32 @@
                     />
                 {/snippet}
             </SidebarItem>
+        </SidebarGroup>
+        <SidebarGroup border>
+            <SidebarDropdownWrapper
+                label="Folders"
+                btnClass="cursor-pointer mb-3 flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+            >
+                {#snippet iconSlot()}
+                    <FolderOutline
+                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                    />
+                {/snippet}
+                <SidebarItem
+                    label="Overdue Tasks"
+                    onclick={filterOverdue}
+                    class="cursor-pointer"
+                    activeClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
+                    nonActiveClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
+                />
+                <SidebarItem
+                    label="Completed Tasks"
+                    onclick={filterCompleted}
+                    class="cursor-pointer"
+                    activeClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
+                    nonActiveClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
+                />
+            </SidebarDropdownWrapper>
         </SidebarGroup>
     </Sidebar>
 </div>
