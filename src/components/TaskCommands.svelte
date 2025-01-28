@@ -14,14 +14,11 @@
         BadgeCheckOutline,
         SortOutline,
         TrashBinOutline,
-        FolderOutline
+        FolderOutline,
     } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
-    import {
-        taskState,
-        loadTasks,
-        allTasksCompleted,
-    } from "$lib/appTaskManager.svelte";
+    import { taskState, loadTasks, allTasksCompleted } from "$lib/appTaskManager.svelte";
+    import { getDisplayTasks } from "$lib/appTaskFilters.svelte";
 
     import { updateTaskStatus } from "$lib/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "$lib/kintoneDeleteRecords.svelte.js";
@@ -40,19 +37,38 @@
     });
 
     // filter actions
-    const filterOverdue = () => console.log("filtering overdue");
-    const filterCompleted = () => console.log("filtering completed");
-    const filterRegistered = () => console.log("filtering registered");
-    const filterUnregistered = () => console.log("filtering unregistered");
+    import {
+        viewState,
+        setFilter,
+        toggleSort,
+    } from "$lib/appTaskFilters.svelte.js";
+    const filterOverdue = () => setFilter("overdue");
+    const filterCompleted = () => setFilter("completed");
+    const filterRegistered = () => setFilter("registered");
+    const filterUnregistered = () => setFilter("unregistered");
 
     // sort actions
-    import {
-        sortByCreationDate,
-        sortByDueDate,
-        sortState,
-    } from "$lib/appTaskSort.svelte.js";
-    const sortByCreated = () => sortByCreationDate();
-    const sortByDue = () => sortByDueDate();
+    const sortByCreated = () => toggleSort("created");
+    const sortByDue = () => toggleSort("due");
+    let createdSortLabel = $derived(
+        `Date Created ${
+            viewState.sortField === "created"
+                ? viewState.sortDirection === "asc"
+                    ? "↑"
+                    : "↓"
+                : ""
+        }`,
+    );
+
+    let dueSortLabel = $derived(
+        `Due Date ${
+            viewState.sortField === "due"
+                ? viewState.sortDirection === "asc"
+                    ? "↑"
+                    : "↓"
+                : ""
+        }`,
+    );
 
     // sync
     const sync = () => loadTasks();
@@ -166,7 +182,7 @@
                     />
                 {/snippet}
                 <SidebarItem
-                    label={`Date Created ${sortState.currentSort === "created" ? (sortState.direction === "asc" ? "↑" : "↓") : ""}`}
+                    label={createdSortLabel}
                     onclick={sortByCreated}
                     class="cursor-pointer"
                     activeClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
@@ -174,7 +190,7 @@
                 />
 
                 <SidebarItem
-                    label={`Due Date ${sortState.currentSort === "due" ? (sortState.direction === "asc" ? "↑" : "↓") : ""}`}
+                    label={dueSortLabel}
                     onclick={sortByDue}
                     class="cursor-pointer"
                     activeClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
