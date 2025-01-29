@@ -3,11 +3,12 @@
     import { Card, P, Heading, Listgroup, Hr } from "svelte-5-ui-lib";
     import { CheckCircleOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
+    import { draggable } from '@thisux/sveltednd';
     import { taskState, toggleTaskSelection } from "$lib/appTaskManager.svelte";
+    import { clearActiveFolderId } from "$lib/appTaskDragState.svelte";
     import { formatDate, getDueText } from "$lib/appDateHelpers.js";
 
-    let { name, id, status, description, memo, dateCreated, dateDue } =
-        $props();
+    let { name, id, status, description, memo, dateCreated, dateDue } = $props();
     let isSelected = $derived(taskState.selectedTasks.includes(id));
 
     let statusItems = $derived([
@@ -16,6 +17,11 @@
         `Due: ${formatDate(dateDue)}`,
         getDueText(dateDue),
     ]);
+
+    // Add dragEnd callback to clean up state
+    function handleDragEnd() {
+        clearActiveFolderId();
+    }
 
     function handleClick(event) {
         if (event.ctrlKey || event.metaKey) {
@@ -80,15 +86,34 @@
                 return "hover:bg-amber-400";
         }
     });
+
+    const taskData = {
+        id,
+        name,
+        status,
+        description,
+        memo,
+        dateCreated,
+        dateDue
+    };
 </script>
 
-<div role="listitem" oncontextmenu={handleRightClick}>
+<div role="listitem" 
+     oncontextmenu={handleRightClick}
+     use:draggable={{ 
+        container: "tasks", 
+        dragData: taskData,
+        callbacks: {
+            onDragEnd: handleDragEnd
+        }
+     }}>
     <Card
         onclick={handleClick}
         padding="none"
         size="xl"
-        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-pointer px-4 py-6"
+        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6"
     >
+        <!-- Card content unchanged -->
         <div class="flex gap-12">
             <div
                 class="flex items-center justify-center h-10 w-10 min-w-8 mt-1 rounded-full border border-ebony-200 bg-white"
@@ -100,10 +125,10 @@
                 {/if}
             </div>
 
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 max-w-full overflow-hidden">
                 <Heading
                     tag="h3"
-                    class="text-5xl font-bold mb-8 line-clamp-1 {isSelected
+                    class="text-5xl font-bold mb-8 {isSelected
                         ? 'text-stone-200'
                         : 'text-slate-700'}">{name}</Heading
                 >
@@ -133,3 +158,21 @@
         </div>
     </Card>
 </div>
+
+<style>
+    /* Add dragging styles */
+    :global(.svelte-dnd-dragging) {
+        opacity: 0.6;
+        transform: scale(1.05);
+        transition: transform 0.2s ease-in-out;
+        user-select: none;
+    }
+
+    /* Prevent text selection during drag */
+    div[role="listitem"] {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    }
+</style>

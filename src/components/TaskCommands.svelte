@@ -5,9 +5,13 @@
         SidebarGroup,
         SidebarButton,
         uiHelpers,
+        SidebarItem,
     } from "svelte-5-ui-lib";
+    import { FolderOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
+    import { droppable } from '@thisux/sveltednd';
     import { taskState, allTasksCompleted } from "../lib/appTaskManager.svelte";
+    import { dragState, setActiveFolderId, clearActiveFolderId } from "../lib/appTaskDragState.svelte.js";
     import { updateTaskStatus } from "../lib/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "../lib/kintoneDeleteRecords.svelte.js";
     import ConfirmDeleteModal from "./ConfirmDeleteModal.svelte";
@@ -49,6 +53,25 @@
             console.error("Failed to delete tasks:", err);
         }
     };
+
+    function handleDrop(folderId) {
+        return (state) => {
+            console.log(`Task dropped into folder ${folderId}:`, state.draggedItem);
+            clearActiveFolderId();
+        };
+    }
+
+    function handleDragEnter(folderId) {
+        return () => {
+            setActiveFolderId(folderId);
+        };
+    }
+
+    function handleDragLeave() {
+        return () => {
+            clearActiveFolderId();
+        };
+    }
 </script>
 
 <div class="relative">
@@ -71,6 +94,83 @@
             <SelectAllButton />
             <CompleteButton modalUI={completeModalUI} />
             <DeleteButton modalUI={deleteModalUI} />
+        </SidebarGroup>
+        
+        <SidebarGroup border>
+            <div 
+                class="folder-item {dragState.activeFolderId === '1' ? 'outline-dashed outline-2 outline-moss_green-500 outline-offset-2 bg-moss_green-50 animated-outline' : ''}"
+                use:droppable={{ 
+                    container: "folder1", 
+                    callbacks: { 
+                        onDrop: handleDrop("1"),
+                        onDragEnter: handleDragEnter("1"),
+                        onDragLeave: handleDragLeave()
+                    }
+                }}
+            >
+                <SidebarItem
+                    label="Folder 1"
+                    class="cursor-pointer mb-3"
+                    activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                    nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                >
+                    {#snippet iconSlot()}
+                        <FolderOutline
+                            class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                        />
+                    {/snippet}
+                </SidebarItem>
+            </div>
+            
+            <div 
+                class="folder-item {dragState.activeFolderId === '2' ? 'outline-dashed outline-2 outline-moss_green-500 outline-offset-2 bg-moss_green-50 animated-outline' : ''}"
+                use:droppable={{ 
+                    container: "folder2", 
+                    callbacks: { 
+                        onDrop: handleDrop("2"),
+                        onDragEnter: handleDragEnter("2"),
+                        onDragLeave: handleDragLeave()
+                    }
+                }}
+            >
+                <SidebarItem
+                    label="Folder 2"
+                    class="cursor-pointer mb-3"
+                    activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                    nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                >
+                    {#snippet iconSlot()}
+                        <FolderOutline
+                            class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                        />
+                    {/snippet}
+                </SidebarItem>
+            </div>
+            
+            <div 
+                class="folder-item {dragState.activeFolderId === '3' ? 'outline-dashed outline-2 outline-moss_green-500 outline-offset-2 bg-moss_green-50 animated-outline' : ''}"
+                use:droppable={{ 
+                    container: "folder3", 
+                    callbacks: { 
+                        onDrop: handleDrop("3"),
+                        onDragEnter: handleDragEnter("3"),
+                        onDragLeave: handleDragLeave()
+                    }
+                }}
+            >
+                <SidebarItem
+                    label="Folder 3"
+                    class="cursor-pointer mb-3"
+                    activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                    nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+                >
+                    {#snippet iconSlot()}
+                        <FolderOutline
+                            class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+                        />
+                    {/snippet}
+                </SidebarItem>
+            </div>
         </SidebarGroup>
     </Sidebar>
 </div>
