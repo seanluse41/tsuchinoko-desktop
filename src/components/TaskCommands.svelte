@@ -60,6 +60,10 @@
 
     function handleDrop(folderId) {
         return (state) => {
+            console.log(
+                `Task dropped into folder ${folderId}:`,
+                state.draggedItem,
+            );
             clearActiveFolderId();
         };
     }
@@ -199,30 +203,43 @@
 {/if}
 
 <style>
-.folder-item {
-    position: relative;
-    padding: 2px;
-    margin-bottom: 1rem;
-}
-
-.folder-item.animated-outline {
-    background: 
-        linear-gradient(90deg, #227558 50%, transparent 50%), /* top */
-        linear-gradient(90deg, #227558 50%, transparent 50%), /* bottom */
-        linear-gradient(0deg, #227558 50%, transparent 50%),  /* left */
-        linear-gradient(0deg, #227558 50%, transparent 50%);  /* right */
-    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
-    background-size: 15px 2px, 15px 2px, 2px 15px, 2px 15px;
-    background-position: 0 0, 0 100%, 0 0, 100% 0;
-    animation: march 1s infinite linear !important;
-}
-
-@keyframes march {
-    from {
-        background-position: 0 0, 0 100%, 0 0, 100% 0;
+    .folder-item {
+        padding: 4px;
     }
-    to {
-        background-position: 15px 0, -15px 100%, 0 -15px, 100% 15px;
+
+    .animated-outline {
+        background:
+            linear-gradient(90deg, #227558 50%, transparent 50%),
+            /* top */ linear-gradient(90deg, #227558 50%, transparent 50%),
+            /* bottom */ linear-gradient(0deg, #227558 50%, transparent 50%),
+            /* left */ linear-gradient(0deg, #227558 50%, transparent 50%); /* right */
+        background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+        background-size:
+            15px 2px,
+            15px 2px,
+            2px 15px,
+            2px 15px;
+        background-position:
+            0 0,
+            0 100%,
+            0 0,
+            100% 0;
+        animation: march 1s infinite linear;
     }
-}
+    @keyframes march {
+        from {
+            background-position:
+                0 0,
+                0 100%,
+                0 0,
+                100% 0;
+        }
+        to {
+            background-position:
+                15px 0,
+                -15px 100%,
+                0 -15px,
+                100% 15px;
+        }
+    }
 </style>
