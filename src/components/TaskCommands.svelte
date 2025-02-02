@@ -60,9 +60,14 @@
 
     function handleDrop(folderId) {
         return (state) => {
+            const draggedId = state.draggedItem.id;
+            const tasksToMove = taskState.selectedTasks.includes(draggedId) 
+                ? taskState.selectedTasks 
+                : [draggedId];
+            
             console.log(
-                `Task dropped into folder ${folderId}:`,
-                state.draggedItem,
+                `Moving tasks to folder ${folderId}:`,
+                tasksToMove
             );
             clearActiveFolderId();
         };
