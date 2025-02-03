@@ -33,7 +33,7 @@
 
 <SidebarDropdownWrapper
     label="Sort"
-    btnClass="cursor-pointer mb-3 flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+    btnClass="cursor-pointer mb-3 flex items-center text-base font-bold text-slate-700 rounded-lg border border-slate-700 p-3 hover:bg-slate-200 bg-white"
 >
     {#snippet iconSlot()}
         <SortOutline
@@ -45,15 +45,15 @@
         label={createdSortLabel}
         onclick={sortByCreated}
         class="cursor-pointer"
-        activeClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
-        nonActiveClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
+        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-white rounded"
+        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-white rounded"
     />
 
     <SidebarItem
         label={dueSortLabel}
         onclick={sortByDue}
         class="cursor-pointer"
-        activeClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
-        nonActiveClass="flex items-center text-base font-normal text-gray-900 p-3 hover:bg-white rounded"
+        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-white rounded"
+        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-white rounded"
     />
 </SidebarDropdownWrapper>

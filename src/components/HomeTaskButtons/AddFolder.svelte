@@ -16,11 +16,11 @@
         label="Add Folder"
         {onclick}
         class="cursor-pointer"
-        activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 border-dotted p-3 hover:bg-transparent bg-transparent"
-        nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 border-dotted p-3 hover:bg-transparent bg-transparent"
+        activeClass="flex items-center text-base font-normal text-slate-700 font-bold rounded-lg border border-slate-700 border-dotted p-3 hover:bg-slate-200 bg-white"
+        nonActiveClass="flex items-center text-base font-normal text-slate-700 font-bold rounded-lg border border-slate-700 border-dashed p-3 hover:bg-slate-200 bg-white"
     >
         {#snippet iconSlot()}
-            <CirclePlusSolid class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
+            <CirclePlusSolid class="h-5 w-5 text-slate-700" />
         {/snippet}
     </SidebarItem>
 </div>
