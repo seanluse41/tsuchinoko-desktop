@@ -5,23 +5,19 @@
         SidebarGroup,
         SidebarButton,
         uiHelpers,
-        SidebarItem,
     } from "svelte-5-ui-lib";
-    import { FolderOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
-    import { droppable } from "@thisux/sveltednd";
-    import { taskState, allTasksCompleted } from "../lib/appTaskManager.svelte";
-    import {
-        dragState,
-        setActiveFolderId,
-        clearActiveFolderId,
-    } from "../lib/appTaskDragState.svelte.js";
+    import { taskState, allTasksCompleted } from "$lib/appTaskManager.svelte";
+    import { dragState } from "$lib/appTaskDragState.svelte.js";
     import { updateTaskStatus } from "../lib/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "../lib/kintoneDeleteRecords.svelte.js";
     import { dndState } from "@thisux/sveltednd";
     import ConfirmDeleteModal from "./ConfirmDeleteModal.svelte";
     import ConfirmCompleteModal from "./ConfirmCompleteModal.svelte";
     import NoticeModal from "./NoticeModal.svelte";
+    import TaskFolder from "./HomeTaskButtons/TaskFolder.svelte";
+    import AddFolder from "./HomeTaskButtons/AddFolder.svelte";
+    import { folderState } from "$lib/appFolderManager.svelte.js";
 
     import FilterButton from "./HomeTaskButtons/FilterTasks.svelte";
     import SortButton from "./HomeTaskButtons/SortTasks.svelte";
@@ -30,6 +26,7 @@
     import CompleteButton from "./HomeTaskButtons/CompleteTasks.svelte";
     import DeleteButton from "./HomeTaskButtons/DeleteTasks.svelte";
 
+    // Sidebar setup
     const sidebarUI = uiHelpers();
     const deleteModalUI = uiHelpers();
     const completeModalUI = uiHelpers();
@@ -40,6 +37,7 @@
         isOpen = sidebarUI.isOpen;
     });
 
+    // Task handling functions
     const handleComplete = async () => {
         try {
             await updateTaskStatus("16");
@@ -59,27 +57,24 @@
         }
     };
 
-    function handleDrop(folderId) {
-        return (state) => {
-            const draggedId = state.draggedItem.id;
-            const tasksToMove = taskState.selectedTasks.includes(draggedId)
-                ? taskState.selectedTasks
-                : [draggedId];
+    function handleDrop(folderId, state) {
+        const draggedId = state.draggedItem.id;
+        const tasksToMove = taskState.selectedTasks.includes(draggedId)
+            ? taskState.selectedTasks
+            : [draggedId];
 
-            console.log(`Moving tasks to folder ${folderId}:`, tasksToMove);
-            clearActiveFolderId();
-        };
-    }
-
-    function handleDragEnter(folderId) {
-        return () => {
-            setActiveFolderId(folderId);
-        };
+        console.log(`Moving tasks to folder ${folderId}:`, tasksToMove);
     }
 
     let shouldShowGroupOutline = $derived(
         dndState.isDragging && !dragState.activeFolderId,
     );
+
+    function handleAddFolder() {
+        console.log(folderState)
+        console.log(taskState)
+        console.log("Add folder clicked");
+    }
 </script>
 
 <div class="relative">
@@ -104,103 +99,22 @@
             <DeleteButton modalUI={deleteModalUI} />
         </SidebarGroup>
 
-        <div class="p-4 -m-4">
-            <SidebarGroup border class="p-4 -m-4">
-                <div
-                    class={shouldShowGroupOutline ? "folder-group-outline" : ""}
-                >
-                    <div class="folder-item">
-                        <div
-                            class="relative p-1 -m-1 {dragState.activeFolderId ===
-                            '1'
-                                ? 'animated-outline'
-                                : ''}"
-                            use:droppable={{
-                                container: "folder1",
-                                callbacks: {
-                                    onDrop: handleDrop("1"),
-                                    onDragEnter: handleDragEnter("1"),
-                                    onDragLeave: clearActiveFolderId,
-                                },
-                            }}
-                        >
-                            <SidebarItem
-                                label="Folder 1"
-                                class="cursor-pointer"
-                                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
-                                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
-                            >
-                                {#snippet iconSlot()}
-                                    <FolderOutline
-                                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
-                                    />
-                                {/snippet}
-                            </SidebarItem>
-                        </div>
-                    </div>
-
-                    <div class="folder-item">
-                        <div
-                            class="relative p-1 -m-1 {dragState.activeFolderId ===
-                            '2'
-                                ? 'animated-outline'
-                                : ''}"
-                            use:droppable={{
-                                container: "folder2",
-                                callbacks: {
-                                    onDrop: handleDrop("2"),
-                                    onDragEnter: handleDragEnter("2"),
-                                    onDragLeave: clearActiveFolderId,
-                                },
-                            }}
-                        >
-                            <SidebarItem
-                                label="Folder 2"
-                                class="cursor-pointer"
-                                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
-                                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
-                            >
-                                {#snippet iconSlot()}
-                                    <FolderOutline
-                                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
-                                    />
-                                {/snippet}
-                            </SidebarItem>
-                        </div>
-                    </div>
-
-                    <div class="folder-item">
-                        <div
-                            class="relative p-1 -m-1 {dragState.activeFolderId ===
-                            '3'
-                                ? 'animated-outline'
-                                : ''}"
-                            use:droppable={{
-                                container: "folder3",
-                                callbacks: {
-                                    onDrop: handleDrop("3"),
-                                    onDragEnter: handleDragEnter("3"),
-                                    onDragLeave: clearActiveFolderId,
-                                },
-                            }}
-                        >
-                            <SidebarItem
-                                label="Folder 3"
-                                class="cursor-pointer"
-                                activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
-                                nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
-                            >
-                                {#snippet iconSlot()}
-                                    <FolderOutline
-                                        class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
-                                    />
-                                {/snippet}
-                            </SidebarItem>
-                        </div>
-                    </div>
-                </div>
-            </SidebarGroup>
-        </div>
+        <SidebarGroup border>
+            <div
+                class={shouldShowGroupOutline
+                    ? "folder-group-outline flex flex-col gap-4 mb-4"
+                    : "flex flex-col gap-4 mb-4"}
+            >
+                {#each folderState.folders as folderId}
+                    <TaskFolder
+                        {folderId}
+                        label={folderId}
+                        onDrop={handleDrop}
+                    />
+                {/each}
+            </div>
+            <AddFolder onclick={handleAddFolder} />
+        </SidebarGroup>
     </Sidebar>
 </div>
 
@@ -219,40 +133,29 @@
 {/if}
 
 <style>
-
-.folder-item {
-    margin-bottom: 15px;
-}
-
-.folder-group-outline {
-    outline: 2px dashed #227558;
-    outline-offset: 10px;
-    animation: march 1s linear infinite;
-}
-
-.animated-outline {
-    outline: 2px dashed #227558;
-    outline-offset: 1px;
-    animation: march 1s linear infinite;
-}
-
-@keyframes march {
-    0% {
+    .folder-group-outline {
+        outline: 2px dashed #227558;
         outline-offset: 10px;
-        outline-style: dashed;
+        animation: march 1s linear infinite;
     }
-    49% {
-        outline-style: dashed;
+
+    @keyframes march {
+        0% {
+            outline-offset: 10px;
+            outline-style: dashed;
+        }
+        49% {
+            outline-style: dashed;
+        }
+        50% {
+            outline-style: dotted;
+        }
+        99% {
+            outline-style: dotted;
+        }
+        100% {
+            outline-offset: 10px;
+            outline-style: dashed;
+        }
     }
-    50% {
-        outline-style: dotted;
-    }
-    99% {
-        outline-style: dotted;
-    }
-    100% {
-        outline-offset: 10px;
-        outline-style: dashed;
-    }
-}
 </style>
