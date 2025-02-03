@@ -8,6 +8,7 @@
     } from "svelte-5-ui-lib";
     import { goto } from "$app/navigation";
     import { taskState, allTasksCompleted } from "$lib/appTaskManager.svelte";
+    import { getDisplayTasks } from "$lib/appTaskFilters.svelte";
     import { dragState } from "$lib/appTaskDragState.svelte.js";
     import { updateTaskStatus } from "../lib/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "../lib/kintoneDeleteRecords.svelte.js";
@@ -58,10 +59,17 @@
     };
 
     function handleDrop(folderId, state) {
-        const draggedId = state.draggedItem.id;
-        const tasksToMove = taskState.selectedTasks.includes(draggedId)
+        const displayTasks = getDisplayTasks();
+        const draggedTask = displayTasks[state.draggedItem.viewIndex];
+        
+        if (!draggedTask) {
+            console.error('Could not find dragged task in current view');
+            return;
+        }
+
+        const tasksToMove = taskState.selectedTasks.includes(draggedTask.id)
             ? taskState.selectedTasks
-            : [draggedId];
+            : [draggedTask.id];
 
         console.log(`Moving tasks to folder ${folderId}:`, tasksToMove);
     }

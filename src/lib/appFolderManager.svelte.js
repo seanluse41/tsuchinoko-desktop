@@ -1,19 +1,16 @@
 // src/lib/appFolderManager.svelte.js
+import { resetFiltersAndSort } from './appTaskFilters.svelte.js';
 import { taskState } from './appTaskManager.svelte.js';
-
-let availableFolders = $derived.by(() => [
-    'All',
-    ...new Set(taskState.tasks
-        .map(task => task.folder)
-        .filter(Boolean)
-    )
-]);
 
 export const folderState = $state({
     selectedFolder: 'All',
-    folders: availableFolders
+    folders: ['All']
 });
 
 export function selectFolder(folderId) {
-    folderState.selectedFolder = folderId;
+    if (folderState.selectedFolder !== folderId) {
+        resetFiltersAndSort();
+        taskState.selectedTasks = [];
+        folderState.selectedFolder = folderId;
+    }
 }

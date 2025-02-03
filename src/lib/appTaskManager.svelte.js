@@ -1,5 +1,6 @@
 // src/lib/appTaskManager.svelte.js
 import { getRecords } from './kintoneGetRecords.svelte.js';
+import { folderState } from './appFolderManager.svelte.js';
 
 export const taskState = $state({
     tasks: [],
@@ -14,6 +15,10 @@ export async function loadTasks() {
     const response = await getRecords("16", "");
     taskState.tasks = response.list;
     taskState.selectedTasks = [];
+    
+    // Update available folders
+    folderState.folders = ['All', ...new Set(response.list.map(task => task.folder).filter(Boolean))];
+    
     taskState.isLoading = false;
 }
 

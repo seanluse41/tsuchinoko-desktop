@@ -1,23 +1,27 @@
 // src/lib/appTaskFilters.svelte.js
 import { taskState } from './appTaskManager.svelte.js';
+import { folderState } from './appFolderManager.svelte.js';
 
-// Combined state for filters and sorts
 export const viewState = $state({
     filter: null,  // 'overdue', 'completed', 'registered', 'unregistered'
     sortField: null,    // 'created', 'due'  
     sortDirection: null // 'asc', 'desc'
 });
 
-// Create the derived state but don't export it directly
 const tasksView = $derived.by(() => {
     let result = [...taskState.tasks];
     
-    // Apply filter
+    // First, apply folder filtering
+    if (folderState.selectedFolder !== 'All') {
+        result = result.filter(task => task.folder === folderState.selectedFolder);
+    }
+    
+    // Then apply status filter
     if (viewState.filter) {
         result = result.filter(task => task.status === viewState.filter);
     }
     
-    // Apply sort
+    // Finally apply sort
     if (viewState.sortField) {
         const dateField = viewState.sortField === 'created' ? 'dateCreated' : 'dateDue';
         result.sort((a, b) => {
@@ -30,12 +34,10 @@ const tasksView = $derived.by(() => {
     return result;
 });
 
-// Export a function to get the current view
 export function getDisplayTasks() {
     return tasksView;
 }
 
-// Helper functions stay the same
 export function toggleSort(field) {
     if (viewState.sortField === field) {
         if (viewState.sortDirection === 'asc') {
@@ -51,5 +53,15 @@ export function toggleSort(field) {
 }
 
 export function setFilter(filter) {
-    viewState.filter = viewState.filter === filter ? null : filter;
+    const newFilter = viewState.filter === filter ? null : filter;
+    if (newFilter !== viewState.filter) {
+        taskState.selectedTasks = [];
+        viewState.filter = newFilter;
+    }
+}
+
+export function resetFiltersAndSort() {
+    viewState.filter = null;
+    viewState.sortField = null;
+    viewState.sortDirection = null;
 }

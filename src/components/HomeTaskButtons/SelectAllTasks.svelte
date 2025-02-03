@@ -3,18 +3,28 @@
     import { SidebarItem } from "svelte-5-ui-lib";
     import { BadgeCheckOutline } from "flowbite-svelte-icons";
     import { taskState } from "../../lib/appTaskManager.svelte";
+    import { getDisplayTasks } from "../../lib/appTaskFilters.svelte.js";
 
-    let selectAllText = $derived(
-        taskState.selectedTasks.length === taskState.tasks.length
-            ? "Deselect All"
-            : "Select All"
+    let displayTasks = $derived(getDisplayTasks());
+    let displayTaskIds = $derived(displayTasks.map(task => task.id));
+    let allCurrentSelected = $derived(
+        displayTaskIds.length > 0 && 
+        displayTaskIds.every(id => taskState.selectedTasks.includes(id))
     );
 
+    let selectAllText = $derived(allCurrentSelected ? "Deselect All" : "Select All");
+
     function toggleSelectAll() {
-        if (taskState.selectedTasks.length === taskState.tasks.length) {
-            taskState.selectedTasks = [];
+        if (allCurrentSelected) {
+            taskState.selectedTasks = taskState.selectedTasks.filter(
+                id => !displayTaskIds.includes(id)
+            );
         } else {
-            taskState.selectedTasks = taskState.tasks.map((task) => task.id);
+            const newSelection = [...new Set([
+                ...taskState.selectedTasks,
+                ...displayTaskIds
+            ])];
+            taskState.selectedTasks = newSelection;
         }
     }
 </script>

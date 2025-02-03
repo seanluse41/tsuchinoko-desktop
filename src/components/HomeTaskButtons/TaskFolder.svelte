@@ -1,23 +1,25 @@
-<!-- src/components/TaskFolder.svelte -->
+<!-- /src/components/HomeTaskButtons/TaskFolder.svelte -->
 <script>
     import { SidebarItem } from "svelte-5-ui-lib";
     import { FolderOutline } from "flowbite-svelte-icons";
     import { droppable } from "@thisux/sveltednd";
-    import {
-        dragState,
-        setActiveFolderId,
-        clearActiveFolderId,
-    } from "$lib/appTaskDragState.svelte.js";
+    import { dragState, setActiveFolderId, clearActiveFolderId } from "$lib/appTaskDragState.svelte.js";
+    import { folderState, selectFolder } from "$lib/appFolderManager.svelte.js";
+    import { resetFiltersAndSort } from "$lib/appTaskFilters.svelte.js";
 
     let { folderId, label, onDrop } = $props();
 
+    let isSelected = $derived(folderState.selectedFolder === folderId);
+
+    function handleClick() {
+        selectFolder(folderId);
+    }
+
     const handleDrop = (state) => {
-        console.log("dropped", folderId);
         if (onDrop) onDrop(folderId, state);
     };
 
     const handleDragEnter = () => {
-        console.log("entered", folderId);
         setActiveFolderId(folderId);
     };
 
@@ -38,9 +40,10 @@
     >
         <SidebarItem
             {label}
+            onclick={handleClick}
             class="cursor-pointer"
-            activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
-            nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
+            activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-700 {isSelected ? 'bg-thistle-400' : 'bg-white'}"
+            nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-700 {isSelected ? 'bg-thistle-400' : 'bg-white'}"
         >
             {#snippet iconSlot()}
                 <FolderOutline
