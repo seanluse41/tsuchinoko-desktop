@@ -15,4 +15,4 @@
     });
 </script>
 
-<div id="tsparticles" class="fixed inset-0"></div>
+<div id="tsparticles" class="fixed inset-0 z-0"></div>

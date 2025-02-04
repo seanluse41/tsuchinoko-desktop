@@ -5,3 +5,4 @@ pub use types::*;
 pub use api::*;
 pub use api::delete_records;
 pub use api::update_records;
+pub use api::add_record;

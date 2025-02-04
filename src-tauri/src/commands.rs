@@ -1,7 +1,7 @@
 use base64::{engine::general_purpose::STANDARD as base64, Engine};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use crate::kintone::{get_records, update_records, delete_records, GetRecordsConfig, KintoneResponse};
+use crate::kintone::{get_records, add_record, update_records, delete_records, GetRecordsConfig, KintoneResponse};
 
 #[derive(Serialize, Deserialize)]
 pub struct TokenResponse {
@@ -113,4 +113,13 @@ pub async fn kintone_delete_records(
    config: GetRecordsConfig,
 ) -> Result<(), String> {
    delete_records(app_id, ids, config).await
+}
+
+#[tauri::command]
+pub async fn kintone_add_record(
+    app_id: String,
+    record: serde_json::Value,
+    config: GetRecordsConfig,
+) -> Result<serde_json::Value, String> {
+    add_record(app_id, record, config).await
 }

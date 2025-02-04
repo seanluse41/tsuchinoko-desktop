@@ -8,7 +8,7 @@
     let displayTasks = $derived(getDisplayTasks());
 </script>
 
-<div class="flex flex-col flex-grow w-full p-8 gap-2">
+<div class="flex flex-col flex-grow w-full p-8 gap-4">
     <Task404Alert {alertStatus} />
     
     {#each displayTasks as task}

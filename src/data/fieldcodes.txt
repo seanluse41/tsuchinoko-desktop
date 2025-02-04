@@ -9,3 +9,5 @@ notificationTitle - a text field for the original notification's title
 notificationSubtitle - a text field for the original notification's subtitle
 notificationContent - a text field for the original notification's text content
 taskMemo - a text field for extra memos the user added when converting to a task
+taskFolder - a text field for which folder the task belongs to
+taskCompletionMemo - a text field for memos entered by the user upon task completion

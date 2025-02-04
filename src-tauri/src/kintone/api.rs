@@ -123,3 +123,44 @@ pub async fn delete_records(
 
     Ok(())
 }
+
+pub async fn add_record(
+    app_id: String,
+    record: serde_json::Value,
+    config: GetRecordsConfig,
+) -> Result<serde_json::Value, String> {
+    let client = Client::new();
+    
+    let url = format!(
+        "https://{}.{}/k/v1/record.json", 
+        config.subdomain,
+        config.domain
+    );
+
+    let body = serde_json::json!({
+        "app": app_id,
+        "record": record
+    });
+
+    let response = client
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", config.access_token))
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to add record: {}", e))?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.map_err(|e| e.to_string())?;
+        
+        if status == 401 {
+            return Err("token_expired".to_string());
+        }
+        return Err(format!("API request failed: {}", text));
+    }
+
+    response.json::<serde_json::Value>()
+        .await
+        .map_err(|e| format!("Failed to parse response: {}", e))
+}

@@ -180,13 +180,13 @@
         onclick={handleClick}
         padding="none"
         size="xl"
-        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
+        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-slate-700 rounded-lg cursor-move px-4 py-6 relative {shouldFade
             ? 'opacity-50'
             : ''}"
     >
         <div class="flex gap-12">
             <div
-                class="flex items-center justify-center h-10 w-10 min-w-8 mt-1 rounded-full border border-ebony-200 bg-white"
+                class="flex items-center justify-center h-10 w-10 min-w-8 mt-1 rounded-full border border-slate-700 bg-white"
             >
                 {#if isSelected}
                     <CheckCircleOutline class="h-8 w-8 text-moss_green-600" />

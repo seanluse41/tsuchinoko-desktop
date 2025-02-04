@@ -1,7 +1,8 @@
 <!-- src/routes/(app)/task-create/+page.svelte -->
-
 <script>
-    import { Card, Input, Label, Button, Radio } from "svelte-5-ui-lib";
+    import { Card, Input, Label, Button, Radio, Alert } from "svelte-5-ui-lib";
+    import { goto } from "$app/navigation";
+    import { addRecord } from "$lib/kintoneAddRecord.svelte.js";
 
     let formData = $state({
         notificationTitle: "",
@@ -12,29 +13,36 @@
         taskMemo: "",
     });
 
-    function handleSubmit(event) {
+    let error = $state(null);
+    let isSubmitting = $state(false);
+
+    async function handleSubmit(event) {
         event.preventDefault();
-        const now = new Date().toISOString();
-
-        const taskData = {
-            taskCreationDateTime: { value: now },
-            notificationTitle: { value: formData.notificationTitle },
-            notificationContent: { value: formData.notificationContent },
-            taskPriority: { value: formData.taskPriority },
-            taskDeadline: { value: formData.taskDeadline },
-            taskStatus: { value: formData.taskStatus },
-            taskMemo: { value: formData.taskMemo },
-            notificationDateTime: { value: "" },
-            notificationSubtitle: { value: "" },
-        };
-
-        console.log("Form submitted:", taskData);
+        
+        if (isSubmitting) return;
+        
+        try {
+            isSubmitting = true;
+            error = null;
+            
+            await addRecord("16", formData);
+            goto("/home");
+        } catch (err) {
+            error = err.message || "Failed to create task. Please try again.";
+            isSubmitting = false;
+        }
     }
 </script>
 
 <div class="pt-8 p-32">
-    <Card class="max-w-none p-8 bg-moss_green-700">
+    <Card class="max-w-none p-8 bg-moss_green-700 relative z-10">
         <h1 class="text-5xl font-bold mb-6 text-slate-700">Create New Task</h1>
+
+        {#if error}
+            <Alert color="red" class="mb-4">
+                {error}
+            </Alert>
+        {/if}
 
         <form onsubmit={handleSubmit}>
             <div class="mb-6">
@@ -119,13 +127,12 @@
                 </div>
                 <div>
                     <Label for="deadline" class="font-bold text-slate-700">Deadline</Label>
-                    <div tabindex="-1" onblur={(e) => e.target.blur()}>
+                    <div tabindex="-1">
                         <Input
                             type="datetime-local"
                             id="deadline"
                             bind:value={formData.taskDeadline}
                             required
-                            disabled
                         />
                     </div>
                 </div>
@@ -134,9 +141,10 @@
             <Button
                 size="xl"
                 type="submit"
-                class="mt-8 w-full bg-thistle hover:bg-thistle-400 font-extrabold text-5xl text-slate-700 border hover:text-stone-200"
+                disabled={isSubmitting}
+                class="mt-8 w-full bg-thistle hover:bg-thistle-400 font-extrabold text-5xl text-slate-700 border hover:text-stone-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                Create Task
+                {isSubmitting ? "Creating..." : "Create Task"}
             </Button>
         </form>
     </Card>
