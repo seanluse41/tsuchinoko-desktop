@@ -1,6 +1,6 @@
 <!-- src/components/HomeTaskButtons/FilterTasks.svelte -->
 <script>
-    import { viewState, setFilter } from "../../lib/appTaskFilters.svelte.js";
+    import { viewState, setFilter } from "$lib/app/appTaskFilters.svelte.js";
     import { SidebarDropdownWrapper, SidebarItem } from "svelte-5-ui-lib";
     import { SearchOutline } from "flowbite-svelte-icons";
 

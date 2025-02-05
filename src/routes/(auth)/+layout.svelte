@@ -1,7 +1,7 @@
 <!-- src/routes/(auth)/+layout.svelte -->
 <script>
     let { children } = $props();
-    import { initializeUrlListener, cleanupUrlListener } from '../../lib/urlListenerManager.svelte.js';
+    import { initializeUrlListener, cleanupUrlListener } from '$lib/app/urlListenerManager.svelte.js';
 
     $effect.root(() => {
         initializeUrlListener();

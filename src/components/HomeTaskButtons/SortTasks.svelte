@@ -5,7 +5,7 @@
         SidebarDropdownWrapper,
     } from "svelte-5-ui-lib";
     import { SortOutline } from "flowbite-svelte-icons";
-    import { viewState, toggleSort } from "../../lib/appTaskFilters.svelte.js";
+    import { viewState, toggleSort } from "$lib/app/appTaskFilters.svelte.js";
 
     const sortByCreated = () => toggleSort("created");
     const sortByDue = () => toggleSort("due");

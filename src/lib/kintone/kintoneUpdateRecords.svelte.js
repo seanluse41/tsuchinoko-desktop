@@ -1,8 +1,8 @@
-// src/lib/kintoneUpdateRecords.svelte.js
+// src/lib/kintone/kintoneUpdateRecords.svelte.js
 import { invoke } from "@tauri-apps/api/core";
-import { authState } from './appLoginManager.svelte.js';
+import { authState } from '../app/appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
-import { taskState } from "./appTaskManager.svelte.js";
+import { taskState } from "../app/appTaskManager.svelte.js";
 
 export async function updateTaskStatus(appId) {
     if (!authState.isAuthenticated || !authState.token) {

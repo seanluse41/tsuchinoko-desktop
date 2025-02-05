@@ -4,10 +4,11 @@
     import { CheckCircleOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
     import { dndState, draggable } from "@thisux/sveltednd";
-    import { taskState, toggleTaskSelection } from "$lib/appTaskManager.svelte";
-    import { clearActiveFolderId } from "$lib/appTaskDragState.svelte";
-    import { formatDate, getDueText } from "$lib/appDateHelpers.js";
-    import { getDisplayTasks } from "$lib/appTaskFilters.svelte";
+    import { taskState, toggleTaskSelection } from "$lib/app/appTaskManager.svelte";
+    import { clearActiveFolderId } from "$lib/app/appTaskDragState.svelte";
+    import { formatDate, getDueText } from "$lib/app/appDateHelpers.js";
+    import { getDisplayTasks } from "$lib/app/appTaskFilters.svelte";
+    import { navigationState } from "$lib/app/appNavigationTracker.svelte.js";
 
     let { name, id, status, description, memo, dateCreated, dateDue } =
         $props();
@@ -180,8 +181,11 @@
         onclick={handleClick}
         padding="none"
         size="xl"
-        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-slate-700 rounded-lg cursor-move px-4 py-6 relative {shouldFade
+        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
             ? 'opacity-50'
+            : ''} {id === navigationState.latestTaskId &&
+        navigationState.latestAction === 'create'
+            ? 'animate-wiggle'
             : ''}"
     >
         <div class="flex gap-12">

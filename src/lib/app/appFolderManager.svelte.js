@@ -1,4 +1,4 @@
-// src/lib/appFolderManager.svelte.js
+// src/lib/app/appFolderManager.svelte.js
 import { resetFiltersAndSort } from './appTaskFilters.svelte.js';
 import { taskState } from './appTaskManager.svelte.js';
 

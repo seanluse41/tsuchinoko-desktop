@@ -7,18 +7,18 @@
         uiHelpers,
     } from "svelte-5-ui-lib";
     import { goto } from "$app/navigation";
-    import { taskState, allTasksCompleted } from "$lib/appTaskManager.svelte";
-    import { getDisplayTasks } from "$lib/appTaskFilters.svelte";
-    import { dragState } from "$lib/appTaskDragState.svelte.js";
-    import { updateTaskStatus } from "../lib/kintoneUpdateRecords.svelte";
-    import { deleteRecords } from "../lib/kintoneDeleteRecords.svelte.js";
+    import { taskState, allTasksCompleted } from "$lib/app/appTaskManager.svelte";
+    import { getDisplayTasks } from "$lib/app/appTaskFilters.svelte";
+    import { dragState } from "$lib/app/appTaskDragState.svelte.js";
+    import { updateTaskStatus } from "$lib/kintone/kintoneUpdateRecords.svelte";
+    import { deleteRecords } from "$lib/kintone/kintoneDeleteRecords.svelte.js";
     import { dndState } from "@thisux/sveltednd";
     import ConfirmDeleteModal from "./ConfirmDeleteModal.svelte";
     import ConfirmCompleteModal from "./ConfirmCompleteModal.svelte";
     import NoticeModal from "./NoticeModal.svelte";
     import TaskFolder from "./HomeTaskButtons/TaskFolder.svelte";
     import AddFolder from "./HomeTaskButtons/AddFolder.svelte";
-    import { folderState } from "$lib/appFolderManager.svelte.js";
+    import { folderState } from "$lib/app/appFolderManager.svelte.js";
 
     import FilterButton from "./HomeTaskButtons/FilterTasks.svelte";
     import SortButton from "./HomeTaskButtons/SortTasks.svelte";

@@ -1,4 +1,4 @@
-// src/lib/appLoginManager.svelte.js
+// src/lib/app/appLoginManager.svelte.js
 export const authState = $state({
   isAuthenticated: false,
   isLoading: false,

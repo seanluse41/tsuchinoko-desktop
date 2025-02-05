@@ -1,5 +1,5 @@
-// src/lib/appTaskManager.svelte.js
-import { getRecords } from './kintoneGetRecords.svelte.js';
+// src/lib/app/appTaskManager.svelte.js
+import { getRecords } from '../kintone/kintoneGetRecords.svelte.js';
 import { folderState } from './appFolderManager.svelte.js';
 
 export const taskState = $state({

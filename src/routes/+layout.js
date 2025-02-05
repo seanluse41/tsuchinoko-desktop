@@ -1,5 +1,5 @@
 // src/routes/+layout.js
-import { secretManager } from '../lib/appSecretManager.svelte.js';
+import { secretManager } from '$lib/app/appSecretManager.svelte.js';
 
 export const prerender = true;
 export const ssr = false;

@@ -7,9 +7,9 @@
         dragState,
         setActiveFolderId,
         clearActiveFolderId,
-    } from "$lib/appTaskDragState.svelte.js";
-    import { folderState, selectFolder } from "$lib/appFolderManager.svelte.js";
-    import { resetFiltersAndSort } from "$lib/appTaskFilters.svelte.js";
+    } from "$lib/app/appTaskDragState.svelte.js";
+    import { folderState, selectFolder } from "$lib/app/appFolderManager.svelte.js";
+    import { resetFiltersAndSort } from "$lib/app/appTaskFilters.svelte.js";
 
     let { folderId, label, onDrop } = $props();
 

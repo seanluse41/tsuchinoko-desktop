@@ -1,7 +1,7 @@
-// src/lib/authCallbackHandler.svelte.js
+// src/lib/app/authCallbackHandler.svelte.js
 import { goto } from "$app/navigation";
-import { validateState } from "./kintoneAuthRequest";
-import { exchangeToken } from "./kintoneAccessRequest";
+import { validateState } from "../kintone/kintoneAuthRequest";
+import { exchangeToken } from "../kintone/kintoneAccessRequest";
 import { authState } from "./appLoginManager.svelte.js";
 import { secretManager } from "./appSecretManager.svelte.js";
 

@@ -7,9 +7,9 @@
         uiHelpers,
     } from "svelte-5-ui-lib";
     import { goto } from "$app/navigation";
-    import { updateTaskStatus } from "../lib/kintoneUpdateRecords.svelte";
-    import { deleteRecords } from "../lib/kintoneDeleteRecords.svelte.js";
-    import { taskState, allTasksCompleted } from "../lib/appTaskManager.svelte";
+    import { updateTaskStatus } from "$lib/kintone/kintoneUpdateRecords.svelte";
+    import { deleteRecords } from "$lib/kintone/kintoneDeleteRecords.svelte.js";
+    import { taskState, allTasksCompleted } from "$lib/app/appTaskManager.svelte";
     import BackButton from "./TaskDetailsButtons/BackToHome.svelte";
     import AddToGroupButton from "./TaskDetailsButtons/AddToGroup.svelte";
     import CompleteButton from "./TaskDetailsButtons/CompleteTask.svelte";

@@ -2,7 +2,7 @@
 <script>
     import { Modal, Button, uiHelpers } from 'svelte-5-ui-lib';
     import { TrashBinOutline } from "flowbite-svelte-icons";
-    import { taskState } from '../lib/appTaskManager.svelte';
+    import { taskState } from '$lib/app/appTaskManager.svelte';
 
     let { modalUI = uiHelpers(), onConfirm = () => {} } = $props();
 

@@ -2,7 +2,7 @@
 <script>
     import { SidebarItem } from "svelte-5-ui-lib";
     import { TrashBinOutline } from "flowbite-svelte-icons";
-    import { taskState } from "../../lib/appTaskManager.svelte";
+    import { taskState } from "$lib/app/appTaskManager.svelte";
 
     let { modalUI = undefined } = $props();
 if (!modalUI) throw new Error('modalUI prop is required');

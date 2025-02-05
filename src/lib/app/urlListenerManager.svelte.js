@@ -1,4 +1,4 @@
-// src/lib/urlListenerManager.svelte.js
+// src/lib/app/urlListenerManager.svelte.js
 import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
 import { handleAuthCallback } from "./authCallbackHandler.svelte.js";
 

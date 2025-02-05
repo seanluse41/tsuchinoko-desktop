@@ -3,7 +3,7 @@
     import { SidebarItem } from "svelte-5-ui-lib";
     import { LinkOutline } from "flowbite-svelte-icons";
     import { open } from "@tauri-apps/plugin-shell";
-    import { authState } from "../../lib/appLoginManager.svelte";
+    import { authState } from "$lib/app/appLoginManager.svelte";
 
     let { taskId } = $props();
     if (!taskId) throw new Error('taskId prop is required');

@@ -3,9 +3,9 @@
   import { open } from "@tauri-apps/plugin-shell";
   import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
   import { Card, Heading, P, Img, Button, Spinner } from "svelte-5-ui-lib";
-  import { buildAuthUrl } from "../../../lib/kintoneAuthRequest";
-  import { handleAuthCallback } from "../../../lib/authCallbackHandler.svelte.js";
-  import { authState } from "../../../lib/appLoginManager.svelte.js";
+  import { buildAuthUrl } from "$lib/kintone/kintoneAuthRequest";
+  import { handleAuthCallback } from "$lib/app/authCallbackHandler.svelte.js";
+  import { authState } from "$lib/app/appLoginManager.svelte.js";
 
   let isButtonDisabled = $derived(authState.isLoading || !authState.user.subdomain);
   let buttonText = $derived(authState.isLoading ? "Loading ..." : "Login with Kintone");

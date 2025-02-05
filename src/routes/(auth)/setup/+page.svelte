@@ -1,5 +1,4 @@
 <!-- src/routes/(auth)/setup/+page.svelte -->
-<!-- src/routes/(auth)/setup/+page.svelte -->
 <script>
     import {
         Input,
@@ -19,8 +18,8 @@
         EyeSlashOutline,
     } from "flowbite-svelte-icons";
     import { open } from "@tauri-apps/plugin-shell";
-    import { buildAuthUrl } from "../../../lib/kintoneAuthRequest";
-    import { authState } from "../../../lib/appLoginManager.svelte.js";
+    import { buildAuthUrl } from "$lib/kintone/kintoneAuthRequest";
+    import { authState } from "$lib/app/appLoginManager.svelte.js";
 
     let {
         subdomain,

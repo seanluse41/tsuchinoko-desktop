@@ -2,8 +2,8 @@
 <script>
     import { Spinner } from "svelte-5-ui-lib";
     import { goto } from "$app/navigation";
-    import { authState } from "../lib/appLoginManager.svelte";
-    import { secretManagerState } from "../lib/appSecretManager.svelte";
+    import { authState } from "$lib/app/appLoginManager.svelte";
+    import { secretManagerState } from "$lib/app/appSecretManager.svelte";
 
     $effect(() => {
         if (!secretManagerState.isInitializing && !authState.isLoading) {

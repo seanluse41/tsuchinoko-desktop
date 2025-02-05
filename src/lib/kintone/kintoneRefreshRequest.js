@@ -1,6 +1,6 @@
-// src/lib/kintoneRefreshRequest.js
+// src/lib/kintone/kintoneRefreshRequest.js
 import { invoke } from "@tauri-apps/api/core";
-import { authState } from './appLoginManager.svelte.js';
+import { authState } from '../app/appLoginManager.svelte.js';
 
 export async function refreshToken() {
   try {

@@ -1,4 +1,4 @@
-// src/lib/appDateHelpers.js
+// src/lib/app/appDateHelpers.js
 
 export function formatDate(dateStr) {
     if (!dateStr) return 'Not set';

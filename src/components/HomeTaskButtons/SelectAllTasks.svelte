@@ -2,8 +2,8 @@
 <script>
     import { SidebarItem } from "svelte-5-ui-lib";
     import { BadgeCheckOutline, BadgeCheckSolid } from "flowbite-svelte-icons";
-    import { taskState } from "../../lib/appTaskManager.svelte";
-    import { getDisplayTasks } from "../../lib/appTaskFilters.svelte.js";
+    import { taskState } from "$lib/app/appTaskManager.svelte";
+    import { getDisplayTasks } from "$lib/app/appTaskFilters.svelte.js";
 
     let displayTasks = $derived(getDisplayTasks());
     let displayTaskIds = $derived(displayTasks.map(task => task.id));

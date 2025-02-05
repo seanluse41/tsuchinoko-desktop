@@ -1,8 +1,8 @@
 <script>
     import TaskItem from "./TaskItem.svelte";
     import Task404Alert from "./Task404Alert.svelte";
-    import { taskState } from "../lib/appTaskManager.svelte";
-    import { getDisplayTasks } from "../lib/appTaskFilters.svelte.js";
+    import { taskState } from "$lib/app/appTaskManager.svelte";
+    import { getDisplayTasks } from "$lib/app/appTaskFilters.svelte.js";
 
     let alertStatus = $derived(!!taskState.error);
     let displayTasks = $derived(getDisplayTasks());

@@ -1,7 +1,7 @@
 <!-- src/routes/(auth)/logout/+page.svelte -->
 <script>
     import { goto } from "$app/navigation";
-    import { secretManager } from "../../../lib/appSecretManager.svelte.js";
+    import { secretManager } from "$lib/app/appSecretManager.svelte.js";
 
     $effect(async () => {
         try {

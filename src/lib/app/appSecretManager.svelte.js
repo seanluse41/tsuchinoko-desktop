@@ -1,4 +1,4 @@
-// src/lib/appSecretManager.svelte.js
+// src/lib/app/appSecretManager.svelte.js
 import { Client, Stronghold } from '@tauri-apps/plugin-stronghold';
 import { appDataDir } from '@tauri-apps/api/path';
 import { authState } from './appLoginManager.svelte.js';

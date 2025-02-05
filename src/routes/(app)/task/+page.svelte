@@ -1,8 +1,8 @@
 <!-- src/routes/(app)/task/+page.svelte -->
 <script>
     import { page } from "$app/state";
-    import { taskState } from "$lib/appTaskManager.svelte";
-    import { formatDate, getDueText } from "$lib/appDateHelpers.js";
+    import { taskState } from "$lib/app/appTaskManager.svelte";
+    import { formatDate, getDueText } from "$lib/app/appDateHelpers.js";
     import TaskDetailsCommands from "../../../components/TaskDetailsCommands.svelte";
     
     // Get taskId from query parameter instead of route param

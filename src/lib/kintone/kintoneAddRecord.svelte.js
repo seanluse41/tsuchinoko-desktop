@@ -1,6 +1,6 @@
-// src/lib/kintoneAddRecord.svelte.js
+// src/lib/kintone/kintoneAddRecord.svelte.js
 import { invoke } from "@tauri-apps/api/core";
-import { authState } from './appLoginManager.svelte.js';
+import { authState } from '../app//appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
 
 function formatDateTime(dateString) {

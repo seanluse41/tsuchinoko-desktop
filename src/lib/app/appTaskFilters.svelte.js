@@ -1,4 +1,4 @@
-// src/lib/appTaskFilters.svelte.js
+// src/lib/app/appTaskFilters.svelte.js
 import { taskState } from './appTaskManager.svelte.js';
 import { folderState } from './appFolderManager.svelte.js';
 

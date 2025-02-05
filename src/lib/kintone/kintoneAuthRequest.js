@@ -1,5 +1,5 @@
-// src/lib/kintoneAuthRequest.js
-import { authState } from './appLoginManager.svelte.js';
+// src/lib/kintone/kintoneAuthRequest.js
+import { authState } from '../app/appLoginManager.svelte.js';
 
 export function buildAuthUrl(subdomain, clientId, domain = 'cybozu.com') {
   const state = crypto.randomUUID();

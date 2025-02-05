@@ -1,6 +1,6 @@
-// src/lib/kintoneAccessRequest.js
+// src/lib/kintone/kintoneAccessRequest.js
 import { invoke } from "@tauri-apps/api/core";
-import { authState } from './appLoginManager.svelte.js';
+import { authState } from '../app/appLoginManager.svelte.js';
 
 export async function exchangeToken(code) {
     if (!authState.user.clientId || !authState.user.clientSecret || !authState.user.subdomain || !authState.user.domain) {

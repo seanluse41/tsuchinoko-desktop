@@ -3,7 +3,8 @@
   import { Spinner } from "svelte-5-ui-lib";
   import TaskCommands from "../../../components/TaskCommands.svelte";
   import TaskList from "../../../components/TaskList.svelte";
-  import { taskState, loadTasks } from "$lib/appTaskManager.svelte";
+  import { taskState, loadTasks } from "$lib/app/appTaskManager.svelte";
+  import { navigationState } from "$lib/app/appNavigationTracker.svelte";
 
   $effect(() => {
     loadTasks();

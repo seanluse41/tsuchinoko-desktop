@@ -2,7 +2,7 @@
 <script>
     import { SidebarItem } from "svelte-5-ui-lib";
     import { RefreshOutline } from "flowbite-svelte-icons";
-    import { loadTasks } from "../../lib/appTaskManager.svelte";
+    import { loadTasks } from "$lib/app/appTaskManager.svelte";
 </script>
 
 <SidebarItem
