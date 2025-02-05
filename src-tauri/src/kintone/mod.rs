@@ -1,8 +1,8 @@
-pub mod types;
 pub mod api;
+pub mod types;
 
-pub use types::*;
-pub use api::*;
+pub use api::add_record;
 pub use api::delete_records;
 pub use api::update_records;
-pub use api::add_record;
+pub use api::*;
+pub use types::*;

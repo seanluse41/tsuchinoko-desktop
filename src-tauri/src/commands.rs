@@ -1,7 +1,9 @@
+use crate::kintone::{
+    add_record, delete_records, get_records, update_records, GetRecordsConfig, KintoneResponse,
+};
 use base64::{engine::general_purpose::STANDARD as base64, Engine};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use crate::kintone::{get_records, add_record, update_records, delete_records, GetRecordsConfig, KintoneResponse};
 
 #[derive(Serialize, Deserialize)]
 pub struct TokenResponse {
@@ -9,7 +11,7 @@ pub struct TokenResponse {
     token_type: String,
     expires_in: i32,
     refresh_token: Option<String>,
-    scope: Option<String>
+    scope: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -27,18 +29,21 @@ pub async fn kintone_exchange_token(
     config: AuthConfig,
 ) -> Result<TokenResponse, String> {
     let client = Client::new();
-    
+
     let auth_str = format!("{}:{}", config.client_id, config.client_secret);
     let auth_header = format!("Basic {}", base64.encode(auth_str.as_bytes()));
 
     let form_data = [
         ("grant_type", "authorization_code"),
         ("code", &code),
-        ("redirect_uri", &redirect_uri)
+        ("redirect_uri", &redirect_uri),
     ];
 
     let response = client
-        .post(format!("https://{}.{}/oauth2/token", config.subdomain, config.domain))
+        .post(format!(
+            "https://{}.{}/oauth2/token",
+            config.subdomain, config.domain
+        ))
         .header("Authorization", auth_header)
         .header("Content-Type", "application/x-www-form-urlencoded")
         .form(&form_data)
@@ -51,7 +56,8 @@ pub async fn kintone_exchange_token(
         return Err(format!("Token exchange failed: {}", text));
     }
 
-    response.json::<TokenResponse>()
+    response
+        .json::<TokenResponse>()
         .await
         .map_err(|e| format!("Failed to parse token response: {}", e))
 }
@@ -62,17 +68,20 @@ pub async fn kintone_refresh_token(
     config: AuthConfig,
 ) -> Result<TokenResponse, String> {
     let client = Client::new();
-    
+
     let auth_str = format!("{}:{}", config.client_id, config.client_secret);
     let auth_header = format!("Basic {}", base64.encode(auth_str.as_bytes()));
 
     let response = client
-        .post(format!("https://{}.{}/oauth2/token", config.subdomain, config.domain))
+        .post(format!(
+            "https://{}.{}/oauth2/token",
+            config.subdomain, config.domain
+        ))
         .header("Authorization", auth_header)
         .header("Content-Type", "application/x-www-form-urlencoded")
         .form(&[
             ("grant_type", "refresh_token"),
-            ("refresh_token", &refresh_token)
+            ("refresh_token", &refresh_token),
         ])
         .send()
         .await
@@ -83,7 +92,8 @@ pub async fn kintone_refresh_token(
         return Err(format!("Token refresh failed: {}", text));
     }
 
-    response.json::<TokenResponse>()
+    response
+        .json::<TokenResponse>()
         .await
         .map_err(|e| format!("Failed to parse refresh response: {}", e))
 }
@@ -99,20 +109,20 @@ pub async fn kintone_get_records(
 
 #[tauri::command]
 pub async fn kintone_update_records(
-   app_id: String,
-   records: Vec<serde_json::Value>,
-   config: GetRecordsConfig,
+    app_id: String,
+    records: Vec<serde_json::Value>,
+    config: GetRecordsConfig,
 ) -> Result<(), String> {
-   update_records(app_id, records, config).await
+    update_records(app_id, records, config).await
 }
 
 #[tauri::command]
 pub async fn kintone_delete_records(
-   app_id: String,
-   ids: Vec<String>,
-   config: GetRecordsConfig,
+    app_id: String,
+    ids: Vec<String>,
+    config: GetRecordsConfig,
 ) -> Result<(), String> {
-   delete_records(app_id, ids, config).await
+    delete_records(app_id, ids, config).await
 }
 
 #[tauri::command]

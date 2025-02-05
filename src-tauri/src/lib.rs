@@ -2,23 +2,23 @@ mod commands;
 mod kintone;
 use tauri::Manager;
 // Only import DeepLinkExt on Linux and Windows
+use std::fs;
 #[cfg(any(target_os = "linux", windows))]
 use tauri_plugin_deep_link::DeepLinkExt;
-use std::fs;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let mut builder = tauri::Builder::default();
-    
+    let mut builder = tauri::Builder::default().plugin(tauri_plugin_clipboard_manager::init());
+
     #[cfg(desktop)]
     {
-        builder = builder
-            .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
-                let _ = app.get_webview_window("main")
-                    .expect("no main window")
-                    .set_focus();
-                println!("new instance started with arguments: {argv:?}");
-            }));
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
+            let _ = app
+                .get_webview_window("main")
+                .expect("no main window")
+                .set_focus();
+            println!("new instance started with arguments: {argv:?}");
+        }));
     }
 
     builder
@@ -28,14 +28,14 @@ pub fn run() {
                 .path()
                 .app_local_data_dir()
                 .expect("could not resolve app local data path");
-            
+
             // Create the directory if it doesn't exist
-            fs::create_dir_all(&app_local_dir)
-                .expect("failed to create app local data directory");
-            
+            fs::create_dir_all(&app_local_dir).expect("failed to create app local data directory");
+
             let salt_path = app_local_dir.join("salt.txt");
-            app.handle().plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
-            
+            app.handle()
+                .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
+
             // Only register deep-link on Linux and Windows
             #[cfg(any(target_os = "linux", windows))]
             {

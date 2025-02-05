@@ -23,10 +23,10 @@ pub struct KintoneRecord {
     pub notificationSubtitle: Value,
     pub notificationContent: Value,
     pub taskMemo: Value,
-    pub taskFolder: Value
+    pub taskFolder: Value,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct KintoneResponse {
-    pub records: Vec<KintoneRecord>
+    pub records: Vec<KintoneRecord>,
 }

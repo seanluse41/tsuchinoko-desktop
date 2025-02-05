@@ -4,19 +4,21 @@
     import { taskState } from "$lib/app/appTaskManager.svelte";
     import { formatDate, getDueText } from "$lib/app/appDateHelpers.js";
     import TaskDetailsCommands from "../../../components/TaskDetailsCommands.svelte";
+    import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte";
     // Get taskId from query parameter instead of route param
-    let taskId = $derived(page.url.searchParams.get('id'));
-    
+    let taskId = $derived(page.url.searchParams.get("id"));
+
     $effect(() => {
         if (taskId) {
             taskState.selectedTasks = [taskId];
         }
+        trackTaskAction([taskId], "view")
     });
-    
-    let task = $derived(taskState.tasks.find(t => t.id === taskId));
+
+    let task = $derived(taskState.tasks.find((t) => t.id === taskId));
 </script>
 
-<div class="flex h-full">
+<main class="flex h-full select-enabled">
     <div class="w-64 flex-shrink-0">
         <TaskDetailsCommands taskId={task?.id} />
     </div>
@@ -29,7 +31,10 @@
                 <p><strong>Created:</strong> {formatDate(task.dateCreated)}</p>
                 <p><strong>Due:</strong> {formatDate(task.dateDue)}</p>
                 <p><strong>Due in:</strong> {getDueText(task.dateDue)}</p>
-                <p class="break-words"><strong>Description:</strong> {task.description}</p>
+                <p class="break-words">
+                    <strong>Description:</strong>
+                    {task.description}
+                </p>
                 <p class="break-words"><strong>Memo:</strong> {task.memo}</p>
             </div>
         </div>
@@ -38,4 +43,4 @@
             <p>Task not found</p>
         </div>
     {/if}
-</div>
+</main>
