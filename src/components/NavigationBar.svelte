@@ -12,20 +12,27 @@
   import { page } from "$app/state";
   let activeUrl = $state(page.url.pathname);
   import { ChevronDownOutline } from "flowbite-svelte-icons";
-  // for navbar
+  import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
+  
   let nav = uiHelpers();
   let navStatus = $state(false);
   let toggleNav = nav.toggle;
   let closeNav = nav.close;
-  // for Dropdown
+  
   let dropdown = uiHelpers();
   let dropdownStatus = $state(false);
   let closeDropdown = dropdown.close;
+  
   $effect(() => {
     navStatus = nav.isOpen;
     dropdownStatus = dropdown.isOpen;
     activeUrl = page.url.pathname;
   });
+
+  const trackNav = async (path) => {
+    trackNavigation(path);
+    closeDropdown();
+  }
 </script>
 
 <Navbar
@@ -40,8 +47,8 @@
   {/snippet}
 
   <NavUl {activeUrl} class="text-ebony-800">
-    <NavLi href="/home" class="hover:text-moss_green-600">Home</NavLi>
-    <NavLi href="/task-create" class="hover:text-moss_green-600"
+    <NavLi href="/home" onclick={() => trackNav('/home')} class="hover:text-moss_green-600">Home</NavLi>
+    <NavLi href="/task-create" onclick={() => trackNav('/task-create')} class="hover:text-moss_green-600"
       >Task Creator</NavLi
     >
     <NavLi
@@ -59,22 +66,22 @@
         <DropdownUl>
           <DropdownLi
             href="/account"
-            onclick={closeDropdown}
+            onclick={() => trackNav('/account')}
             class="hover:bg-thistle-700 text-ebony-800">Account</DropdownLi
           >
           <DropdownLi
             href="/preferences"
-            onclick={closeDropdown}
+            onclick={() => trackNav('/preferences')}
             class="hover:bg-thistle-700 text-ebony-800">Preferences</DropdownLi
           >
           <DropdownLi
             href="/about"
-            onclick={closeDropdown}
+            onclick={() => trackNav('/about')}
             class="hover:bg-thistle-700 text-ebony-800">About</DropdownLi
           >
           <DropdownLi
             href="/logout"
-            onclick={closeDropdown}
+            onclick={() => trackNav('/logout')}
             class="hover:bg-thistle-700 text-ebony-800">Logout</DropdownLi
           >
         </DropdownUl>

@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { authState } from '../app/appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
 import { taskState } from "../app/appTaskManager.svelte.js";
+import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte.js";
 
 export async function updateTaskStatus(appId) {
     if (!authState.isAuthenticated || !authState.token) {
@@ -37,6 +38,8 @@ export async function updateTaskStatus(appId) {
                 ? { ...task, status: "completed" }
                 : task
         );
+        // track nav log etc
+        trackTaskAction(taskState.selectedTasks, "update");
         taskState.selectedTasks = [];
 
     } catch (error) {

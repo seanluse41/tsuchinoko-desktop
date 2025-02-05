@@ -4,6 +4,7 @@ import { validateState } from "../kintone/kintoneAuthRequest";
 import { exchangeToken } from "../kintone/kintoneAccessRequest";
 import { authState } from "./appLoginManager.svelte.js";
 import { secretManager } from "./appSecretManager.svelte.js";
+import { trackNavigation, trackTaskAction } from "./appNavigationTracker.svelte";
 
 export async function handleAuthCallback(url) {
     console.log("Processing auth callback...");
@@ -29,7 +30,8 @@ export async function handleAuthCallback(url) {
 
         await secretManager.storeCredentials();
         console.log("Credentials stored after successful auth");
-       
+        trackTaskAction([], "login")
+        trackNavigation("/home")       
         goto("/home");
     } catch (err) {
         Object.assign(authState, {

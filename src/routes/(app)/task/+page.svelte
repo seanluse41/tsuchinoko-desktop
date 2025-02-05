@@ -4,7 +4,6 @@
     import { taskState } from "$lib/app/appTaskManager.svelte";
     import { formatDate, getDueText } from "$lib/app/appDateHelpers.js";
     import TaskDetailsCommands from "../../../components/TaskDetailsCommands.svelte";
-    
     // Get taskId from query parameter instead of route param
     let taskId = $derived(page.url.searchParams.get('id'));
     

@@ -1,4 +1,7 @@
 // src/lib/app/appNavigationTracker.svelte.js
+
+import { goto } from "$app/navigation";
+
 export const navigationState = $state({
     latestTaskId: null,
     latestAction: null, // 'create', 'update', 'delete', 'complete', 'view'.
@@ -17,7 +20,12 @@ export function trackNavigation(path) {
     ];
 }
 
-export function trackTaskAction(taskId, action) {
-    navigationState.latestTaskId = taskId;
+export function trackTaskAction(taskIds, action) {
+    navigationState.latestTaskId = taskIds;
     navigationState.latestAction = action;
+}
+
+export function appNavigation(path) {
+    trackNavigation(path)
+    goto(path)
 }

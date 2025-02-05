@@ -7,10 +7,7 @@
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
     import { addRecord } from "$lib/kintone/kintoneAddRecord.svelte.js";
-    import {
-        trackTaskAction,
-        trackNavigation,
-    } from "$lib/app/appNavigationTracker.svelte.js";
+    import { trackNavigation, trackTaskAction } from "$lib/app/appNavigationTracker.svelte";
 
     let formData = $state({
         notificationTitle: "",
@@ -27,6 +24,7 @@
     let datepicker;
 
     onMount(() => {
+        trackTaskAction([], "view")
         datepicker = new AirDatepicker(dateInput, {
             timepicker: true,
             locale: localeJa,
@@ -63,8 +61,7 @@
             isSubmitting = true;
             error = null;
             const response = await addRecord("16", formData);
-            trackTaskAction(response.id, "create");
-            trackNavigation("/task-create");
+            trackNavigation("/home")
             goto("/home");
         } catch (err) {
             error = err.message || "Failed to create task. Please try again.";

@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { authState } from '../app/appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
 import { taskState } from "../app/appTaskManager.svelte.js";
+import { trackNavigation, trackTaskAction } from "$lib/app/appNavigationTracker.svelte.js";
 
 export async function deleteRecords(appId) {
     if (!authState.isAuthenticated || !authState.token) {
@@ -23,6 +24,9 @@ export async function deleteRecords(appId) {
                 access_token: authState.token
             }
         });
+
+        // Track deletion before clearing state
+        trackTaskAction(taskState.selectedTasks, "delete");
 
         // Update local state after successful deletion
         taskState.tasks = taskState.tasks.filter(task => 

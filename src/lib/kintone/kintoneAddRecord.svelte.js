@@ -2,6 +2,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { authState } from '../app//appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
+import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte.js";
 
 function formatDateTime(dateString) {
     if (!dateString) return "";
@@ -59,7 +60,7 @@ export async function addRecord(appId, formData) {
                 access_token: authState.token
             }
         });
-
+        trackTaskAction([response.id], "create")
         return response;
 
     } catch (error) {

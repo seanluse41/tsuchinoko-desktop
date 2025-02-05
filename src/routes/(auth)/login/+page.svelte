@@ -6,7 +6,7 @@
   import { buildAuthUrl } from "$lib/kintone/kintoneAuthRequest";
   import { handleAuthCallback } from "$lib/app/authCallbackHandler.svelte.js";
   import { authState } from "$lib/app/appLoginManager.svelte.js";
-
+  import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
   let isButtonDisabled = $derived(authState.isLoading || !authState.user.subdomain);
   let buttonText = $derived(authState.isLoading ? "Loading ..." : "Login with Kintone");
 
@@ -78,6 +78,7 @@
           class="lg:w-3/4 rounded-lg bg-thistle px-8 py-8 text-black hover:bg-thistle-700 focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
           href="/setup"
           size="xl"
+          onclick={() => trackNavigation('/setup')}
         >
           <P class="text-xl">First Time Setup</P>
         </Button>

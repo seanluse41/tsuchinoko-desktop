@@ -26,6 +26,7 @@
     import SelectAllButton from "./HomeTaskButtons/SelectAllTasks.svelte";
     import CompleteButton from "./HomeTaskButtons/CompleteTasks.svelte";
     import DeleteButton from "./HomeTaskButtons/DeleteTasks.svelte";
+    import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
 
     // Sidebar setup
     const sidebarUI = uiHelpers();
@@ -51,6 +52,7 @@
         try {
             await deleteRecords("16");
             if (window.location.pathname.includes("/task/")) {
+                trackNavigation("/home")
                 goto("/home");
             }
         } catch (err) {

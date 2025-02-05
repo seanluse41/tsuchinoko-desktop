@@ -4,11 +4,17 @@
     import { CheckCircleOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
     import { dndState, draggable } from "@thisux/sveltednd";
-    import { taskState, toggleTaskSelection } from "$lib/app/appTaskManager.svelte";
+    import {
+        taskState,
+        toggleTaskSelection,
+    } from "$lib/app/appTaskManager.svelte";
     import { clearActiveFolderId } from "$lib/app/appTaskDragState.svelte";
     import { formatDate, getDueText } from "$lib/app/appDateHelpers.js";
     import { getDisplayTasks } from "$lib/app/appTaskFilters.svelte";
-    import { navigationState } from "$lib/app/appNavigationTracker.svelte.js";
+    import {
+        trackNavigation,
+        navigationState,
+    } from "$lib/app/appNavigationTracker.svelte.js";
 
     let { name, id, status, description, memo, dateCreated, dateDue } =
         $props();
@@ -26,6 +32,13 @@
             (isSelected &&
                 isAnyDragging &&
                 taskState.selectedTasks.includes(dndState.draggedItem?.id)),
+    );
+
+    let wasJustCreated = $derived(
+        navigationState.latestAction === "create" &&
+            navigationState.latestTaskId?.includes(id) &&
+            navigationState.navigationStack[0]?.path === "/home" &&
+            navigationState.navigationStack[1]?.path === "/task-create",
     );
 
     let statusItems = $derived([
@@ -62,6 +75,7 @@
             toggleTaskSelection(id);
         } else {
             taskState.selectedTasks = [];
+            trackNavigation(`/task?id=${id}`);
             goto(`/task?id=${id}`);
         }
     }
@@ -177,17 +191,14 @@
         },
     }}
 >
-    <Card
-        onclick={handleClick}
-        padding="none"
-        size="xl"
-        class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
-            ? 'opacity-50'
-            : ''} {id === navigationState.latestTaskId &&
-        navigationState.latestAction === 'create'
-            ? 'animate-wiggle'
-            : ''}"
-    >
+<Card
+    onclick={handleClick}
+    padding="none"
+    size="xl"
+    class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
+        ? 'opacity-50'
+        : ''} {wasJustCreated ? 'animate-wiggle' : ''}"
+>
         <div class="flex gap-12">
             <div
                 class="flex items-center justify-center h-10 w-10 min-w-8 mt-1 rounded-full border border-slate-700 bg-white"

@@ -4,10 +4,12 @@
     import { InfoCircleSolid, UserSettingsSolid } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
     import { open } from "@tauri-apps/plugin-shell";
+    import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
 
     let { alertStatus = false } = $props();
 
     function navigateToSettings() {
+        trackNavigation("/account")
         goto("/account");
     }
 

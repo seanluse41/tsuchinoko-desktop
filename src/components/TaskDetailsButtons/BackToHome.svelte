@@ -3,8 +3,12 @@
     import { SidebarItem } from "svelte-5-ui-lib";
     import { ArrowLeftOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
+    import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
 
-    const goBack = () => goto("/home");
+    const goBack = () => {
+        trackNavigation("/home")
+        goto("/home");
+    };
 </script>
 
 <SidebarItem
@@ -15,6 +19,8 @@
     nonActiveClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"
 >
     {#snippet iconSlot()}
-        <ArrowLeftOutline class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600" />
+        <ArrowLeftOutline
+            class="h-5 w-5 text-ebony-600 transition-colors hover:text-moss_green-600"
+        />
     {/snippet}
 </SidebarItem>

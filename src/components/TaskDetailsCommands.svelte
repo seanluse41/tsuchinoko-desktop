@@ -20,6 +20,7 @@
     import ConfirmDeleteModal from "./ConfirmDeleteModal.svelte";
     import ConfirmCompleteModal from "./ConfirmCompleteModal.svelte";
     import NoticeModal from "./NoticeModal.svelte";
+    import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
 
     let { taskId } = $props();
 
@@ -40,6 +41,7 @@
         if (!allTasksCompleted(taskState.selectedTasks, taskState.tasks)) {
             try {
                 await updateTaskStatus("16");
+                trackNavigation("/home")
                 goto("/home");
             } catch (err) {
                 console.error("Failed to complete task:", err);
@@ -50,6 +52,7 @@
     const handleDelete = async () => {
         try {
             await deleteRecords("16");
+            trackNavigation("/home")
             goto("/home");
         } catch (err) {
             console.error("Failed to delete task:", err);
