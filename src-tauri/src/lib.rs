@@ -1,14 +1,16 @@
 mod commands;
 mod kintone;
 use tauri::Manager;
-// Only import DeepLinkExt on Linux and Windows
-use std::fs;
+use tauri_plugin_log::{Target, TargetKind};
 #[cfg(any(target_os = "linux", windows))]
 use tauri_plugin_deep_link::DeepLinkExt;
+use std::fs;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let mut builder = tauri::Builder::default().plugin(tauri_plugin_clipboard_manager::init());
+    let mut builder = tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_log::Builder::new().build());
 
     #[cfg(desktop)]
     {
