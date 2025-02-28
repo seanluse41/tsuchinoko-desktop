@@ -13,10 +13,6 @@
     import { InfoCircleSolid } from "flowbite-svelte-icons";
     import { preferencesState, resetAllPreferences, resetColors } from "$lib/app/appPreferences.svelte.js";
     import ColorPicker from "svelte-awesome-color-picker";
-
-    $effect(() => {
-        $inspect(preferencesState);
-    });
 </script>
 
 <div class="p-8 relative">
@@ -140,7 +136,7 @@
             >
 
             <div class="grid grid-cols-2 gap-8">
-                <div class="p-4 bg-white rounded-3xl">
+                <div class="p-4 bg-white border rounded-3xl border-slate-700">
                     <span class="text-lg font-medium mb-2 block"
                         >Menu Color</span
                     >
@@ -151,7 +147,7 @@
                     />
                 </div>
 
-                <div class="p-4 bg-white rounded-3xl">
+                <div class="p-4 bg-white border rounded-3xl border-slate-700">
                     <span class="text-lg font-medium mb-2 block"
                         >Completed Task Color</span
                     >
@@ -162,7 +158,7 @@
                     />
                 </div>
 
-                <div class="p-4 bg-white rounded-3xl">
+                <div class="p-4 bg-white border rounded-3xl border-slate-700">
                     <span class="text-lg font-medium mb-2 block"
                         >Registered Task Color</span
                     >
@@ -173,7 +169,7 @@
                     />
                 </div>
 
-                <div class="p-4 bg-white rounded-3xl">
+                <div class="p-4 bg-white border rounded-3xl border-slate-700">
                     <span class="text-lg font-medium mb-2 block"
                         >Overdue Task Color</span
                     >
@@ -186,8 +182,8 @@
             </div>
             <Hr hrClass="my-16" />
             <div class="space-y-2">
-                <Button size="lg" color="light" outline onclick={resetColors}>Reset Colors</Button>
-                <Button size="lg" color="light" outline onclick={resetAllPreferences}>Reset All Preferences</Button>
+                <Button size="lg" color="light" class="border-slate-700" outline onclick={resetColors}>Reset Colors</Button>
+                <Button size="lg" color="light" class="border-slate-700" outline onclick={resetAllPreferences}>Reset All Preferences</Button>
             </div>
         </div>
     </Card>

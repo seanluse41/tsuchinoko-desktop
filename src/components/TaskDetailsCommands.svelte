@@ -10,6 +10,7 @@
     import { updateTaskStatus } from "$lib/kintone/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "$lib/kintone/kintoneDeleteRecords.svelte.js";
     import { taskState, allTasksCompleted } from "$lib/app/appTaskManager.svelte";
+    import { preferencesState } from "$lib/app/appPreferences.svelte";
     import BackButton from "./TaskDetailsButtons/BackToHome.svelte";
     import AddToGroupButton from "./TaskDetailsButtons/AddToGroup.svelte";
     import CompleteButton from "./TaskDetailsButtons/CompleteTask.svelte";

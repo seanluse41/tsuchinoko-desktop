@@ -15,6 +15,12 @@
         trackNavigation,
         navigationState,
     } from "$lib/app/appNavigationTracker.svelte.js";
+    import { preferencesState } from "$lib/app/appPreferences.svelte";
+    import {
+        getTaskBackgroundColor,
+        getTaskHoverColor,
+        getTaskTextColor
+    } from "$lib/app/appColorHelpers.svelte.js";
 
     let { name, id, status, description, memo, dateCreated, dateDue } =
         $props();
@@ -22,23 +28,21 @@
     let isDragging = $state(false);
     let mouseX = $state(0);
     let mouseY = $state(0);
+    let isHovered = $state(false);
 
-    // Track if any drag operation is happening
     let isAnyDragging = $derived(dndState.isDragging);
-    // Should show faded if this task is selected and there's a drag happening
-    // For the dragged task OR selected tasks when dragging a selected task
     let shouldFade = $derived(
         isDragging ||
             (isSelected &&
                 isAnyDragging &&
-                taskState.selectedTasks.includes(dndState.draggedItem?.id)),
+                taskState.selectedTasks.includes(dndState.draggedItem?.id))
     );
 
     let wasJustCreated = $derived(
         navigationState.latestAction === "create" &&
             navigationState.latestTaskId?.includes(id) &&
             navigationState.navigationStack[0]?.path === "/home" &&
-            navigationState.navigationStack[1]?.path === "/task-create",
+            navigationState.navigationStack[1]?.path === "/task-create"
     );
 
     let statusItems = $derived([
@@ -47,6 +51,32 @@
         `Due: ${formatDate(dateDue)}`,
         getDueText(dateDue),
     ]);
+    
+    // Get the current background color based on hover and other states
+    let currentBgColor = $derived(
+        isHovered 
+            ? getTaskHoverColor(status, isSelected, isDragging) 
+            : getTaskBackgroundColor(status, isSelected, isDragging)
+    );
+    
+    // Get text color based on selection state
+    let textColor = $derived(getTaskTextColor(isSelected));
+
+    let selectedCount = $derived(taskState.selectedTasks.length);
+    let showBadge = $derived(isDragging && isSelected && selectedCount > 1);
+
+    const currentViewIndex = getDisplayTasks().findIndex((t) => t.id === id);
+
+    const taskData = {
+        id,
+        viewIndex: currentViewIndex,
+        name,
+        status,
+        description,
+        memo,
+        dateCreated,
+        dateDue,
+    };
 
     $effect(() => {
         if (isDragging) {
@@ -84,96 +114,6 @@
         event.preventDefault();
         toggleTaskSelection(id);
     }
-
-    let bgColor = $derived.by(() => {
-        if (isDragging && isSelected) {
-            switch (status) {
-                case "completed":
-                    return "bg-moss_green-600";
-                case "registered":
-                    return "bg-thistle-600";
-                case "overdue":
-                    return "bg-redwood-600";
-                default:
-                    return "bg-amber-600";
-            }
-        }
-        if (isSelected) {
-            switch (status) {
-                case "completed":
-                    return "bg-moss_green-300";
-                case "registered":
-                    return "bg-thistle-300";
-                case "overdue":
-                    return "bg-redwood-300";
-                default:
-                    return "bg-amber-300";
-            }
-        }
-        switch (status) {
-            case "completed":
-                return "bg-moss_green-700";
-            case "registered":
-                return "bg-thistle";
-            case "overdue":
-                return "bg-redwood";
-            default:
-                return "bg-amber";
-        }
-    });
-
-    let hoverColor = $derived.by(() => {
-        if (isDragging && isSelected) {
-            switch (status) {
-                case "completed":
-                    return "hover:bg-moss_green-500";
-                case "registered":
-                    return "hover:bg-thistle-500";
-                case "overdue":
-                    return "hover:bg-redwood-500";
-                default:
-                    return "hover:bg-amber-500";
-            }
-        }
-        if (isSelected) {
-            switch (status) {
-                case "completed":
-                    return "hover:bg-moss_green-200";
-                case "registered":
-                    return "hover:bg-thistle-200";
-                case "overdue":
-                    return "hover:bg-redwood-200";
-                default:
-                    return "hover:bg-amber-200";
-            }
-        }
-        switch (status) {
-            case "completed":
-                return "hover:bg-moss_green-500";
-            case "registered":
-                return "hover:bg-thistle-400";
-            case "overdue":
-                return "hover:bg-redwood-400";
-            default:
-                return "hover:bg-amber-400";
-        }
-    });
-
-    let selectedCount = $derived(taskState.selectedTasks.length);
-    let showBadge = $derived(isDragging && isSelected && selectedCount > 1);
-
-    const currentViewIndex = getDisplayTasks().findIndex((t) => t.id === id);
-
-    const taskData = {
-        id,
-        viewIndex: currentViewIndex,
-        name,
-        status,
-        description,
-        memo,
-        dateCreated,
-        dateDue,
-    };
 </script>
 
 <div
@@ -195,9 +135,12 @@
     onclick={handleClick}
     padding="none"
     size="xl"
-    class="flex flex-col {bgColor} {hoverColor} max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
+    onmouseenter={() => isHovered = true}
+    onmouseleave={() => isHovered = false}
+    class="task-card flex flex-col max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
         ? 'opacity-50'
         : ''} {wasJustCreated ? 'animate-wiggle' : ''}"
+    style="background-color: {currentBgColor};"
 >
         <div class="flex gap-12">
             <div
@@ -213,31 +156,27 @@
             <div class="flex-1 max-w-full overflow-hidden">
                 <Heading
                     tag="h3"
-                    class="text-5xl font-bold mb-8 {isSelected
-                        ? 'text-stone-200'
-                        : 'text-slate-700'}"
+                    class="text-5xl font-bold mb-8"
+                    style="color: {textColor};"
                 >
                     {name}
                 </Heading>
                 <P
-                    class="mt-4 text-slate-700 line-clamp-1 {isSelected
-                        ? 'text-stone-200'
-                        : ''}"
+                    class="mt-4 line-clamp-1"
+                    style="color: {textColor};"
                 >
                     {description}
                 </P>
                 <Hr hrClass="mt-6 mb-2" />
                 <P
-                    class="text-slate-700 {isSelected
-                        ? 'text-stone-200'
-                        : ''} p-0 m-0"
+                    class="p-0 m-0"
+                    style="color: {textColor};"
                 >
                     Memo:
                 </P>
                 <P
-                    class="text-slate-700 line-clamp-1 {isSelected
-                        ? 'text-stone-200'
-                        : ''} p-0 m-0"
+                    class="line-clamp-1 p-0 m-0"
+                    style="color: {textColor};"
                 >
                     {memo}
                 </P>
@@ -245,18 +184,18 @@
 
             <Listgroup
                 items={statusItems}
-                class={isSelected ? "text-slate-700" : ""}
+                class="bg-transparent"
                 itemClass="border bg-transparent hover:bg-transparent p-4 font-bold"
+                style="color: {textColor};"
             />
         </div>
-    </Card>
+</Card>
 </div>
 
 {#if showBadge}
     <div
-        class="fixed z-[9999] bg-moss_green-600 text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-slate-700 pointer-events-none"
-        style="left: {mouseX + 20}px; top: {mouseY -
-            10}px; transform: translate(0, 0);"
+        class="fixed z-[9999] text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-slate-700 pointer-events-none"
+        style="left: {mouseX + 20}px; top: {mouseY - 10}px; transform: translate(0, 0); background-color: {preferencesState.completedTaskColor};"
     >
         {selectedCount}
     </div>
@@ -276,5 +215,9 @@
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
+    }
+    
+    :global(.task-card) {
+        transition: background-color 0.2s ease !important;
     }
 </style>
