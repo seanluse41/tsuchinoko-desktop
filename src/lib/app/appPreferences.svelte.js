@@ -4,8 +4,26 @@ export const preferencesState = $state({
     language: "en",
     compact: false,
     syncTimer: "15",
-    completedTaskColor: "default",
-    registeredTaskColor: "default",
-    overdueTaskColor: "default",
-    menuColor: "default"
+    completedTaskColor: "#829650",
+    registeredTaskColor: "#ffbf00",
+    overdueTaskColor: "#9d6455",
+    menuColor: "#d1c1e9"
 });
+
+export const resetAllPreferences = () => {
+    preferencesState.loggingEnabled = true,
+    preferencesState.language = "en",
+    preferencesState.compact = false,
+    preferencesState.syncTimer = "15",
+    preferencesState.completedTaskColor = "#829650",
+    preferencesState.registeredTaskColor = "#ffbf00",
+    preferencesState.overdueTaskColor = "#9d6455",
+    preferencesState.menuColor = "#d1c1e9"
+}
+
+export const resetColors = () => {
+    preferencesState.completedTaskColor = "#829650",
+    preferencesState.registeredTaskColor = "#ffbf00",
+    preferencesState.overdueTaskColor = "#9d6455",
+    preferencesState.menuColor = "#d1c1e9"
+}

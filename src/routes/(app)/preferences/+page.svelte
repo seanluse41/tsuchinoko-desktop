@@ -8,9 +8,10 @@
         Select,
         Tooltip,
         Hr,
+        Button,
     } from "svelte-5-ui-lib";
     import { InfoCircleSolid } from "flowbite-svelte-icons";
-    import { preferencesState } from "$lib/app/appPreferences.svelte.js";
+    import { preferencesState, resetAllPreferences, resetColors } from "$lib/app/appPreferences.svelte.js";
     import ColorPicker from "svelte-awesome-color-picker";
 
     $effect(() => {
@@ -19,8 +20,10 @@
 </script>
 
 <div class="p-8 relative">
-    <Card class="max-w-4xl mx-auto" style="background-color: {preferencesState.menuColor || '#D1C1E9'}">        >
-
+    <Card
+        class="max-w-4xl mx-auto"
+        style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
+    >
         <div class="space-y-8">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -137,55 +140,54 @@
             >
 
             <div class="grid grid-cols-2 gap-8">
-                <div>
+                <div class="p-4 bg-white rounded-3xl">
                     <span class="text-lg font-medium mb-2 block"
                         >Menu Color</span
                     >
                     <ColorPicker
                         label={preferencesState.menuColor}
                         position="responsive"
-                        onInput={(event) => {
-                            preferencesState.menuColor = event.hex;
-                        }}
+                        bind:hex={preferencesState.menuColor}
                     />
                 </div>
 
-                <div>
+                <div class="p-4 bg-white rounded-3xl">
                     <span class="text-lg font-medium mb-2 block"
                         >Completed Task Color</span
                     >
                     <ColorPicker
                         label={preferencesState.completedTaskColor}
                         position="responsive"
-                        onInput={(event) => {
-                            preferencesState.completedTaskColor = event.hex;
-                        }}
+                        bind:hex={preferencesState.completedTaskColor}
                     />
                 </div>
 
-                <div>
+                <div class="p-4 bg-white rounded-3xl">
                     <span class="text-lg font-medium mb-2 block"
                         >Registered Task Color</span
                     >
                     <ColorPicker
+                        label={preferencesState.registeredTaskColor}
                         position="responsive"
-                        onInput={(event) => {
-                            preferencesState.registeredTaskColor = event.hex;
-                        }}
+                        bind:hex={preferencesState.registeredTaskColor}
                     />
                 </div>
 
-                <div>
+                <div class="p-4 bg-white rounded-3xl">
                     <span class="text-lg font-medium mb-2 block"
                         >Overdue Task Color</span
                     >
                     <ColorPicker
+                        label={preferencesState.overdueTaskColor}
                         position="responsive"
-                        onInput={(event) => {
-                            preferencesState.overdueTaskColor = event.hex;
-                        }}
+                        bind:hex={preferencesState.overdueTaskColor}
                     />
                 </div>
+            </div>
+            <Hr hrClass="my-16" />
+            <div class="space-y-2">
+                <Button size="lg" color="light" outline onclick={resetColors}>Reset Colors</Button>
+                <Button size="lg" color="light" outline onclick={resetAllPreferences}>Reset All Preferences</Button>
             </div>
         </div>
     </Card>

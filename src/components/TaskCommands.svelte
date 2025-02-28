@@ -19,6 +19,7 @@
     import TaskFolder from "./HomeTaskButtons/TaskFolder.svelte";
     import AddFolder from "./HomeTaskButtons/AddFolder.svelte";
     import { folderState } from "$lib/app/appFolderManager.svelte.js";
+    import { preferencesState } from "$lib/app/appPreferences.svelte";
 
     import FilterButton from "./HomeTaskButtons/FilterTasks.svelte";
     import SortButton from "./HomeTaskButtons/SortTasks.svelte";
@@ -94,8 +95,9 @@
         backdrop={false}
         {isOpen}
         {closeSidebar}
-        class="bg-thistle z-10 h-full border-r-2 border-ebony"
+        class="z-10 h-full border-r-2 border-ebony"
         divClass="bg-transparent px-6 py-20 overflow-y-auto"
+        style="background-color: {preferencesState.menuColor}"
     >
         <SidebarGroup>
             <FilterButton />

@@ -13,6 +13,7 @@
   let activeUrl = $state(page.url.pathname);
   import { ChevronDownOutline } from "flowbite-svelte-icons";
   import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
+  import { preferencesState } from "$lib/app/appPreferences.svelte";
   
   let nav = uiHelpers();
   let navStatus = $state(false);
@@ -40,7 +41,8 @@
   {closeNav}
   {navStatus}
   breakPoint="md"
-  navClass="bg-thistle border-b-2 border-ebony sticky z-50"
+  navClass="border-b-2 border-ebony sticky z-50"
+  style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
 >
   {#snippet brand()}
     <NavBrand siteName="Tsuuchinoko" class="text-ebony-800"></NavBrand>
