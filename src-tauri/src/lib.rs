@@ -1,6 +1,7 @@
 mod commands;
 mod kintone;
 use tauri::Manager;
+use tauri::LogicalSize;
 use tauri_plugin_log::{Target, TargetKind};
 #[cfg(any(target_os = "linux", windows))]
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -25,6 +26,11 @@ pub fn run() {
 
     builder
         .setup(|app| {
+
+            if let Some(window) = app.get_webview_window("main") {
+                window.set_min_size(Some(LogicalSize::new(640, 480)))
+                    .expect("Failed to set minimum window size");
+            }
             // Get the app local data directory and ensure it exists
             let app_local_dir = app
                 .path()

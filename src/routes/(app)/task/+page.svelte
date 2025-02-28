@@ -9,11 +9,16 @@
     let taskId = $derived(page.url.searchParams.get("id"));
 
     $effect(() => {
-        if (taskId) {
-            taskState.selectedTasks = [taskId];
-        }
-        trackTaskAction([taskId], "view")
-    });
+    console.log("Task ID from URL:", taskId);
+    console.log("Task ID type:", typeof taskId);
+    console.log("All task IDs:", taskState.tasks.map(t => t.id));
+    console.log("All task ID types:", taskState.tasks.map(t => typeof t.id));
+    
+    if (taskId) {
+        taskState.selectedTasks = [taskId];
+    }
+    trackTaskAction([taskId], "view")
+});
 
     let task = $derived(taskState.tasks.find((t) => t.id === taskId));
 </script>
@@ -23,8 +28,8 @@
         <TaskDetailsCommands taskId={task?.id} />
     </div>
     {#if task}
-        <div class="flex-1 overflow-y-auto p-8">
-            <h1 class="text-2xl font-bold mb-4">{task.name}</h1>
+        <div class="flex-1 overflow-y-auto p-8 z-10">
+            <h1 class="text-5xl font-bold mb-4">{task.name}</h1>
             <div class="space-y-4 max-w-full">
                 <p><strong>ID:</strong> {task.id}</p>
                 <p><strong>Status:</strong> {task.status}</p>
