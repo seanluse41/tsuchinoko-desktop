@@ -1,20 +1,21 @@
-<!-- src/components/AddFolder.svelte -->
+<!-- src/components/HomeTaskButtons/AddFolder.svelte -->
 <script>
-    import { SidebarItem } from "svelte-5-ui-lib";
+    import { SidebarItem, uiHelpers } from "svelte-5-ui-lib";
     import { CirclePlusSolid } from "flowbite-svelte-icons";
+    import AddFolderModal from "../AddFolderModal.svelte";
     
-    let { onclick } = $props();
+    // Create a UI helper for the modal
+    const modalUI = uiHelpers();
 
-    function handleClick() {
-        console.log("Add folder clicked");
-        if (onclick) onclick();
+    function openAddFolderModal() {
+        modalUI.toggle();
     }
 </script>
 
 <div class="folder-item">
     <SidebarItem
         label="Add Folder"
-        {onclick}
+        onclick={openAddFolderModal}
         class="cursor-pointer"
         activeClass="flex items-center text-base font-normal text-slate-700 font-bold rounded-lg border border-slate-700 border-dotted p-3 hover:bg-slate-200 bg-white"
         nonActiveClass="flex items-center text-base font-normal text-slate-700 font-bold rounded-lg border border-slate-700 border-dashed p-3 hover:bg-slate-200 bg-white"
@@ -24,3 +25,5 @@
         {/snippet}
     </SidebarItem>
 </div>
+
+<AddFolderModal modalUI={modalUI} />

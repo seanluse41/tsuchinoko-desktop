@@ -5,6 +5,7 @@
         SidebarGroup,
         SidebarButton,
         uiHelpers,
+        Modal
     } from "svelte-5-ui-lib";
     import { goto } from "$app/navigation";
     import { taskState, allTasksCompleted } from "$lib/app/appTaskManager.svelte";
@@ -81,11 +82,6 @@
         dndState.isDragging && !dragState.activeFolderId,
     );
 
-    function handleAddFolder() {
-        console.log(folderState)
-        console.log(taskState)
-        console.log("Add folder clicked");
-    }
 </script>
 
 <div class="relative">
@@ -125,7 +121,7 @@
                     />
                 {/each}
             </div>
-            <AddFolder onclick={handleAddFolder} />
+            <AddFolder />
         </SidebarGroup>
     </Sidebar>
 </div>
