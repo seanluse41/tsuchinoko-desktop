@@ -6,7 +6,7 @@ export function buildAuthUrl(subdomain, clientId, domain = 'cybozu.com') {
   authState.state = state;
 
   const authUrl = new URL(`https://${subdomain}.${domain}/oauth2/authorization`);
-  const scope = "k:app_record:read k:app_record:write";
+  const scope = "k:app_record:read k:app_record:write k:app_settings:read k:app_settings:write";
   
   authUrl.searchParams.set("response_type", "code");
   authUrl.searchParams.set("client_id", clientId);

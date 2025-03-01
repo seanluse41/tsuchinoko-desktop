@@ -11,10 +11,7 @@ export const viewState = $state({
 const tasksView = $derived.by(() => {
     let result = [...taskState.tasks];
     
-    // Debug: Log all unique status values in tasks
     const uniqueStatuses = [...new Set(result.map(task => task.status))];
-    console.log("Available task statuses:", uniqueStatuses);
-    console.log("Active filters:", viewState.activeFilters);
     
     // First, apply folder filtering
     if (folderState.selectedFolder !== 'All') {
@@ -26,7 +23,6 @@ const tasksView = $derived.by(() => {
         // Only keep tasks whose status is in the activeFilters array
         result = result.filter(task => {
             const matches = viewState.activeFilters.includes(task.status);
-            console.log(`Task ${task.id} status: ${task.status}, matches filters: ${matches}`);
             return matches;
         });
     }
@@ -41,7 +37,6 @@ const tasksView = $derived.by(() => {
         });
     }
     
-    console.log(`Filtered tasks: ${result.length} of ${taskState.tasks.length}`);
     return result;
 });
 

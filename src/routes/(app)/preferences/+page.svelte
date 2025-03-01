@@ -15,7 +15,7 @@
     import ColorPicker from "svelte-awesome-color-picker";
 </script>
 
-<div class="p-8 relative">
+<div class="relative w-full h-full overflow-auto p-8">
     <Card
         class="max-w-4xl mx-auto"
         style="background-color: {preferencesState.menuColor || '#D1C1E9'}"

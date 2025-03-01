@@ -10,6 +10,7 @@ export const authState = $state({
       subdomain: null,
       domain: 'cybozu.com',
       clientId: null,
-      clientSecret: null
+      clientSecret: null,
+      appId: null
   }
 });
