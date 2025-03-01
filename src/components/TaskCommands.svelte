@@ -75,14 +75,11 @@
             return;
         }
 
-        // Determine which tasks to move:
-        // If the dragged task is part of the selected tasks, move all selected tasks
-        // Otherwise, just move the dragged task
+        // check if one or multiple drag
         const tasksToMove = taskState.selectedTasks.includes(draggedTask.id)
             ? taskState.selectedTasks
             : [draggedTask.id];
 
-        // If target is "All" folder, we'll set the folder value to empty string
         const targetFolderValue = folderId === "All" ? "" : folderId;
 
         // Skip if trying to move to the same folder
@@ -93,13 +90,8 @@
         });
 
         if (allTasksAlreadyInFolder) {
-            console.log("Tasks already in this folder");
             return;
         }
-
-        console.log(
-            `Moving ${tasksToMove.length} tasks to folder ${folderId} (value: "${targetFolderValue}")`,
-        );
 
         // Call the changeTaskFolder function
         changeTaskFolder("16", tasksToMove, targetFolderValue)

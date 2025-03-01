@@ -8,12 +8,7 @@
     // Get taskId from query parameter instead of route param
     let taskId = $derived(page.url.searchParams.get("id"));
 
-    $effect(() => {
-    console.log("Task ID from URL:", taskId);
-    console.log("Task ID type:", typeof taskId);
-    console.log("All task IDs:", taskState.tasks.map(t => t.id));
-    console.log("All task ID types:", taskState.tasks.map(t => typeof t.id));
-    
+    $effect(() => {  
     if (taskId) {
         taskState.selectedTasks = [taskId];
     }

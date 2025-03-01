@@ -22,7 +22,6 @@ ${selectedTask.folder ? `Folder: ${selectedTask.folder}` : ""}`;
         if (!selectedTask) return;
 
         const formattedText = formatText(selectedTask);
-        console.log(formattedText)
         await writeText(formattedText);
     };
 </script>
