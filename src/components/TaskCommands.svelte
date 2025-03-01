@@ -32,6 +32,7 @@
     import SelectAllButton from "./HomeTaskButtons/SelectAllTasks.svelte";
     import CompleteButton from "./HomeTaskButtons/CompleteTasks.svelte";
     import DeleteButton from "./HomeTaskButtons/DeleteTasks.svelte";
+    import HelpButton from "./HomeTaskButtons/Help.svelte"
     import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
 
     // Sidebar setup
@@ -146,6 +147,9 @@
                 {/each}
             </div>
             <AddFolder />
+        </SidebarGroup>
+        <SidebarGroup border>
+            <HelpButton />
         </SidebarGroup>
     </Sidebar>
 </div>

@@ -137,7 +137,7 @@
                     <div class="p-4 border border-slate-200 rounded-lg bg-white hover:bg-slate-100">
                         <Heading level={3} class="text-xl font-semibold mb-2 text-slate-700">Kintone Developer Program</Heading>
                         <P class="mb-3 text-slate-600">
-                            Learn more about building custom solutions on the Kintone platform.
+                            Learn more about building customizations, plugins, and more solutions on Kintone!
                         </P>
                         <A href="https://kintone.dev/" target="_blank" class="text-slate-700 hover:text-slate-800">
                             Visit Kintone Developer Program
