@@ -61,7 +61,6 @@ export function setFilter(filter) {
 }
 
 export function resetFiltersAndSort() {
-    viewState.filter = null;
     viewState.sortField = null;
     viewState.sortDirection = null;
 }
