@@ -3,7 +3,7 @@ import { taskState } from './appTaskManager.svelte.js';
 import { folderState } from './appFolderManager.svelte.js';
 
 export const viewState = $state({
-    filter: null,  // 'overdue', 'completed', 'registered', 'unregistered'
+    activeFilters: [],  // Array of active filters: ['overdue', 'completed', 'registered', 'unregistered']
     sortField: null,    // 'created', 'due'  
     sortDirection: null // 'asc', 'desc'
 });
@@ -11,14 +11,24 @@ export const viewState = $state({
 const tasksView = $derived.by(() => {
     let result = [...taskState.tasks];
     
+    // Debug: Log all unique status values in tasks
+    const uniqueStatuses = [...new Set(result.map(task => task.status))];
+    console.log("Available task statuses:", uniqueStatuses);
+    console.log("Active filters:", viewState.activeFilters);
+    
     // First, apply folder filtering
     if (folderState.selectedFolder !== 'All') {
         result = result.filter(task => task.folder === folderState.selectedFolder);
     }
     
-    // Then apply status filter
-    if (viewState.filter) {
-        result = result.filter(task => task.status === viewState.filter);
+    // Then apply status filters (if any are active)
+    if (viewState.activeFilters.length > 0) {
+        // Only keep tasks whose status is in the activeFilters array
+        result = result.filter(task => {
+            const matches = viewState.activeFilters.includes(task.status);
+            console.log(`Task ${task.id} status: ${task.status}, matches filters: ${matches}`);
+            return matches;
+        });
     }
     
     // Finally apply sort
@@ -31,6 +41,7 @@ const tasksView = $derived.by(() => {
         });
     }
     
+    console.log(`Filtered tasks: ${result.length} of ${taskState.tasks.length}`);
     return result;
 });
 
@@ -52,12 +63,22 @@ export function toggleSort(field) {
     }
 }
 
-export function setFilter(filter) {
-    const newFilter = viewState.filter === filter ? null : filter;
-    if (newFilter !== viewState.filter) {
-        taskState.selectedTasks = [];
-        viewState.filter = newFilter;
+export function toggleFilter(filter) {
+  
+    if (viewState.activeFilters.includes(filter)) {
+        // Remove the filter if it's already active
+        viewState.activeFilters = viewState.activeFilters.filter(f => f !== filter);
+    } else {
+        // Add the filter if it's not already active
+        viewState.activeFilters = [...viewState.activeFilters, filter];
     }
+   
+    // Clear selection when filters change
+    taskState.selectedTasks = [];
+}
+
+export function isFilterActive(filter) {
+    return viewState.activeFilters.includes(filter);
 }
 
 export function resetFiltersAndSort() {

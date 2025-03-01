@@ -1,26 +1,23 @@
 <!-- src/components/HomeTaskButtons/FilterTasks.svelte -->
 <script>
-    import { viewState, setFilter } from "$lib/app/appTaskFilters.svelte.js";
+    import { viewState, toggleFilter, isFilterActive } from "$lib/app/appTaskFilters.svelte.js";
     import {
         SidebarDropdownWrapper,
         SidebarItem,
-        Indicator,
     } from "svelte-5-ui-lib";
     import { SearchOutline } from "flowbite-svelte-icons";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
 
-    const filterOverdue = () => setFilter("overdue");
-    const filterCompleted = () => setFilter("completed");
-    const filterRegistered = () => setFilter("registered");
-    const filterUnregistered = () => setFilter("unregistered");
+    const filterOverdue = () => toggleFilter("overdue");
+    const filterCompleted = () => toggleFilter("completed");
+    const filterRegistered = () => toggleFilter("registered");
+    const filterUnregistered = () => toggleFilter("unregistered");
 
-    $effect(() => {
-        $inspect(viewState);
-    });
+    let activeFilterCount = $derived(viewState.activeFilters.length);
 </script>
 
 <SidebarDropdownWrapper
-    label="Filter"
+    label="Filter{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}"
     btnClass="cursor-pointer mb-3 flex items-center text-base font-bold text-slate-700 rounded-lg border border-slate-700 p-3 hover:bg-slate-200 bg-white"
 >
     {#snippet iconSlot()}
@@ -32,11 +29,11 @@
         onclick={filterOverdue}
         class="cursor-pointer"
         aClass="flex justify-end"
-        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded"
-        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded"
+        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded {isFilterActive('overdue') ? 'bg-slate-200' : ''}"
+        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded {isFilterActive('overdue') ? 'bg-slate-200' : ''}"
     >
         {#snippet subtext()}
-            {#if viewState.filter == "overdue"}
+            {#if isFilterActive("overdue")}
                 <span
                     class="ms-3 h-4 w-4 rounded-full px-2"
                     style="background-color: {preferencesState.overdueTaskColor};"
@@ -50,11 +47,11 @@
         onclick={filterCompleted}
         class="cursor-pointer"
         aClass="flex justify-end"
-        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded"
-        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded"
+        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded {isFilterActive('completed') ? 'bg-slate-200' : ''}"
+        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded {isFilterActive('completed') ? 'bg-slate-200' : ''}"
     >
         {#snippet subtext()}
-            {#if viewState.filter == "completed"}
+            {#if isFilterActive("completed")}
                 <span
                     class="ms-3 h-4 w-4 rounded-full px-2"
                     style="background-color: {preferencesState.completedTaskColor};"
@@ -68,11 +65,11 @@
         onclick={filterRegistered}
         class="cursor-pointer"
         aClass="flex justify-end"
-        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded"
-        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded"
+        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded {isFilterActive('registered') ? 'bg-slate-200' : ''}"
+        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded {isFilterActive('registered') ? 'bg-slate-200' : ''}"
     >
         {#snippet subtext()}
-            {#if viewState.filter == "registered"}
+            {#if isFilterActive("registered")}
                 <span
                     class="ms-3 h-4 w-4 rounded-full px-2"
                     style="background-color: {preferencesState.registeredTaskColor};"
@@ -86,11 +83,11 @@
         onclick={filterUnregistered}
         class="cursor-pointer"
         aClass="flex justify-end"
-        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded"
-        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded"
+        activeClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded {isFilterActive('unregistered') ? 'bg-slate-200' : ''}"
+        nonActiveClass="flex items-center text-base font-normal text-slate-700 p-3 hover:bg-slate-200 rounded {isFilterActive('unregistered') ? 'bg-slate-200' : ''}"
     >
         {#snippet subtext()}
-            {#if viewState.filter == "unregistered"}
+            {#if isFilterActive("unregistered")}
                 <span
                     class="ms-3 h-4 w-4 rounded-full px-2"
                     style="background-color: {preferencesState.unregisteredTaskColor};"
