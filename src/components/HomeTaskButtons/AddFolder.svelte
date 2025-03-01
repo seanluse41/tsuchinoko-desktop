@@ -4,7 +4,6 @@
     import { CirclePlusSolid } from "flowbite-svelte-icons";
     import AddFolderModal from "../AddFolderModal.svelte";
     
-    // Create a UI helper for the modal
     const modalUI = uiHelpers();
 
     function openAddFolderModal() {

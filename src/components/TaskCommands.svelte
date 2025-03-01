@@ -5,14 +5,18 @@
         SidebarGroup,
         SidebarButton,
         uiHelpers,
-        Modal
+        Modal,
     } from "svelte-5-ui-lib";
     import { goto } from "$app/navigation";
-    import { taskState, allTasksCompleted } from "$lib/app/appTaskManager.svelte";
+    import {
+        taskState,
+        allTasksCompleted,
+    } from "$lib/app/appTaskManager.svelte";
     import { getDisplayTasks } from "$lib/app/appTaskFilters.svelte";
     import { dragState } from "$lib/app/appTaskDragState.svelte.js";
     import { updateTaskStatus } from "$lib/kintone/kintoneUpdateRecords.svelte";
     import { deleteRecords } from "$lib/kintone/kintoneDeleteRecords.svelte.js";
+    import { changeTaskFolder } from "$lib/kintone/kintoneChangeFolder.svelte.js";
     import { dndState } from "@thisux/sveltednd";
     import ConfirmDeleteModal from "./ConfirmDeleteModal.svelte";
     import ConfirmCompleteModal from "./ConfirmCompleteModal.svelte";
@@ -54,7 +58,7 @@
         try {
             await deleteRecords("16");
             if (window.location.pathname.includes("/task/")) {
-                trackNavigation("/home")
+                trackNavigation("/home");
                 goto("/home");
             }
         } catch (err) {
@@ -65,23 +69,51 @@
     function handleDrop(folderId, state) {
         const displayTasks = getDisplayTasks();
         const draggedTask = displayTasks[state.draggedItem.viewIndex];
-        
+
         if (!draggedTask) {
-            console.error('Could not find dragged task in current view');
+            console.error("Could not find dragged task in current view");
             return;
         }
 
+        // Determine which tasks to move:
+        // If the dragged task is part of the selected tasks, move all selected tasks
+        // Otherwise, just move the dragged task
         const tasksToMove = taskState.selectedTasks.includes(draggedTask.id)
             ? taskState.selectedTasks
             : [draggedTask.id];
 
-        console.log(`Moving tasks to folder ${folderId}:`, tasksToMove);
+        // If target is "All" folder, we'll set the folder value to empty string
+        const targetFolderValue = folderId === "All" ? "" : folderId;
+
+        // Skip if trying to move to the same folder
+        const allTasksAlreadyInFolder = tasksToMove.every((id) => {
+            const task = taskState.tasks.find((t) => t.id === id);
+            const currentFolder = task?.folder || "";
+            return currentFolder === targetFolderValue;
+        });
+
+        if (allTasksAlreadyInFolder) {
+            console.log("Tasks already in this folder");
+            return;
+        }
+
+        console.log(
+            `Moving ${tasksToMove.length} tasks to folder ${folderId} (value: "${targetFolderValue}")`,
+        );
+
+        // Call the changeTaskFolder function
+        changeTaskFolder("16", tasksToMove, targetFolderValue)
+            .then(() => {
+                console.log("Tasks moved successfully");
+            })
+            .catch((err) => {
+                console.error("Failed to move tasks:", err);
+            });
     }
 
     let shouldShowGroupOutline = $derived(
         dndState.isDragging && !dragState.activeFolderId,
     );
-
 </script>
 
 <div class="relative">
