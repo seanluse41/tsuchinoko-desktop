@@ -159,7 +159,7 @@ async function clearCredentials() {
         const currentDomain = authState.user.domain;
         const currentClientId = authState.user.clientId;
         const currentClientSecret = authState.user.clientSecret;
-        const currentAppId = authState.user.appId; // Preserve appId when clearing auth
+        const currentAppId = authState.user.appId;
         
         Object.assign(authState, {
             token: null,

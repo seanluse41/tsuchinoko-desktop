@@ -7,8 +7,11 @@
   import { navigationState } from "$lib/app/appNavigationTracker.svelte";
   import { authState } from "$lib/app/appLoginManager.svelte.js";
 
+  // In src/routes/(app)/home/+page.svelte
   $effect(() => {
-    loadTasks();
+    if (authState.isAuthenticated && authState.token) {
+      loadTasks();
+    }
   });
 </script>
 

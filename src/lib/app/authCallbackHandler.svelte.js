@@ -21,7 +21,6 @@ export async function handleAuthCallback(url) {
         validateState(state);
         const tokenResponse = await exchangeToken(code);
         
-        // Update auth state with token info, but don't save yet
         Object.assign(authState, {
             token: tokenResponse.access_token,
             refreshToken: tokenResponse.refresh_token,
@@ -29,27 +28,21 @@ export async function handleAuthCallback(url) {
             error: null,
             isLoading: false
         });
-
-        // After authentication, check for the Tsuuchinoko app
-        try {
-            console.log("Checking for Tsuuchinoko app after login...");
-            const appResult = await checkForTsuuchinokoApp();
-            
-            if (appResult.exists) {
-                console.log(`Found Tsuuchinoko app with ID: ${appResult.appId}`);
-                // App ID is already stored by checkForTsuuchinokoApp function
-            } else {
-                console.log("Tsuuchinoko app not found after login");
-                // Note: appId will remain null in authState
+        
+        // Only check for app if we don't already have an app ID
+        if (!authState.user.appId) {
+            try {
+                console.log("No app ID found, checking for Tsuuchinoko app after login...");
+                const appResult = await checkForTsuuchinokoApp();
+                // App ID is already stored by checkForTsuuchinokoApp if found
+            } catch (appError) {
+                console.error("Error checking for Tsuuchinoko app after login:", appError);
+                // Continue with the login flow even if app detection fails
             }
-        } catch (appError) {
-            console.error("Error checking for Tsuuchinoko app after login:", appError);
-            // Continue with the login flow even if app detection fails
         }
-
-        // Now save credentials once with all updates (token and possibly app ID)
+        
+        // Now save credentials once with all updates
         await secretManager.storeCredentials();
-        console.log("Credentials stored after successful auth");
 
         trackTaskAction([], "login")
         trackNavigation("/home")       

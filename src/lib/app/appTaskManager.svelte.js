@@ -16,35 +16,52 @@ export const taskState = $state({
 export async function loadTasks() {
     taskState.isLoading = true;
     taskState.error = null;
-    
+
     try {
-        // If we don't have an appId, try to detect the Tsuuchinoko app first
+        // Only check for app if ID is missing
         if (!authState.user.appId) {
             console.log("No app ID found, attempting to detect Tsuuchinoko app...");
             const appResult = await checkForTsuuchinokoApp();
-            
+
             if (!appResult.exists) {
-                // App not found, we need to handle this case
                 taskState.error = "Tsuuchinoko app not found. Please go to Account Settings to set up your app.";
                 taskState.isLoading = false;
-                
-                // Wait a short time before redirecting to the account page
+
                 setTimeout(() => {
                     trackNavigation("/account");
                     goto("/account");
                 }, 2000);
-                
+
                 return;
             }
         }
-        
-        // Now we should have an app ID, proceed with loading tasks
-        const response = await getRecords("");
-        taskState.tasks = response.list;
-        taskState.selectedTasks = [];
-        
-        // Update available folders
-        folderState.folders = ['All', ...new Set(response.list.map(task => task.folder).filter(Boolean))];
+
+        // Attempt to get records - this may fail if app was deleted
+        try {
+            const response = await getRecords("");
+            taskState.tasks = response.list;
+            taskState.selectedTasks = [];
+
+            // Update available folders
+            folderState.folders = ['All', ...new Set(response.list.map(task => task.folder).filter(Boolean))];
+        } catch (error) {
+            // Check if error indicates app not found/deleted
+            if (error.toString().includes("GAIA_APP")) {
+                // App likely deleted, clear ID and redirect
+                console.log("App appears to be deleted, clearing app ID");
+                authState.user.appId = null;
+                await secretManager.storeCredentials();
+
+                taskState.error = "Tsuuchinoko app not found. It may have been deleted.";
+                setTimeout(() => {
+                    trackNavigation("/account");
+                    goto("/account");
+                }, 2000);
+            } else {
+                // Other error, just throw it
+                throw error;
+            }
+        }
     } catch (error) {
         taskState.error = error instanceof Error ? error.message : String(error);
         console.error("Error loading tasks:", error);
@@ -63,7 +80,7 @@ export function toggleTaskSelection(taskId) {
 }
 
 export function allTasksCompleted(selectedIds, tasks) {
-    return selectedIds.every(id => 
+    return selectedIds.every(id =>
         tasks.find(task => task.id === id)?.status === 'completed'
     );
 }
