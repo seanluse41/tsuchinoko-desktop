@@ -24,6 +24,7 @@ pub struct KintoneRecord {
     pub notificationContent: Value,
     pub taskMemo: Value,
     pub taskFolder: Value,
+    pub taskCompletionMemo: Value
 }
 
 #[derive(Debug, Serialize, Deserialize)]

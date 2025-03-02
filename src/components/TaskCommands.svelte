@@ -47,9 +47,9 @@
     });
 
     // Task handling functions
-    const handleComplete = async () => {
+    const handleComplete = async (completionMemo = '') => {
         try {
-            await updateTaskStatus();
+            await updateTaskStatus(completionMemo);
         } catch (err) {
             console.error("failed to complete task", err);
         }

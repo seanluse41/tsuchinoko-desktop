@@ -38,10 +38,10 @@
         }
     });
 
-    const handleComplete = async () => {
+    const handleComplete = async (completionMemo = '') => {
         if (!allTasksCompleted(taskState.selectedTasks, taskState.tasks)) {
             try {
-                await updateTaskStatus();
+                await updateTaskStatus(completionMemo);
                 trackNavigation("/home")
                 goto("/home");
             } catch (err) {

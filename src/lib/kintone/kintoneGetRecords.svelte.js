@@ -55,6 +55,7 @@ function transformRecords(records, appId) {
             dateDue: record.taskDeadline.value,
             description: record.notificationContent.value,
             memo: record.taskMemo.value,
+            completionMemo: record.taskCompletionMemo?.value,
             priority: record.taskPriority.value,
             folder: record.taskFolder.value
         }))

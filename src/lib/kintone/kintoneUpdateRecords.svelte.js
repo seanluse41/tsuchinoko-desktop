@@ -5,7 +5,7 @@ import { refreshToken } from './kintoneRefreshRequest.js';
 import { taskState } from "../app/appTaskManager.svelte.js";
 import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte.js";
 
-export async function updateTaskStatus() {
+export async function updateTaskStatus(completionMemo = '') {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
@@ -22,6 +22,9 @@ export async function updateTaskStatus() {
                 record: {
                     taskStatus: {
                         value: "completed"
+                    },
+                    taskCompletionMemo: {
+                        value: completionMemo || ""
                     }
                 }
             })),
@@ -32,9 +35,14 @@ export async function updateTaskStatus() {
             }
         });
 
+        // Update local state
         taskState.tasks = taskState.tasks.map(task =>
             taskState.selectedTasks.includes(task.id)
-                ? { ...task, status: "completed" }
+                ? { 
+                    ...task, 
+                    status: "completed",
+                    completionMemo: completionMemo || ""
+                }
                 : task
         );
         trackTaskAction(taskState.selectedTasks, "update");
@@ -43,7 +51,7 @@ export async function updateTaskStatus() {
     } catch (error) {
         if (error === "token_expired" && authState.refreshToken) {
             await refreshToken();
-            return await updateTaskStatus(appId);
+            return await updateTaskStatus(completionMemo);
         }
         throw error;
     }

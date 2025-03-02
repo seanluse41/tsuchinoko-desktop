@@ -5,6 +5,7 @@
     import { formatDate, getDueText } from "$lib/app/appDateHelpers.js";
     import TaskDetailsCommands from "../../../components/TaskDetailsCommands.svelte";
     import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte";
+    import { Heading, P, Hr } from "svelte-5-ui-lib";
     // Get taskId from query parameter instead of route param
     let taskId = $derived(page.url.searchParams.get("id"));
 
@@ -24,18 +25,26 @@
     </div>
     {#if task}
         <div class="flex-1 overflow-y-auto p-8 z-10">
-            <h1 class="text-5xl font-bold mb-4">{task.name}</h1>
+            <Heading class="text-5xl font-bold mb-4">{task.name}</Heading>
             <div class="space-y-4 max-w-full">
-                <p><strong>ID:</strong> {task.id}</p>
-                <p><strong>Status:</strong> {task.status}</p>
-                <p><strong>Created:</strong> {formatDate(task.dateCreated)}</p>
-                <p><strong>Due:</strong> {formatDate(task.dateDue)}</p>
-                <p><strong>Due in:</strong> {getDueText(task.dateDue)}</p>
-                <p class="break-words">
-                    <strong>Description:</strong>
+                <P>ID: {task.id}</P>
+                <P>Status: {task.status}</P>
+                <P>Created: {formatDate(task.dateCreated)}</P>
+                <P>Due: {formatDate(task.dateDue)}</P>
+                <P>Due in: {getDueText(task.dateDue)}</P>
+                <P class="break-words">
+                    Description:
                     {task.description}
-                </p>
-                <p class="break-words"><strong>Memo:</strong> {task.memo}</p>
+                </P>
+                <P class="break-words">Memo: {task.memo}</P>
+                <Hr />
+                {#if task.status === 'completed'}
+                    <div class="p-4 bg-moss_green-500 border border-slate-700 rounded-lg mt-4">
+                        <Heading class="font-medium text-white">Completion Notes:</Heading>
+                        <Hr class="mb-8 mt-4" />
+                        <P class="break-words text-white">{task.completionMemo}</P>
+                    </div>
+                {/if}
             </div>
         </div>
     {:else}

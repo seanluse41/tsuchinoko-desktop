@@ -3,7 +3,6 @@
     import { SidebarItem } from "svelte-5-ui-lib";
     import { BadgeCheckOutline } from "flowbite-svelte-icons";
     import { taskState, allTasksCompleted } from "$lib/app/appTaskManager.svelte";
-    import { updateTaskStatus } from "$lib/kintone/kintoneUpdateRecords.svelte";
 
     let { modalUI = undefined } = $props();
 if (!modalUI) throw new Error('modalUI prop is required');
