@@ -133,7 +133,7 @@ export async function createTsuuchinokoApp() {
         };
     }
 }
-// src/lib/kintone/kintoneCreateApp.svelte.js
+
 export async function updateRecordNumberField(appId, revision) {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
@@ -218,7 +218,7 @@ export async function getFormFields(appId) {
 }
 
 // Helper function to get all the field definitions for our app
-function getFieldDefinitions() {
+export async function getFieldDefinitions() {
     return {
         "notificationTitle": {
             "type": "SINGLE_LINE_TEXT",
