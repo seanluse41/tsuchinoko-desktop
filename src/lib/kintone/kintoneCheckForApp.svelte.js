@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { authState } from '../app/appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
 import { secretManager } from '../app/appSecretManager.svelte.js';
+import { createTsuuchinokoApp } from './kintoneCreateApp.svelte.js';
 
 // Function to get all apps from Kintone
 export async function getAllApps() {
@@ -38,11 +39,12 @@ export async function checkForTsuuchinokoApp() {
         const apps = await getAllApps();
         console.log("All apps:", apps);
         
-        // Example: "TSUUCHINOKO - sean"
-        // We would need to get the username from somewhere 
-        // For now, let's look for "TSUUCHINOKO - sean" specifically
+        // Look for app with "TSUUCHINOKO - [username]" pattern
+        const userName = authState.user.username || 'sean';
+        const expectedAppName = `TSUUCHINOKO - ${userName}`;
+        
         const tsuuchinokoApp = apps.find(app => 
-            app.name === "TSUUCHINOKO - sean"
+            app.name === expectedAppName
         );
         
         if (tsuuchinokoApp) {
@@ -61,12 +63,28 @@ export async function checkForTsuuchinokoApp() {
             };
         }
         
-        console.log("Tsuuchinoko app not found");
-        return {
-            exists: false,
-            appId: null,
-            app: null
-        };
+        console.log("Tsuuchinoko app not found, attempting to create one...");
+        const createResult = await createTsuuchinokoApp();
+        
+        if (createResult.success) {
+            return {
+                exists: true,
+                appId: createResult.appId,
+                app: {
+                    appId: createResult.appId,
+                    name: expectedAppName
+                },
+                created: true
+            };
+        } else {
+            console.error("Failed to create Tsuuchinoko app:", createResult.error);
+            return {
+                exists: false,
+                appId: null,
+                app: null,
+                error: createResult.error
+            };
+        }
         
     } catch (error) {
         console.error("Error checking for Tsuuchinoko app:", error);
