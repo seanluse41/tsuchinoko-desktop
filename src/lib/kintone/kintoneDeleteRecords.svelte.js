@@ -5,7 +5,7 @@ import { refreshToken } from './kintoneRefreshRequest.js';
 import { taskState } from "../app/appTaskManager.svelte.js";
 import { trackNavigation, trackTaskAction } from "$lib/app/appNavigationTracker.svelte.js";
 
-export async function deleteRecords(appId) {
+export async function deleteRecords() {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
@@ -16,7 +16,7 @@ export async function deleteRecords(appId) {
 
     try {
         await invoke("kintone_delete_records", {
-            appId,
+            appId: authState.user.appId,
             ids: taskState.selectedTasks,
             config: {
                 subdomain: authState.user.subdomain,

@@ -13,7 +13,7 @@ function formatDateTime(dateString) {
     return date.toISOString();
 }
 
-export async function addRecord(appId, formData) {
+export async function addRecord(formData) {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
@@ -52,7 +52,7 @@ export async function addRecord(appId, formData) {
         };
 
         const response = await invoke("kintone_add_record", {
-            appId,
+            appId: authState.user.appId,
             record,
             config: {
                 subdomain: authState.user.subdomain,
@@ -66,7 +66,7 @@ export async function addRecord(appId, formData) {
     } catch (error) {
         if (error === "token_expired" && authState.refreshToken) {
             await refreshToken();
-            return await addRecord(appId, formData);
+            return await addRecord(formData);
         }
         throw error;
     }

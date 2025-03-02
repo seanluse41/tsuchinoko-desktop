@@ -49,7 +49,7 @@
     // Task handling functions
     const handleComplete = async () => {
         try {
-            await updateTaskStatus("16");
+            await updateTaskStatus();
         } catch (err) {
             console.error("failed to complete task", err);
         }
@@ -57,7 +57,7 @@
 
     const handleDelete = async () => {
         try {
-            await deleteRecords("16");
+            await deleteRecords();
             if (window.location.pathname.includes("/task/")) {
                 trackNavigation("/home");
                 goto("/home");
@@ -95,7 +95,7 @@
         }
 
         // Call the changeTaskFolder function
-        changeTaskFolder("16", tasksToMove, targetFolderValue)
+        changeTaskFolder(tasksToMove, targetFolderValue)
             .then(() => {
                 console.log("Tasks moved successfully");
             })

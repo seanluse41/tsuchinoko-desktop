@@ -41,7 +41,7 @@
     const handleComplete = async () => {
         if (!allTasksCompleted(taskState.selectedTasks, taskState.tasks)) {
             try {
-                await updateTaskStatus("16");
+                await updateTaskStatus();
                 trackNavigation("/home")
                 goto("/home");
             } catch (err) {
@@ -52,7 +52,7 @@
 
     const handleDelete = async () => {
         try {
-            await deleteRecords("16");
+            await deleteRecords();
             trackNavigation("/home")
             goto("/home");
         } catch (err) {

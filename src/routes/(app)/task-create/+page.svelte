@@ -60,7 +60,7 @@
         try {
             isSubmitting = true;
             error = null;
-            const response = await addRecord("16", formData);
+            const response = await addRecord(formData);
             trackNavigation("/home")
             goto("/home");
         } catch (err) {

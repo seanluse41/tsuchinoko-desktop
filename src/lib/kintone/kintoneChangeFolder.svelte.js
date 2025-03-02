@@ -5,7 +5,7 @@ import { refreshToken } from './kintoneRefreshRequest.js';
 import { taskState } from "../app/appTaskManager.svelte.js";
 import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte.js";
 
-export async function changeTaskFolder(appId, taskIds, targetFolder) {
+export async function changeTaskFolder(taskIds, targetFolder) {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
@@ -16,7 +16,7 @@ export async function changeTaskFolder(appId, taskIds, targetFolder) {
 
     try {
         await invoke("kintone_update_records", {
-            appId,
+            appId: authState.user.appId,
             records: taskIds.map(id => ({
                 id: id,
                 record: {
