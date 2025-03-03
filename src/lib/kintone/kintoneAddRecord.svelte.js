@@ -60,6 +60,8 @@ export async function addRecord(formData) {
                 access_token: authState.token
             }
         });
+
+        console.log(response)
         trackTaskAction([response.id], "create")
         return response;
 

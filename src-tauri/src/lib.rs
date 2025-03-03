@@ -66,7 +66,10 @@ pub fn run() {
             commands::kintone_add_form_fields,
             commands::kintone_deploy_app,
             commands::kintone_update_form_fields,
-            commands::kintone_get_form_fields
+            commands::kintone_get_form_fields,
+            commands::kintone_update_app_settings,
+            commands::kintone_get_app_settings,
+            commands::kintone_get_deploy_status
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

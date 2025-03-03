@@ -113,7 +113,8 @@ async function loadStoredCredentials() {
                 domain: setupCreds?.domain || 'cybozu.com',
                 clientId: setupCreds?.clientId || null,
                 clientSecret: setupCreds?.clientSecret || null,
-                appId: setupCreds?.appId || null // Add appId to credentials loading
+                appId: setupCreds?.appId || null,
+                username: setupCreds?.username || null // Add username to loading
             },
             isAuthenticated: !!authCreds?.token,
             error: null
@@ -133,7 +134,8 @@ async function storeCredentials() {
         domain: authState.user.domain,
         clientId: authState.user.clientId,
         clientSecret: authState.user.clientSecret,
-        appId: authState.user.appId // Add appId to credentials storage
+        appId: authState.user.appId,
+        username: authState.user.username // Add username to storage
     };
 
     const authCredentials = {
@@ -160,6 +162,7 @@ async function clearCredentials() {
         const currentClientId = authState.user.clientId;
         const currentClientSecret = authState.user.clientSecret;
         const currentAppId = authState.user.appId;
+        const currentUsername = authState.user.username;
         
         Object.assign(authState, {
             token: null,
@@ -169,7 +172,8 @@ async function clearCredentials() {
                 domain: currentDomain,
                 clientId: currentClientId,
                 clientSecret: currentClientSecret,
-                appId: currentAppId
+                appId: currentAppId,
+                username: currentUsername
             },
             isAuthenticated: false,
             error: null

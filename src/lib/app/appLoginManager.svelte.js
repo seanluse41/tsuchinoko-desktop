@@ -11,6 +11,7 @@ export const authState = $state({
       domain: 'cybozu.com',
       clientId: null,
       clientSecret: null,
-      appId: null
+      appId: null,
+      username: null
   }
 });

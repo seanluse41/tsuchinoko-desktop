@@ -398,3 +398,120 @@ pub async fn kintone_get_form_fields(
         .await
         .map_err(|e| format!("Failed to parse response: {}", e))
 }
+
+#[tauri::command]
+pub async fn kintone_update_app_settings(
+    settings: serde_json::Value,
+    config: GetRecordsConfig,
+) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    
+    let url = format!(
+        "https://{}.{}/k/v1/preview/app/settings.json",
+        config.subdomain, config.domain
+    );
+    
+    let response = client
+        .put(&url)
+        .header("Authorization", format!("Bearer {}", config.access_token))
+        .json(&settings)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to update app settings: {}", e))?;
+    
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.map_err(|e| e.to_string())?;
+        
+        if status == reqwest::StatusCode::UNAUTHORIZED {
+            return Err("token_expired".to_string());
+        }
+        return Err(format!("API request failed: {}", text));
+    }
+    
+    response
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| format!("Failed to parse response: {}", e))
+}
+
+#[tauri::command]
+pub async fn kintone_get_app_settings(
+    app_id: String,
+    config: GetRecordsConfig,
+) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    
+    let url = format!(
+        "https://{}.{}/k/v1/app/settings.json?app={}",
+        config.subdomain, config.domain, app_id
+    );
+    
+    let response = client
+        .get(&url)
+        .header("Authorization", format!("Bearer {}", config.access_token))
+        .send()
+        .await
+        .map_err(|e| format!("Failed to get app settings: {}", e))?;
+    
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.map_err(|e| e.to_string())?;
+        
+        if status == reqwest::StatusCode::UNAUTHORIZED {
+            return Err("token_expired".to_string());
+        }
+        return Err(format!("API request failed: {}", text));
+    }
+    
+    response
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| format!("Failed to parse response: {}", e))
+}
+
+#[tauri::command]
+pub async fn kintone_get_deploy_status(
+    app_ids: Vec<String>,
+    config: GetRecordsConfig,
+) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+    
+    // Build the URL with query parameters
+    let mut url = format!(
+        "https://{}.{}/k/v1/preview/app/deploy.json?",
+        config.subdomain, config.domain
+    );
+    
+    // Add app IDs to query parameters
+    for (i, app_id) in app_ids.iter().enumerate() {
+        url.push_str(&format!("apps[{}]={}&", i, app_id));
+    }
+    
+    // Remove the trailing '&' if it exists
+    if url.ends_with('&') {
+        url.pop();
+    }
+    
+    let response = client
+        .get(&url)
+        .header("Authorization", format!("Bearer {}", config.access_token))
+        .send()
+        .await
+        .map_err(|e| format!("Failed to get deployment status: {}", e))?;
+    
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.map_err(|e| e.to_string())?;
+        
+        if status == reqwest::StatusCode::UNAUTHORIZED {
+            return Err("token_expired".to_string());
+        }
+        return Err(format!("API request failed: {}", text));
+    }
+    
+    response
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| format!("Failed to parse response: {}", e))
+}

@@ -1,18 +1,90 @@
 // src/lib/kintone/kintoneCreateApp.svelte.js
+
 import { invoke } from "@tauri-apps/api/core";
 import { authState } from '../app/appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
 import { secretManager } from '../app/appSecretManager.svelte.js';
+import { deployApp } from './kintoneDeployUtils.svelte.js';
+import { discoverUsername, updateAppName } from './kintoneGetUsername.svelte.js';
+
+/**
+ * Creates a new Tsuuchinoko app in Kintone
+ * @returns {Promise<Object>} Result of the creation process
+ */
+export async function createTsuuchinokoApp() {
+    try {
+        // Step 1: Create preview app
+        console.log("Creating preview app...");
+        const previewResponse = await createPreviewApp();
+        console.log("Preview app created:", previewResponse);
+        
+        const appId = previewResponse.app;
+        
+        // Step 2: Add form fields
+        console.log("Adding form fields...");
+        await addFormFields(appId);
+        console.log("Form fields added successfully");
+        
+        // Step 3: Update record number field code to taskID
+        console.log("Updating record number field code...");
+        await updateRecordNumberField(appId);
+        console.log("Record number field updated successfully");
+        
+        // Store app ID in authState
+        authState.user.appId = appId;
+        
+        // Step 4: Deploy the app and wait for deployment to complete
+        console.log("Deploying app...");
+        const deploymentSuccess = await deployApp(appId);
+        console.log("Deployment result:", deploymentSuccess);
+        
+        // Only proceed with username discovery if deployment succeeded
+        let username = 'user';
+        if (deploymentSuccess) {
+            try {
+                // Step 5: Create a welcome record to discover username
+                console.log("Discovering username...");
+                username = await discoverUsername(appId);
+                authState.user.username = username;
+                
+                // Step 6: Update the app name with the discovered username
+                console.log("Updating app name with username:", username);
+                await updateAppName(appId, username);
+            } catch (error) {
+                console.error("Error during post-deployment setup:", error);
+                // Continue with default username if there's an error
+            }
+        } else {
+            console.warn("Skipping username discovery due to deployment issues");
+        }
+        
+        // Save credentials once at the end
+        await secretManager.storeCredentials();
+        
+        return {
+            success: true,
+            appId,
+            username,
+            message: "Tsuuchinoko app created successfully!"
+        };
+    } catch (error) {
+        console.error("Failed to create Tsuuchinoko app:", error);
+        return {
+            success: false,
+            error: error.message || String(error),
+            message: "Failed to create Tsuuchinoko app."
+        };
+    }
+}
 
 export async function createPreviewApp() {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
+    
     try {
-        // Add username to app name to make it unique per user
-        const userName = authState.user.username || 'sean';
         const response = await invoke("kintone_create_preview_app", {
-            appName: `TSUUCHINOKO - ${userName}`,
+            appName: "TSUUCHINOKO",
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
@@ -29,122 +101,44 @@ export async function createPreviewApp() {
     }
 }
 
-export async function addFormFields(appId, revision) {
+export async function addFormFields(appId) {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
 
     try {
-        // Define all the fields required for the Tsuuchinoko app
         const fields = getFieldDefinitions();
         
-        const response = await invoke("kintone_add_form_fields", {
+        return await invoke("kintone_add_form_fields", {
             appId,
             fields,
-            revision,
+            revision: "", // No revision needed
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
                 access_token: authState.token
             }
         });
-
-        return response;
     } catch (error) {
         if (error === "token_expired" && authState.refreshToken) {
             await refreshToken();
-            return await addFormFields(appId, revision);
+            return await addFormFields(appId);
         }
         throw error;
     }
 }
 
-export async function deployApp(appId, revision) {
+export async function updateRecordNumberField(appId) {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
 
     try {
-        const response = await invoke("kintone_deploy_app", {
-            apps: [{ app: appId, revision }],
-            config: {
-                subdomain: authState.user.subdomain,
-                domain: authState.user.domain,
-                access_token: authState.token
-            }
-        });
-
-        return response;
-    } catch (error) {
-        if (error === "token_expired" && authState.refreshToken) {
-            await refreshToken();
-            return await deployApp(appId, revision);
-        }
-        throw error;
-    }
-}
-
-export async function createTsuuchinokoApp() {
-    try {
-        // Step 1: Create preview app
-        console.log("Creating preview app...");
-        const previewResponse = await createPreviewApp();
-        console.log("Preview app created:", previewResponse);
-        
-        const appId = previewResponse.app;
-        let revision = previewResponse.revision;
-        
-        // Step 2: Add form fields
-        console.log("Adding form fields...");
-        const fieldsResponse = await addFormFields(appId, revision);
-        console.log("Form fields added:", fieldsResponse);
-        
-        // Update revision for next step
-        revision = fieldsResponse.revision;
-        
-        // Step 3: Update record number field code to taskID
-        console.log("Updating record number field code...");
-        const updateResponse = await updateRecordNumberField(appId, revision);
-        console.log("Record number field updated:", updateResponse);
-        
-        // Update revision for deployment
-        revision = updateResponse.revision;
-        
-        // Step 4: Deploy the app
-        console.log("Deploying app...");
-        await deployApp(appId, revision);
-        console.log("App deployed successfully!");
-        
-        // Step 5: Save the app ID to auth state and secure storage
-        authState.user.appId = appId;
-        await secretManager.storeCredentials();
-        
-        return {
-            success: true,
-            appId,
-            message: "Tsuuchinoko app created successfully!"
-        };
-    } catch (error) {
-        console.error("Failed to create Tsuuchinoko app:", error);
-        return {
-            success: false,
-            error: error.message || String(error),
-            message: "Failed to create Tsuuchinoko app."
-        };
-    }
-}
-
-export async function updateRecordNumberField(appId, revision) {
-    if (!authState.isAuthenticated || !authState.token) {
-        throw new Error('Not authenticated');
-    }
-
-    try {
-        // First, get the form fields to find the record number field
+        // Get current form fields
         console.log("Getting form fields...");
         const formFields = await getFormFields(appId);
         
-        // Find the field with type RECORD_NUMBER
+        // Find the record number field
         let recordNumberFieldCode = null;
         let recordNumberField = null;
         
@@ -162,7 +156,7 @@ export async function updateRecordNumberField(appId, revision) {
         
         console.log(`Found record number field with code: ${recordNumberFieldCode}`);
         
-        // Create update properties with only the found field
+        // Update the field code
         const updateProperties = {};
         updateProperties[recordNumberFieldCode] = {
             ...recordNumberField,
@@ -170,23 +164,20 @@ export async function updateRecordNumberField(appId, revision) {
             label: "タスクID"
         };
         
-        // Update the field code
-        const response = await invoke("kintone_update_form_fields", {
+        return await invoke("kintone_update_form_fields", {
             appId,
             properties: updateProperties,
-            revision,
+            revision: "", // No revision needed
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
                 access_token: authState.token
             }
         });
-        
-        return response;
     } catch (error) {
         if (error === "token_expired" && authState.refreshToken) {
             await refreshToken();
-            return await updateRecordNumberField(appId, revision);
+            return await updateRecordNumberField(appId);
         }
         throw error;
     }
@@ -198,7 +189,7 @@ export async function getFormFields(appId) {
     }
 
     try {
-        const response = await invoke("kintone_get_form_fields", {
+        return await invoke("kintone_get_form_fields", {
             appId,
             config: {
                 subdomain: authState.user.subdomain,
@@ -206,8 +197,6 @@ export async function getFormFields(appId) {
                 access_token: authState.token
             }
         });
-
-        return response;
     } catch (error) {
         if (error === "token_expired" && authState.refreshToken) {
             await refreshToken();
