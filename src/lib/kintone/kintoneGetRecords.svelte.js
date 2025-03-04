@@ -44,20 +44,34 @@ export async function getRecords(query = '') {
     }
 }
 
+// Simplified transformRecords function in kintoneGetRecords.svelte.js
 function transformRecords(records, appId) {
     return {
-        list: records.map(record => ({
-            name: record.notificationTitle.value,
-            id: record.taskID.value,
-            status: record.taskStatus.value,
-            link: `https://${authState.user.subdomain}.${authState.user.domain}/k/${appId}/show#record=${record.taskID.value}`,
-            dateCreated: record.taskCreationDateTime.value,
-            dateDue: record.taskDeadline.value,
-            description: record.notificationContent.value,
-            memo: record.taskMemo.value,
-            completionMemo: record.taskCompletionMemo?.value,
-            priority: record.taskPriority.value,
-            folder: record.taskFolder.value
-        }))
+        list: records.map(record => {
+            // Extract creator info - only check the default field names
+            let creatorInfo = null;
+            
+            // Check only default creator field names based on locale
+            if (record['作成者'] && record['作成者'].value) {
+                creatorInfo = record['作成者'].value;
+            } else if (record['Created_by'] && record['Created_by'].value) {
+                creatorInfo = record['Created_by'].value;
+            }
+
+            return {
+                name: record.notificationTitle.value,
+                id: record.taskID?.value || record['レコード番号']?.value,
+                status: record.taskStatus.value,
+                link: `https://${authState.user.subdomain}.${authState.user.domain}/k/${appId}/show#record=${record['レコード番号']?.value}`,
+                dateCreated: record.taskCreationDateTime.value,
+                dateDue: record.taskDeadline.value,
+                description: record.notificationContent.value,
+                memo: record.taskMemo.value,
+                completionMemo: record.taskCompletionMemo?.value,
+                priority: record.taskPriority.value,
+                folder: record.taskFolder.value,
+                creator: creatorInfo
+            }
+        })
     };
 }
