@@ -242,7 +242,6 @@ pub async fn kintone_create_preview_app(
 pub async fn kintone_add_form_fields(
     app_id: String,
     fields: serde_json::Value,
-    revision: String,
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
@@ -255,7 +254,6 @@ pub async fn kintone_add_form_fields(
     let body = serde_json::json!({
         "app": app_id,
         "properties": fields,
-        "revision": revision
     });
     
     let response = client
@@ -324,7 +322,6 @@ pub async fn kintone_deploy_app(
 pub async fn kintone_update_form_fields(
     app_id: String,
     properties: serde_json::Value,
-    revision: String,
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
@@ -337,7 +334,6 @@ pub async fn kintone_update_form_fields(
     let body = serde_json::json!({
         "app": app_id,
         "properties": properties,
-        "revision": revision
     });
     
     let response = client

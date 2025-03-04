@@ -112,7 +112,6 @@ export async function addFormFields(appId) {
         return await invoke("kintone_add_form_fields", {
             appId,
             fields,
-            revision: "", // No revision needed
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
@@ -167,7 +166,6 @@ export async function updateRecordNumberField(appId) {
         return await invoke("kintone_update_form_fields", {
             appId,
             properties: updateProperties,
-            revision: "", // No revision needed
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
