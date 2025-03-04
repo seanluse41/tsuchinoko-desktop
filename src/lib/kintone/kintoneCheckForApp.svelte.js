@@ -40,7 +40,7 @@ export async function checkForTsuuchinokoApp() {
         console.log("All apps:", apps);
         
         // Look for app with "TSUUCHINOKO - [username]" pattern
-        const userName = authState.user.username || 'sean';
+        const userName = authState.user.username;
         const expectedAppName = `TSUUCHINOKO - ${userName}`;
         
         const tsuuchinokoApp = apps.find(app => 
@@ -52,9 +52,6 @@ export async function checkForTsuuchinokoApp() {
             
             // Store the app ID in auth state
             authState.user.appId = tsuuchinokoApp.appId;
-            
-            // Save to secure storage
-            await secretManager.storeCredentials();
             
             return {
                 exists: true,

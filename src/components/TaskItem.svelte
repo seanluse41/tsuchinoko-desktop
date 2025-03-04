@@ -184,7 +184,7 @@
 
             <Listgroup
                 items={statusItems}
-                class="bg-transparent"
+                class="bg-white"
                 itemClass="border bg-transparent hover:bg-transparent p-4 font-bold"
                 style="color: {textColor};"
             />
