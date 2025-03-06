@@ -1,15 +1,16 @@
 mod commands;
 mod kintone;
-use tauri::Manager;
+use std::fs;
 use tauri::LogicalSize;
-use tauri_plugin_log::{Target, TargetKind};
+use tauri::Manager;
 #[cfg(any(target_os = "linux", windows))]
 use tauri_plugin_deep_link::DeepLinkExt;
-use std::fs;
+use tauri_plugin_log::{Target, TargetKind};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let mut builder = tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_log::Builder::new().build());
 
@@ -26,9 +27,9 @@ pub fn run() {
 
     builder
         .setup(|app| {
-
             if let Some(window) = app.get_webview_window("main") {
-                window.set_min_size(Some(LogicalSize::new(640, 480)))
+                window
+                    .set_min_size(Some(LogicalSize::new(640, 480)))
                     .expect("Failed to set minimum window size");
             }
             // Get the app local data directory and ensure it exists

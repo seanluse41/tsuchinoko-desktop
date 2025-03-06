@@ -63,7 +63,7 @@
       <Dropdown
         {dropdownStatus}
         {closeDropdown}
-        class="absolute -top-[20px] left-[100px] md:-left-[170px] md:top-[20px] bg-thistle"
+        class="absolute -top-[20px] left-[100px] md:-left-[170px] md:top-[20px] bg-white"
       >
         <DropdownUl>
           <DropdownLi

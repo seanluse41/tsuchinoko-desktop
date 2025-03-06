@@ -12,7 +12,7 @@ pub struct GetRecordsConfig {
 pub struct KintoneRecord {
     #[serde(rename = "$id")]
     pub id: Value,
-    #[serde(default)]  // Add default for all fields
+    #[serde(default)] // Add default for all fields
     pub taskID: Value,
     #[serde(default)]
     pub notificationDateTime: Value,

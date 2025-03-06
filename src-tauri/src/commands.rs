@@ -47,7 +47,6 @@ pub struct KintoneApp {
     pub modifier: KintoneUser,
 }
 
-
 #[tauri::command]
 pub async fn kintone_exchange_token(
     code: String,
@@ -161,37 +160,35 @@ pub async fn kintone_add_record(
 }
 
 #[tauri::command]
-pub async fn kintone_get_apps(
-    config: GetRecordsConfig,
-) -> Result<GetAppsResponse, String> {
+pub async fn kintone_get_apps(config: GetRecordsConfig) -> Result<GetAppsResponse, String> {
     let client = reqwest::Client::new();
-    
+
     let url = format!(
         "https://{}.{}/k/v1/apps.json",
         config.subdomain, config.domain
     );
-    
+
     println!("Get apps URL: {}", url);
-    
+
     let response = client
         .get(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
         .send()
         .await
         .map_err(|e| format!("Failed to fetch apps: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
         println!("Error Response Status: {}", status);
         println!("Error Response Body: {}", text);
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     response
         .json::<GetAppsResponse>()
         .await
@@ -204,16 +201,16 @@ pub async fn kintone_create_preview_app(
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
-    
+
     let url = format!(
         "https://{}.{}/k/v1/preview/app.json",
         config.subdomain, config.domain
     );
-    
+
     let body = serde_json::json!({
         "name": app_name
     });
-    
+
     let response = client
         .post(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
@@ -221,17 +218,17 @@ pub async fn kintone_create_preview_app(
         .send()
         .await
         .map_err(|e| format!("Failed to create preview app: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     response
         .json::<serde_json::Value>()
         .await
@@ -245,17 +242,17 @@ pub async fn kintone_add_form_fields(
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
-    
+
     let url = format!(
         "https://{}.{}/k/v1/preview/app/form/fields.json",
         config.subdomain, config.domain
     );
-    
+
     let body = serde_json::json!({
         "app": app_id,
         "properties": fields,
     });
-    
+
     let response = client
         .post(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
@@ -263,17 +260,17 @@ pub async fn kintone_add_form_fields(
         .send()
         .await
         .map_err(|e| format!("Failed to add form fields: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     response
         .json::<serde_json::Value>()
         .await
@@ -286,16 +283,16 @@ pub async fn kintone_deploy_app(
     config: GetRecordsConfig,
 ) -> Result<(), String> {
     let client = reqwest::Client::new();
-    
+
     let url = format!(
         "https://{}.{}/k/v1/preview/app/deploy.json",
         config.subdomain, config.domain
     );
-    
+
     let body = serde_json::json!({
         "apps": apps
     });
-    
+
     let response = client
         .post(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
@@ -303,17 +300,17 @@ pub async fn kintone_deploy_app(
         .send()
         .await
         .map_err(|e| format!("Failed to deploy app: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     // The deploy API has no response content when successful
     Ok(())
 }
@@ -325,17 +322,17 @@ pub async fn kintone_update_form_fields(
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
-    
+
     let url = format!(
         "https://{}.{}/k/v1/preview/app/form/fields.json",
         config.subdomain, config.domain
     );
-    
+
     let body = serde_json::json!({
         "app": app_id,
         "properties": properties,
     });
-    
+
     let response = client
         .put(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
@@ -343,17 +340,17 @@ pub async fn kintone_update_form_fields(
         .send()
         .await
         .map_err(|e| format!("Failed to update form fields: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     response
         .json::<serde_json::Value>()
         .await
@@ -366,29 +363,29 @@ pub async fn kintone_get_form_fields(
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
-    
+
     let url = format!(
         "https://{}.{}/k/v1/preview/app/form/fields.json?app={}",
         config.subdomain, config.domain, app_id
     );
-    
+
     let response = client
         .get(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
         .send()
         .await
         .map_err(|e| format!("Failed to get form fields: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     response
         .json::<serde_json::Value>()
         .await
@@ -401,12 +398,12 @@ pub async fn kintone_update_app_settings(
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
-    
+
     let url = format!(
         "https://{}.{}/k/v1/preview/app/settings.json",
         config.subdomain, config.domain
     );
-    
+
     let response = client
         .put(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
@@ -414,17 +411,17 @@ pub async fn kintone_update_app_settings(
         .send()
         .await
         .map_err(|e| format!("Failed to update app settings: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     response
         .json::<serde_json::Value>()
         .await
@@ -437,29 +434,29 @@ pub async fn kintone_get_app_settings(
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
-    
+
     let url = format!(
         "https://{}.{}/k/v1/app/settings.json?app={}",
         config.subdomain, config.domain, app_id
     );
-    
+
     let response = client
         .get(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
         .send()
         .await
         .map_err(|e| format!("Failed to get app settings: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     response
         .json::<serde_json::Value>()
         .await
@@ -472,40 +469,40 @@ pub async fn kintone_get_deploy_status(
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
-    
+
     // Build the URL with query parameters
     let mut url = format!(
         "https://{}.{}/k/v1/preview/app/deploy.json?",
         config.subdomain, config.domain
     );
-    
+
     // Add app IDs to query parameters
     for (i, app_id) in app_ids.iter().enumerate() {
         url.push_str(&format!("apps[{}]={}&", i, app_id));
     }
-    
+
     // Remove the trailing '&' if it exists
     if url.ends_with('&') {
         url.pop();
     }
-    
+
     let response = client
         .get(&url)
         .header("Authorization", format!("Bearer {}", config.access_token))
         .send()
         .await
         .map_err(|e| format!("Failed to get deployment status: {}", e))?;
-    
+
     if !response.status().is_success() {
         let status = response.status();
         let text = response.text().await.map_err(|e| e.to_string())?;
-        
+
         if status == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
         return Err(format!("API request failed: {}", text));
     }
-    
+
     response
         .json::<serde_json::Value>()
         .await

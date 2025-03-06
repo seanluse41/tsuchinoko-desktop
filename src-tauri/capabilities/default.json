@@ -27,6 +27,7 @@
     "stronghold:allow-remove-store-record",
     "clipboard-manager:allow-read-text",
     "clipboard-manager:allow-write-text",
-    "log:default"
+    "log:default",
+    "store:default"
   ]
 }
