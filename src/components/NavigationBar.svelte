@@ -1,3 +1,4 @@
+<!-- src/components/NavigationBar.svelte -->
 <script>
   import {
     Navbar,
@@ -7,14 +8,15 @@
     uiHelpers,
     Dropdown,
     DropdownUl,
-    DropdownLi,
+    DropdownLi
   } from "svelte-5-ui-lib";
   import { page } from "$app/state";
-  let activeUrl = $state(page.url.pathname);
-  import { ChevronDownOutline } from "flowbite-svelte-icons";
+  import { _, locale } from "svelte-i18n";
+  import { ChevronDownOutline, LanguageOutline } from "flowbite-svelte-icons";
   import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
   import { preferencesState } from "$lib/app/appPreferences.svelte";
   
+  let activeUrl = $state(page.url.pathname);  
   let nav = uiHelpers();
   let navStatus = $state(false);
   let toggleNav = nav.toggle;
@@ -48,16 +50,16 @@
     <NavBrand siteName="Tsuuchinoko" class="text-ebony-800"></NavBrand>
   {/snippet}
 
-  <NavUl {activeUrl} class="text-ebony-800">
-    <NavLi href="/home" onclick={() => trackNav('/home')} class="hover:text-moss_green-600">Home</NavLi>
+  <NavUl {activeUrl} class="text-ebony-800 items-center">
+    <NavLi href="/home" onclick={() => trackNav('/home')} class="hover:text-moss_green-600">{$_('nav.home')}</NavLi>
     <NavLi href="/task-create" onclick={() => trackNav('/task-create')} class="hover:text-moss_green-600"
-      >Task Creator</NavLi
+      >{$_('nav.create')}</NavLi
     >
     <NavLi
       onclick={dropdown.toggle}
       class="cursor-pointer hover:text-moss_green-600"
     >
-      Settings<ChevronDownOutline class="ms-2 inline h-6 w-6 text-ebony" />
+      {$_('nav.settings')}<ChevronDownOutline class="ms-2 inline h-6 w-6 text-ebony" />
     </NavLi>
     <div class="relative">
       <Dropdown
@@ -69,17 +71,17 @@
           <DropdownLi
             href="/account"
             onclick={() => trackNav('/account')}
-            class="hover:bg-thistle-700 text-ebony-800">Account</DropdownLi
+            class="hover:bg-thistle-700 text-ebony-800">{$_('nav.account')}</DropdownLi
           >
           <DropdownLi
             href="/preferences"
             onclick={() => trackNav('/preferences')}
-            class="hover:bg-thistle-700 text-ebony-800">Preferences</DropdownLi
+            class="hover:bg-thistle-700 text-ebony-800">{$_('nav.preferences')}</DropdownLi
           >
           <DropdownLi
             href="/about"
             onclick={() => trackNav('/about')}
-            class="hover:bg-thistle-700 text-ebony-800">About</DropdownLi
+            class="hover:bg-thistle-700 text-ebony-800">{$_('nav.about')}</DropdownLi
           >
           <DropdownLi
             href="/logout"

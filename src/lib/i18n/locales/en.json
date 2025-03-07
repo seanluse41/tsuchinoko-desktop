@@ -1,0 +1,11 @@
+{
+    "nav": {
+        "account": "Account",
+        "home": "Home",
+        "create": "Task Creator",
+        "settings": "Settings",
+        "preferences": "Preferences",
+        "about": "About",
+        "logout": "Logout"
+    }
+}
