@@ -11,7 +11,12 @@
         Button,
     } from "svelte-5-ui-lib";
     import { InfoCircleSolid } from "flowbite-svelte-icons";
-    import { preferencesState, resetAllPreferences, resetColors, savePreferences } from "$lib/app/appPreferences.svelte.js";
+    import {
+        preferencesState,
+        resetAllPreferences,
+        resetColors,
+        savePreferences,
+    } from "$lib/app/appPreferences.svelte.js";
     import ColorPicker from "svelte-awesome-color-picker";
 </script>
 
@@ -181,10 +186,27 @@
                 </div>
             </div>
             <Hr hrClass="my-16" />
-            <div class="flex flex-row space-x-8 flex-1 w-full flex-grow">
-                <Button size="lg" color="light" class="border-slate-700 m-0" outline onclick={resetColors}>Reset Colors</Button>
-                <Button size="lg" color="light" class="border-slate-700 m-0" outline onclick={resetAllPreferences}>Reset All Preferences</Button>
-                <Button size="lg" color="light" class="border-slate-700 justify-self-end" outline onclick={savePreferences}>Save Preferences</Button>
+            <div class="flex flex-row space-x-8">
+                <Button
+                    size="lg"
+                    color="light"
+                    class="border-slate-700 flex-grow w-1/4"
+                    outline
+                    onclick={resetColors}>Reset Colors</Button
+                >
+                <Button
+                    size="lg"
+                    color="light"
+                    class="border-slate-700 w-1/4"
+                    outline
+                    onclick={resetAllPreferences}>Reset All Preferences</Button
+                >
+                <Button
+                    size="lg"
+                    class="border-slate-700 flex-grow w-1/2 mx-8 bg-moss_green-500 hover:bg-moss_green-400 active:bg-moss_green-300 text-white"
+                    outline
+                    onclick={savePreferences}>Save Preferences</Button
+                >
             </div>
         </div>
     </Card>
