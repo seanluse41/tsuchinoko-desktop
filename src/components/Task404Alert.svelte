@@ -5,6 +5,7 @@
     import { goto } from "$app/navigation";
     import { open } from "@tauri-apps/plugin-shell";
     import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
+    import { _ } from "svelte-i18n";
 
     let { alertStatus = false } = $props();
 

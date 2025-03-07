@@ -3,6 +3,7 @@
     import { SidebarItem } from "svelte-5-ui-lib";
     import { TrashBinOutline } from "flowbite-svelte-icons";
     import { taskState } from "$lib/app/appTaskManager.svelte";
+    import { _ } from "svelte-i18n";
 
     let { modalUI = undefined } = $props();
 if (!modalUI) throw new Error('modalUI prop is required');
@@ -15,7 +16,7 @@ if (!modalUI) throw new Error('modalUI prop is required');
 </script>
 
 <SidebarItem
-    label="Delete Selected"
+    label={$_('homeTaskButtons.deleteSelected')}
     onclick={taskState.selectedTasks.length > 0 ? deleteTask : undefined}
     class="cursor-pointer mb-3 {taskState.selectedTasks.length === 0
         ? 'opacity-50'

@@ -1,8 +1,10 @@
+<!-- src/components/TaskDetailsButtons/CopyToClipboard.svelte -->
 <script>
     import { SidebarItem } from "svelte-5-ui-lib";
     import { FileCopyOutline } from "flowbite-svelte-icons";
     import { writeText } from "@tauri-apps/plugin-clipboard-manager";
     import { taskState } from "$lib/app/appTaskManager.svelte";
+    import { _ } from "svelte-i18n";
 
     const formatText = (selectedTask) => {
         if (!selectedTask) return "";
@@ -27,7 +29,7 @@ ${selectedTask.folder ? `Folder: ${selectedTask.folder}` : ""}`;
 </script>
 
 <SidebarItem
-    label="Copy to Clipboard"
+    label={$_('taskDetailsButtons.copyToClipboard')}
     onclick={copyToClipboard}
     class="cursor-pointer mb-3"
     activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"

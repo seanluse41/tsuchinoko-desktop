@@ -3,7 +3,8 @@
     import { SidebarItem, uiHelpers } from "svelte-5-ui-lib";
     import { QuestionCircleOutline } from "flowbite-svelte-icons";
     import HelpModal from "../HelpModal.svelte";
-    
+    import { _ } from "svelte-i18n";
+
     const modalUI = uiHelpers();
 
     function openHelpModal() {
@@ -12,7 +13,7 @@
 </script>
 
 <SidebarItem
-    label="Help & Tips"
+    label={$_('homeTaskButtons.helpTips')}
     onclick={openHelpModal}
     class="cursor-pointer mb-3"
     activeClass="flex items-center text-base font-normal text-slate-700 font-bold rounded-lg border border-slate-700 p-3 hover:bg-slate-200 bg-white"

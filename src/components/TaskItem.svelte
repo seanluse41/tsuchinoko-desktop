@@ -4,6 +4,7 @@
     import { CheckCircleOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
     import { dndState, draggable } from "@thisux/sveltednd";
+    import { _ } from "svelte-i18n";
     import {
         taskState,
         toggleTaskSelection,

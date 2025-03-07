@@ -2,12 +2,12 @@
 <script>
     import { SidebarItem } from "svelte-5-ui-lib";
     import { FolderPlusOutline } from "flowbite-svelte-icons";
-
+    import { _ } from "svelte-i18n";
     const addToGroup = () => console.log("add to group");
 </script>
 
 <SidebarItem
-    label="Add to Folder"
+    label={$_('taskDetailsButtons.addToFolder')}
     onclick={addToGroup}
     class="cursor-pointer mb-3"
     activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"

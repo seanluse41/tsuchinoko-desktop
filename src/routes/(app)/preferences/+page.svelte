@@ -18,6 +18,19 @@
         savePreferences,
     } from "$lib/app/appPreferences.svelte.js";
     import ColorPicker from "svelte-awesome-color-picker";
+    import { _, locale } from "svelte-i18n";
+
+    let currentLocale = preferencesState.language;
+
+    const changeLocale = () => {
+        if (currentLocale == "en") {
+            locale.set("ja");
+            currentLocale = "ja";
+        } else if (currentLocale == "ja") {
+            locale.set("en");
+            currentLocale = "en";
+        }
+    };
 </script>
 
 <div class="relative w-full h-full overflow-auto p-8">
@@ -28,7 +41,7 @@
         <div class="space-y-8">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="text-lg font-medium">Activity Logging</span>
+                    <span class="text-lg font-medium">{$_("preferences.logging")}</span>
                     <InfoCircleSolid
                         id="logging-info"
                         class="h-5 w-5 text-slate-600"
@@ -129,7 +142,7 @@
                         >Interface language</Tooltip
                     >
                 </div>
-                <Select size="lg" bind:value={preferencesState.language}>
+                <Select size="lg" bind:value={preferencesState.language} onchange={changeLocale}>
                     <option value="en">English</option>
                     <option value="ja">日本語</option>
                 </Select>

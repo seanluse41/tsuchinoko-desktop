@@ -2,6 +2,7 @@
 <script>
     import { Modal, Button, uiHelpers } from 'svelte-5-ui-lib';
     import { ExclamationCircleOutline } from "flowbite-svelte-icons";
+    import { _ } from "svelte-i18n";
 
     let { 
         modalUI = uiHelpers(),

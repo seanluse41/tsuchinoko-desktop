@@ -3,7 +3,8 @@
     import { SidebarItem, uiHelpers } from "svelte-5-ui-lib";
     import { CirclePlusSolid } from "flowbite-svelte-icons";
     import AddFolderModal from "../AddFolderModal.svelte";
-    
+    import { _ } from "svelte-i18n";
+
     const modalUI = uiHelpers();
 
     function openAddFolderModal() {
@@ -13,7 +14,7 @@
 
 <div class="folder-item">
     <SidebarItem
-        label="Add Folder"
+        label={$_('homeTaskButtons.addFolder')}
         onclick={openAddFolderModal}
         class="cursor-pointer"
         activeClass="flex items-center text-base font-normal text-slate-700 font-bold rounded-lg border border-slate-700 border-dotted p-3 hover:bg-slate-200 bg-white"

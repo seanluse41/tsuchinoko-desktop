@@ -22,6 +22,7 @@
     import ConfirmCompleteModal from "./ConfirmCompleteModal.svelte";
     import NoticeModal from "./NoticeModal.svelte";
     import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
+    import { _ } from "svelte-i18n";
 
     let { taskId } = $props();
 

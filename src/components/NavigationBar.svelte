@@ -11,7 +11,7 @@
     DropdownLi
   } from "svelte-5-ui-lib";
   import { page } from "$app/state";
-  import { _, locale } from "svelte-i18n";
+  import { _ } from "svelte-i18n";
   import { ChevronDownOutline, LanguageOutline } from "flowbite-svelte-icons";
   import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
   import { preferencesState } from "$lib/app/appPreferences.svelte";

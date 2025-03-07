@@ -4,6 +4,7 @@
     import { LinkOutline } from "flowbite-svelte-icons";
     import { open } from "@tauri-apps/plugin-shell";
     import { authState } from "$lib/app/appLoginManager.svelte";
+    import { _ } from "svelte-i18n";
 
     let { taskId } = $props();
     if (!taskId) throw new Error('taskId prop is required');
@@ -15,7 +16,7 @@
 </script>
 
 <SidebarItem
-    label="View in Kintone"
+    label={$_('taskDetailsButtons.viewInKintone')}
     onclick={viewInKintone}
     class="cursor-pointer mb-3"
     activeClass="flex items-center text-base font-normal text-gray-900 rounded-lg border border-ebony-200 p-3 hover:bg-thistle-800 bg-white"

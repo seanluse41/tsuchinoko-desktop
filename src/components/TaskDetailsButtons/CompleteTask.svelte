@@ -4,6 +4,7 @@
     import { BadgeCheckOutline } from "flowbite-svelte-icons";
     import { taskState, allTasksCompleted } from "$lib/app/appTaskManager.svelte";
     import { updateTaskStatus } from "$lib/kintone/kintoneUpdateRecords.svelte";
+    import { _ } from "svelte-i18n";
 
     let { modalUI = undefined } = $props();
 if (!modalUI) throw new Error('modalUI prop is required');
@@ -16,7 +17,7 @@ if (!modalUI) throw new Error('modalUI prop is required');
 </script>
 
 <SidebarItem
-    label="Mark Complete"
+    label={$_('taskDetailsButtons.markComplete')}
     onclick={taskState.selectedTasks.length > 0 ? completeTask : undefined}
     class="cursor-pointer mb-3 {taskState.selectedTasks.length === 0
         ? 'opacity-50'

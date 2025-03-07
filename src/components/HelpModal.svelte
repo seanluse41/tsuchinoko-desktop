@@ -2,6 +2,7 @@
 <script>
     import { Modal, Button, uiHelpers, Accordion, AccordionItem, Img, P, A } from 'svelte-5-ui-lib';
     import { QuestionCircleOutline } from "flowbite-svelte-icons";
+    import { _ } from "svelte-i18n";
 
     let { modalUI = uiHelpers() } = $props();
 

@@ -2,6 +2,7 @@
     import { Modal, Button, Label, Input, P, uiHelpers } from 'svelte-5-ui-lib';
     import { FolderPlusOutline } from "flowbite-svelte-icons";
     import { folderState } from '$lib/app/appFolderManager.svelte.js';
+    import { _ } from "svelte-i18n";
 
     let { modalUI = uiHelpers() } = $props();
 

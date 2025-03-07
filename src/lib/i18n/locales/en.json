@@ -7,5 +7,33 @@
         "preferences": "Preferences",
         "about": "About",
         "logout": "Logout"
+    },
+    "homeTaskButtons": {
+        "addFolder": "Add Folder",
+        "markComplete": "Mark Complete",
+        "deleteSelected": "Delete Selected",
+        "filter": "Filter",
+        "overdueFilter": "Overdue Tasks",
+        "completedFilter": "Completed Tasks",
+        "registeredFilter": "Registered Tasks",
+        "unregisteredFilter": "Unregistered Tasks",
+        "helpTips": "Help & Tips",
+        "selectAllText": "Select All",
+        "sort": "Sort",
+        "dateCreated": "Date Created",
+        "dueDate": "Due Date",
+        "sync": "Sync"
+    },
+    "taskDetailsButtons": {
+        "addToFolder": "Add to Folder",
+        "backToTasks": "Back to Tasks",
+        "markComplete": "Mark Complete",
+        "copyToClipboard": "Copy to Clipboard",
+        "deleteSelected": "Delete Selected",
+        "viewInKintone": "View in Kintone",
+        "viewNotification": "View Original Notification"
+    },
+    "preferences": {
+        "logging": "Activity Logging"
     }
 }

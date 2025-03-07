@@ -25,6 +25,7 @@
     import AddFolder from "./HomeTaskButtons/AddFolder.svelte";
     import { folderState } from "$lib/app/appFolderManager.svelte.js";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
+    import { _ } from "svelte-i18n";
 
     import FilterButton from "./HomeTaskButtons/FilterTasks.svelte";
     import SortButton from "./HomeTaskButtons/SortTasks.svelte";

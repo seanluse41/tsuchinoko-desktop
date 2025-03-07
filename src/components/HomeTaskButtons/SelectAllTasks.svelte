@@ -4,6 +4,7 @@
     import { BadgeCheckOutline, BadgeCheckSolid } from "flowbite-svelte-icons";
     import { taskState } from "$lib/app/appTaskManager.svelte";
     import { getDisplayTasks } from "$lib/app/appTaskFilters.svelte.js";
+    import { _ } from "svelte-i18n";
 
     let displayTasks = $derived(getDisplayTasks());
     let displayTaskIds = $derived(displayTasks.map(task => task.id));
@@ -30,7 +31,7 @@
 </script>
 
 <SidebarItem
-    label={selectAllText}
+    label={$_('homeTaskButtons.selectAllText')}
     onclick={toggleSelectAll}
     class="cursor-pointer mb-3"
     activeClass="flex items-center text-base font-normal text-slate-700 font-bold rounded-lg border border-slate-700 p-3 hover:bg-slate-200 bg-white"

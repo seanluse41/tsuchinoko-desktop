@@ -3,6 +3,7 @@
     import { Modal, Button, uiHelpers, Textarea, Label } from 'svelte-5-ui-lib';
     import { BadgeCheckOutline } from "flowbite-svelte-icons";
     import { taskState } from '$lib/app/appTaskManager.svelte';
+    import { _ } from "svelte-i18n";
 
     let { modalUI = uiHelpers(), onConfirm = () => {} } = $props();
 

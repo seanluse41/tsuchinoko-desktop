@@ -3,10 +3,11 @@
     import { SidebarItem } from "svelte-5-ui-lib";
     import { RefreshOutline } from "flowbite-svelte-icons";
     import { loadTasks } from "$lib/app/appTaskManager.svelte";
+    import { _ } from "svelte-i18n";
 </script>
 
 <SidebarItem
-    label="Sync"
+    label={$_('homeTaskButtons.sync')}
     onclick={loadTasks}
     class="cursor-pointer mb-3"
     activeClass="flex items-center text-base font-normal text-slate-700 font-bold rounded-lg border border-slate-700 p-3 hover:bg-slate-200 bg-white"

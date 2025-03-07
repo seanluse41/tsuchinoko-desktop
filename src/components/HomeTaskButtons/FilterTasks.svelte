@@ -7,6 +7,7 @@
     } from "svelte-5-ui-lib";
     import { SearchOutline } from "flowbite-svelte-icons";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
+    import { _ } from "svelte-i18n";
 
     const filterOverdue = () => toggleFilter("overdue");
     const filterCompleted = () => toggleFilter("completed");
@@ -17,7 +18,7 @@
 </script>
 
 <SidebarDropdownWrapper
-    label="Filter{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}"
+    label="{$_('homeTaskButtons.filter')}{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}"
     btnClass="cursor-pointer mb-3 flex items-center text-base font-bold text-slate-700 rounded-lg border border-slate-700 p-3 hover:bg-slate-200 bg-white"
 >
     {#snippet iconSlot()}
@@ -25,7 +26,7 @@
     {/snippet}
 
     <SidebarItem
-        label="Overdue Tasks"
+        label={$_('homeTaskButtons.overdueFilter')}
         onclick={filterOverdue}
         class="cursor-pointer"
         aClass="flex justify-end"
@@ -43,7 +44,7 @@
     </SidebarItem>
 
     <SidebarItem
-        label="Completed Tasks"
+        label={$_('homeTaskButtons.completedFilter')}
         onclick={filterCompleted}
         class="cursor-pointer"
         aClass="flex justify-end"
@@ -61,7 +62,7 @@
     </SidebarItem>
 
     <SidebarItem
-        label="Registered Tasks"
+        label={$_('homeTaskButtons.registeredFilter')}
         onclick={filterRegistered}
         class="cursor-pointer"
         aClass="flex justify-end"
@@ -79,7 +80,7 @@
     </SidebarItem>
 
     <SidebarItem
-        label="Unregistered Tasks"
+        label={$_('homeTaskButtons.unregisteredFilter')}
         onclick={filterUnregistered}
         class="cursor-pointer"
         aClass="flex justify-end"

@@ -7,5 +7,33 @@
         "preferences": "環境設定",
         "about": "TSUUCHINOKOについて",
         "logout": "ログアウト"
+    },
+    "homeTaskButtons": {
+        "addFolder": "フォルダを追加",
+        "markComplete": "タスクを完了にする",
+        "deleteSelected": "タスクを削除する",
+        "filter": "絞り込み",
+        "overdueFilter": "期限切れタスク",
+        "completedFilter": "完了タスク",
+        "registeredFilter": "登録済みタスク",
+        "unregisteredFilter": "未登録タスク",
+        "helpTips": "ヘルプとヒント",
+        "selectAllText": "すべて選択",
+        "sort": "並べ替え",
+        "dateCreated": "作成日",
+        "dueDate": "期限日",
+        "sync": "同期"
+    },
+    "taskDetailsButtons": {
+        "addToFolder": "フォルダに追加",
+        "backToTasks": "タスク一覧に戻る",
+        "markComplete": "タスクを完了にする",
+        "copyToClipboard": "クリップボードにコピー",
+        "deleteSelected": "タスクを削除する",
+        "viewInKintone": "kintoneで見る",
+        "viewNotification": "元の通知をkintoneで見る"
+    },
+    "preferences": {
+        "logging": "ログ"
     }
 }
