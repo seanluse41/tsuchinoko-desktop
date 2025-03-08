@@ -8,6 +8,7 @@
     import { onMount } from "svelte";
     import { addRecord } from "$lib/kintone/kintoneAddRecord.svelte.js";
     import { trackNavigation, trackTaskAction } from "$lib/app/appNavigationTracker.svelte";
+    import { _ } from "svelte-i18n";
 
     let formData = $state({
         notificationTitle: "",
@@ -31,13 +32,11 @@
             inline: false,
             position: "top left",
             onSelect({ date }) {
-                // Use a function to update state instead of direct mutation
                 updateDeadline(date?.toISOString() || "");
             },
         });
     });
 
-    // Function to safely update the deadline
     function updateDeadline(newDate) {
         formData = {
             ...formData,
@@ -45,7 +44,6 @@
         };
     }
 
-    // Function to update form fields
     function updateFormField(field, value) {
         formData = {
             ...formData,
@@ -64,7 +62,7 @@
             trackNavigation("/home")
             goto("/home");
         } catch (err) {
-            error = err.message || "Failed to create task. Please try again.";
+            error = err.message || $_("taskCreate.failedToCreate");
             isSubmitting = false;
         }
     }
@@ -72,7 +70,7 @@
 
 <div class="pt-8 p-32">
     <Card class="max-w-none bg-moss_green-700 relative p-10">
-        <h1 class="text-5xl font-bold mb-6 text-slate-700">Create New Task</h1>
+        <h1 class="text-5xl font-bold mb-6 text-slate-700">{$_("taskCreate.createNewTask")}</h1>
 
         {#if error}
             <Alert color="red" class="mb-4">{error}</Alert>
@@ -80,8 +78,7 @@
 
         <form onsubmit={handleSubmit} class="flex flex-col gap-4">
             <div class="mb-6">
-                <Label for="title" class="font-bold text-slate-700">Title</Label
-                >
+                <Label for="title" class="font-bold text-slate-700">{$_("taskCreate.title")}</Label>
                 <Input
                     size="lg"
                     type="text"
@@ -95,9 +92,7 @@
 
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                    <Label for="content" class="font-bold text-slate-700"
-                        >Content</Label
-                    >
+                    <Label for="content" class="font-bold text-slate-700">{$_("taskCreate.content")}</Label>
                     <textarea
                         id="content"
                         value={formData.notificationContent}
@@ -111,9 +106,7 @@
                     ></textarea>
                 </div>
                 <div>
-                    <Label for="memo" class="font-bold text-slate-700"
-                        >Memo</Label
-                    >
+                    <Label for="memo" class="font-bold text-slate-700">{$_("taskCreate.memo")}</Label>
                     <textarea
                         id="memo"
                         value={formData.taskMemo}
@@ -127,9 +120,7 @@
 
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                    <Label for="priority" class="mb-4 font-bold text-slate-700"
-                        >Priority</Label
-                    >
+                    <Label for="priority" class="mb-4 font-bold text-slate-700">{$_("taskCreate.priority")}</Label>
                     <ul
                         class="w-full items-center divide-x bg-white divide-slate-700 rounded-lg border border-gray-200 sm:flex"
                     >
@@ -147,16 +138,14 @@
                                         )}
                                     labelClass="p-3"
                                 >
-                                    {priority}
+                                    {$_(`taskCreate.${priority}`)}
                                 </Radio>
                             </li>
                         {/each}
                     </ul>
                 </div>
                 <div>
-                    <Label for="priority" class="mb-4 font-bold text-slate-700"
-                        >Status</Label
-                    >
+                    <Label for="priority" class="mb-4 font-bold text-slate-700">{$_("taskCreate.status")}</Label>
                     <ul
                         class="w-full items-center divide-x bg-white divide-slate-700 rounded-lg border border-gray-200 sm:flex"
                     >
@@ -171,7 +160,7 @@
                                         updateFormField("taskStatus", status)}
                                     labelClass="p-3"
                                 >
-                                    {status}
+                                    {$_(`taskCreate.${status}`)}
                                 </Radio>
                             </li>
                         {/each}
@@ -181,20 +170,16 @@
 
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                    <Label for="assignee" class="font-bold text-slate-700"
-                        >Assignee</Label
-                    >
+                    <Label for="assignee" class="font-bold text-slate-700">{$_("taskCreate.assignee")}</Label>
                     <Input
                         type="text"
                         id="assignee"
-                        value="Coming soon..."
+                        value={$_("taskCreate.comingSoon")}
                         disabled
                     />
                 </div>
                 <div>
-                    <Label for="deadline" class="font-bold text-slate-700"
-                        >Deadline</Label
-                    >
+                    <Label for="deadline" class="font-bold text-slate-700">{$_("taskCreate.deadline")}</Label>
                     <div tabindex="-1">
                         <input
                             bind:this={dateInput}
@@ -214,7 +199,7 @@
                     disabled={isSubmitting}
                     class="w-1/3 text-slate-700 font-bold rounded-lg border border-slate-700 p-4 hover:bg-slate-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isSubmitting ? "Creating..." : "Create Task"}
+                    {isSubmitting ? $_("taskCreate.creating") : $_("taskCreate.createTask")}
                 </Button>
             </div>
         </form>

@@ -5,7 +5,10 @@ export function formatDate(dateStr) {
     const date = new Date(dateStr);
     if (isNaN(date.getTime())) return 'Invalid date';
 
-    return new Intl.DateTimeFormat(navigator.language, {
+    // Use browser or system language as default
+    const locale = navigator.language;
+    
+    return new Intl.DateTimeFormat(locale, {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
@@ -27,6 +30,8 @@ export function getDueText(dueDate) {
     const diffTime = due - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    const rtf = new Intl.RelativeTimeFormat(navigator.language, { numeric: 'auto' });
+    // Use browser or system language
+    const locale = navigator.language;
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
     return rtf.format(diffDays, 'day');
 }

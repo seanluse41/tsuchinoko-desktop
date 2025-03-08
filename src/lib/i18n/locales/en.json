@@ -123,5 +123,42 @@
         "kintoneDevDescription": "Learn more about building customizations, plugins, and more solutions on Kintone!",
         "visitKintoneDev": "Visit Kintone Developer Program",
         "librariesDependencies": "Libraries & Dependencies"
+    },
+    "taskCreate": {
+        "createNewTask": "Create New Task",
+        "failedToCreate": "Failed to create task. Please try again.",
+        "title": "Title",
+        "content": "Content",
+        "memo": "Memo",
+        "priority": "Priority",
+        "normal": "normal",
+        "high": "high",
+        "urgent": "urgent",
+        "status": "Status",
+        "registered": "registered",
+        "completed": "completed",
+        "overdue": "overdue",
+        "assignee": "Assignee",
+        "deadline": "Deadline",
+        "comingSoon": "Coming soon...",
+        "creating": "Creating...",
+        "createTask": "Create Task"
+    },
+    "taskDetail": {
+        "id": "ID",
+        "status": "Status",
+        "created": "Created",
+        "due": "Due",
+        "dueIn": "Due in",
+        "description": "Description",
+        "memo": "Memo",
+        "completionNotes": "Completion Notes",
+        "taskNotFound": "Task not found"
+    },
+    "dateHelpers": {
+        "notSet": "Not set",
+        "invalidDate": "Invalid date",
+        "noDueDate": "No due date",
+        "invalidDueDate": "Invalid due date"
     }
 }

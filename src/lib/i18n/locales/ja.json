@@ -123,5 +123,42 @@
         "kintoneDevDescription": "Kintoneでのカスタマイズ、プラグイン、その他のソリューションの構築についてもっと学びましょう！",
         "visitKintoneDev": "Kintone開発者プログラムを訪問",
         "librariesDependencies": "ライブラリと依存関係"
+    },
+    "taskCreate": {
+        "createNewTask": "新しいタスクを作成",
+        "failedToCreate": "タスクの作成に失敗しました。もう一度お試しください。",
+        "title": "タイトル",
+        "content": "内容",
+        "memo": "メモ",
+        "priority": "優先度",
+        "normal": "通常",
+        "high": "高",
+        "urgent": "緊急",
+        "status": "ステータス",
+        "registered": "登録済み",
+        "completed": "完了",
+        "overdue": "期限切れ",
+        "assignee": "担当者",
+        "deadline": "期限",
+        "comingSoon": "近日公開...",
+        "creating": "作成中...",
+        "createTask": "タスクを作成"
+    },
+    "taskDetail": {
+        "id": "ID",
+        "status": "ステータス",
+        "created": "作成日時",
+        "due": "期限",
+        "dueIn": "残り時間",
+        "description": "詳細",
+        "memo": "メモ",
+        "completionNotes": "完了メモ",
+        "taskNotFound": "タスクが見つかりません"
+    },
+    "dateHelpers": {
+        "notSet": "未設定",
+        "invalidDate": "無効な日付",
+        "noDueDate": "期限なし",
+        "invalidDueDate": "無効な期限"
     }
 }
