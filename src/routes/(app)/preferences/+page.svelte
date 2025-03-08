@@ -47,7 +47,7 @@
                         class="h-5 w-5 text-slate-600"
                     />
                     <Tooltip triggeredBy="#logging-info"
-                        >Track task actions and navigation history</Tooltip
+                        >{$_("preferences.loggingTooltip")}</Tooltip
                     >
                 </div>
                 <Toggle
@@ -60,7 +60,7 @@
                                 ? 'font-semibold'
                                 : ''}"
                         >
-                            Off
+                            {$_("preferences.off")}
                         </div>
                     {/snippet}
                     <div
@@ -68,20 +68,20 @@
                             ? "font-semibold"
                             : ""}
                     >
-                        On
+                        {$_("preferences.on")}
                     </div>
                 </Toggle>
             </div>
 
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="text-lg font-medium">Compact View</span>
+                    <span class="text-lg font-medium">{$_("preferences.compactView")}</span>
                     <InfoCircleSolid
                         id="compact-info"
                         class="h-5 w-5 text-slate-600"
                     />
                     <Tooltip triggeredBy="#compact-info"
-                        >Reduce spacing between task items</Tooltip
+                        >{$_("preferences.compactViewTooltip")}</Tooltip
                     >
                 </div>
                 <Toggle
@@ -94,13 +94,13 @@
                                 ? 'font-semibold'
                                 : ''}"
                         >
-                            Off
+                            {$_("preferences.off")}
                         </div>
                     {/snippet}
                     <div
                         class={preferencesState.compact ? "font-semibold" : ""}
                     >
-                        On
+                        {$_("preferences.on")}
                     </div>
                 </Toggle>
             </div>
@@ -108,14 +108,14 @@
             <div class="space-y-2">
                 <div class="flex items-center gap-2">
                     <span class="text-lg font-medium"
-                        >Sync Interval (minutes)</span
+                        >{$_("preferences.syncInterval")}</span
                     >
                     <InfoCircleSolid
                         id="sync-info"
                         class="h-5 w-5 text-slate-600"
                     />
                     <Tooltip triggeredBy="#sync-info"
-                        >How often to check for task updates</Tooltip
+                        >{$_("preferences.syncIntervalTooltip")}</Tooltip
                     >
                 </div>
                 <Range
@@ -127,36 +127,36 @@
                     bind:value={preferencesState.syncTimer}
                 />
                 <span class="text-sm text-slate-600"
-                    >Current: {preferencesState.syncTimer} minutes</span
+                    >{$_("preferences.currentInterval", { values: { interval: preferencesState.syncTimer } })}</span
                 >
             </div>
 
             <div class="space-y-2">
                 <div class="flex items-center gap-2">
-                    <span class="text-lg font-medium">Language / 言語</span>
+                    <span class="text-lg font-medium">{$_("preferences.language")}</span>
                     <InfoCircleSolid
                         id="lang-info"
                         class="h-5 w-5 text-slate-600"
                     />
                     <Tooltip triggeredBy="#lang-info"
-                        >Interface language</Tooltip
+                        >{$_("preferences.languageTooltip")}</Tooltip
                     >
                 </div>
                 <Select size="lg" bind:value={preferencesState.language} onchange={changeLocale}>
-                    <option value="en">English</option>
-                    <option value="ja">日本語</option>
+                    <option value="en">{$_("preferences.english")}</option>
+                    <option value="ja">{$_("preferences.japanese")}</option>
                 </Select>
             </div>
 
             <Hr hrClass="my-16" />
             <Heading level={2} class="mb-8 text-3xl font-bold text-slate-700"
-                >Color Settings</Heading
+                >{$_("preferences.colorSettings")}</Heading
             >
 
             <div class="grid grid-cols-2 gap-8">
                 <div class="p-4 bg-white border rounded-3xl border-slate-700">
                     <span class="text-lg font-medium mb-2 block"
-                        >Menu Color</span
+                        >{$_("preferences.menuColor")}</span
                     >
                     <ColorPicker
                         label={preferencesState.menuColor}
@@ -167,7 +167,7 @@
 
                 <div class="p-4 bg-white border rounded-3xl border-slate-700">
                     <span class="text-lg font-medium mb-2 block"
-                        >Completed Task Color</span
+                        >{$_("preferences.completedTaskColor")}</span
                     >
                     <ColorPicker
                         label={preferencesState.completedTaskColor}
@@ -178,7 +178,7 @@
 
                 <div class="p-4 bg-white border rounded-3xl border-slate-700">
                     <span class="text-lg font-medium mb-2 block"
-                        >Registered Task Color</span
+                        >{$_("preferences.registeredTaskColor")}</span
                     >
                     <ColorPicker
                         label={preferencesState.registeredTaskColor}
@@ -189,7 +189,7 @@
 
                 <div class="p-4 bg-white border rounded-3xl border-slate-700">
                     <span class="text-lg font-medium mb-2 block"
-                        >Overdue Task Color</span
+                        >{$_("preferences.overdueTaskColor")}</span
                     >
                     <ColorPicker
                         label={preferencesState.overdueTaskColor}
@@ -205,20 +205,20 @@
                     color="light"
                     class="border-slate-700 flex-grow w-1/4"
                     outline
-                    onclick={resetColors}>Reset Colors</Button
+                    onclick={resetColors}>{$_("preferences.resetColors")}</Button
                 >
                 <Button
                     size="lg"
                     color="light"
                     class="border-slate-700 w-1/4"
                     outline
-                    onclick={resetAllPreferences}>Reset All Preferences</Button
+                    onclick={resetAllPreferences}>{$_("preferences.resetAllPreferences")}</Button
                 >
                 <Button
                     size="lg"
                     class="border-slate-700 flex-grow w-1/2 mx-8 bg-moss_green-500 hover:bg-moss_green-400 active:bg-moss_green-300 text-white"
                     outline
-                    onclick={savePreferences}>Save Preferences</Button
+                    onclick={savePreferences}>{$_("preferences.savePreferences")}</Button
                 >
             </div>
         </div>

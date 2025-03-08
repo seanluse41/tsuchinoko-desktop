@@ -26,6 +26,7 @@
         repairApp,
         removeTsuuchinokoApp,
     } from "$lib/kintone/kintoneDiagnoseApp.svelte.js";
+    import { _ } from "svelte-i18n";
 
     // Alert state
     let resultMessage = $state("");
@@ -69,10 +70,10 @@
     async function importTasks() {
         alertStatus = false;
         showErrorModal(
-            "Feature Coming Soon",
-            "Task import feature is not yet available",
+            $_("account.featureComingSoon"),
+            $_("account.importFeatureUnavailable"),
             [
-                "This feature will allow you to import tasks from a CSV file in a future update.",
+                $_("account.importFutureFeature"),
             ],
         );
     }
@@ -95,13 +96,13 @@
                 diagnosisResult.needsRepair
             ) {
                 showErrorModal(
-                    "App Needs Repair",
+                    $_("account.appNeedsRepair"),
                     diagnosisResult.message,
                     diagnosisResult.details,
                 );
             } else {
                 showErrorModal(
-                    "Diagnosis Warning",
+                    $_("account.diagnosisWarning"),
                     diagnosisResult.message,
                     diagnosisResult.details,
                 );
@@ -109,8 +110,8 @@
         } catch (error) {
             console.error("Error diagnosing app:", error);
             showErrorModal(
-                "Diagnosis Error",
-                `Error: ${error.message || error}`,
+                $_("account.diagnosisError"),
+                `${$_("account.error")}: ${error.message || error}`,
                 [String(error)],
             );
             diagnosisResult = null;
@@ -127,8 +128,8 @@
                 !diagnosisResult.diagnosisData
             ) {
                 showErrorModal(
-                    "Cannot Repair",
-                    "Please run diagnosis first to identify issues",
+                    $_("account.cannotRepair"),
+                    $_("account.runDiagnosisFirst"),
                 );
                 return;
             }
@@ -145,15 +146,15 @@
             } else {
                 showErrorModal(
                     result.status === "warning"
-                        ? "Repair Warning"
-                        : "Repair Failed",
+                        ? $_("account.repairWarning")
+                        : $_("account.repairFailed"),
                     result.message,
                     result.details,
                 );
             }
         } catch (error) {
             console.error("Error repairing app:", error);
-            showErrorModal("Repair Error", `Error: ${error.message || error}`, [
+            showErrorModal($_("account.repairError"), `${$_("account.error")}: ${error.message || error}`, [
                 String(error),
             ]);
         } finally {
@@ -171,23 +172,23 @@
 
             if (result.exists) {
                 showSuccessAlert(
-                    `Found Tsuuchinoko app with ID: ${result.appId}`,
-                    ["App connection established successfully."],
+                    $_("account.foundApp", { values: { appId: result.appId } }),
+                    [$_("account.appConnectionEstablished")],
                 );
                 // Clear any previous diagnosis
                 diagnosisResult = null;
             } else {
                 showErrorModal(
-                    "App Not Found",
-                    "Tsuuchinoko app was not detected",
-                    ["You may need to create a new app."],
+                    $_("account.appNotFound"),
+                    $_("account.appNotDetected"),
+                    [$_("account.createNewApp")],
                 );
             }
         } catch (error) {
             console.error("Error checking for app:", error);
             showErrorModal(
-                "Detection Error",
-                `Error: ${error.message || error}`,
+                $_("account.detectionError"),
+                `${$_("account.error")}: ${error.message || error}`,
                 [String(error)],
             );
         } finally {
@@ -204,21 +205,21 @@
 
             if (result.success) {
                 showSuccessAlert(
-                    `Created Tsuuchinoko app with ID: ${result.appId}`,
-                    ["App created and connected successfully."],
+                    $_("account.createdApp", { values: { appId: result.appId } }),
+                    [$_("account.appCreatedSuccessfully")],
                 );
                 // Clear any previous diagnosis
                 diagnosisResult = null;
             } else {
-                showErrorModal("Creation Failed", `Error: ${result.error}`, [
-                    result.message || "Failed to create app.",
+                showErrorModal($_("account.creationFailed"), `${$_("account.error")}: ${result.error}`, [
+                    result.message || $_("account.failedToCreateApp"),
                 ]);
             }
         } catch (error) {
             console.error("Error creating app:", error);
             showErrorModal(
-                "Creation Error",
-                `Error: ${error.message || error}`,
+                $_("account.creationError"),
+                `${$_("account.error")}: ${error.message || error}`,
                 [String(error)],
             );
         } finally {
@@ -239,13 +240,13 @@
                 diagnosisResult = null;
                 showSuccessAlert(result.message);
             } else {
-                showErrorModal("Removal Failed", result.message);
+                showErrorModal($_("account.removalFailed"), result.message);
             }
         } catch (error) {
             console.error("Error removing app:", error);
             showErrorModal(
-                "Removal Error",
-                `Error: ${error.message || error}`,
+                $_("account.removalError"),
+                `${$_("account.error")}: ${error.message || error}`,
                 [String(error)],
             );
         } finally {
@@ -266,7 +267,7 @@
         style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
     >
         <Heading level={1} class="text-4xl font-bold mb-6 text-slate-700"
-            >Account Settings</Heading
+            >{$_("account.accountSettings")}</Heading
         >
 
         <!-- Success Alert -->
@@ -316,7 +317,7 @@
                 {/if}
 
                 <div class="flex justify-center gap-4">
-                    {#if canRepair && errorTitle === "App Needs Repair"}
+                    {#if canRepair && errorTitle === $_("account.appNeedsRepair")}
                         <Button
                             onclick={() => {
                                 closeModal();
@@ -324,14 +325,14 @@
                             }}
                             class="bg-moss_green hover:bg-moss_green-600 text-white"
                         >
-                            Repair App Now
+                            {$_("account.repairAppNow")}
                         </Button>
                     {/if}
                     <Button
                         onclick={closeModal}
                         class="bg-thistle hover:bg-thistle-700"
                     >
-                        Close
+                        {$_("account.close")}
                     </Button>
                 </div>
             </div>
@@ -339,21 +340,25 @@
 
         <div class="bg-white rounded-lg p-6 mb-6 border border-slate-200">
             <Heading level={2} class="text-2xl font-bold mb-4 text-slate-700"
-                >Account Information</Heading
+                >{$_("account.accountInformation")}</Heading
             >
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <P class="font-semibold">Subdomain:</P>
-                    <P class="mb-4">{authState.user.subdomain || "Not set"}</P>
+                    <P class="font-semibold">{$_("account.subdomain")}:</P>
+                    <P class="mb-4">{authState.user.subdomain || $_("account.notSet")}</P>
                 </div>
                 <div>
-                    <P class="font-semibold">Domain:</P>
-                    <P class="mb-4">{authState.user.domain || "Not set"}</P>
+                    <P class="font-semibold">{$_("account.domain")}:</P>
+                    <P class="mb-4">{authState.user.domain || $_("account.notSet")}</P>
                 </div>
-            </div>
-            <div>
-                <P class="font-semibold">App ID:</P>
-                <P class="mb-4">{authState.user.appId || "Not set"}</P>
+                <div>
+                    <P class="font-semibold">{$_("account.appId")}:</P>
+                    <P class="mb-4">{authState.user.appId || $_("account.notSet")}</P>
+                </div>
+                <div>
+                    <P class="font-semibold">{$_("account.username")}:</P>
+                    <P class="mb-4">{authState.user.username || $_("account.notSet")}</P>
+                </div>
             </div>
         </div>
 
@@ -361,11 +366,10 @@
 
         <div class="bg-white rounded-lg p-6 border border-slate-200">
             <Heading level={2} class="text-2xl font-bold mb-4 text-slate-700"
-                >Tsuuchinoko App Management</Heading
+                >{$_("account.appManagement")}</Heading
             >
             <P class="mb-6">
-                Manage your Tsuuchinoko app settings and integration with
-                Kintone.
+                {$_("account.appManagementDescription")}
             </P>
 
             <div class="grid grid-cols-2 gap-4">
@@ -374,7 +378,7 @@
                     class="bg-amber hover:bg-amber-600 mb-4 text-slate-700"
                     disabled={isProcessing || !authState.user.appId}
                 >
-                    Diagnose App
+                    {$_("account.diagnoseApp")}
                 </Button>
 
                 <Button
@@ -382,7 +386,7 @@
                     class="bg-thistle hover:bg-thistle-600 mb-4 text-slate-700"
                     disabled={isProcessing || !authState.user.appId}
                 >
-                    Import Tasks
+                    {$_("account.importTasks")}
                 </Button>
             </div>
 
@@ -390,9 +394,7 @@
                 class="mt-4 p-4 bg-amber-100 rounded-lg border border-amber-300"
             >
                 <P class="text-amber-800">
-                    <strong>Note:</strong> "Diagnose App" checks if your Kintone
-                    app has all the required fields and configuration. If issues
-                    are found, you'll be given the option to repair the app automatically.
+                    <strong>{$_("account.note")}:</strong> {$_("account.diagnoseAppDescription")}
                 </P>
             </div>
         </div>
