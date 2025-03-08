@@ -160,5 +160,11 @@
         "invalidDate": "Invalid date",
         "noDueDate": "No due date",
         "invalidDueDate": "Invalid due date"
+    },
+    "taskItem": {
+        "status": "Status",
+        "created": "Created",
+        "due": "Due",
+        "memo": "Memo"
     }
 }

@@ -46,11 +46,14 @@
             navigationState.navigationStack[1]?.path === "/task-create"
     );
 
+    // Get current language from preferences
+    let currentLanguage = $derived(preferencesState.language);
+
     let statusItems = $derived([
-        `Status: ${status}`,
-        `Created: ${formatDate(dateCreated)}`,
-        `Due: ${formatDate(dateDue)}`,
-        getDueText(dateDue),
+        `${$_("taskItem.status")}: ${status}`,
+        `${$_("taskItem.created")}: ${formatDate(dateCreated, $_, currentLanguage)}`,
+        `${$_("taskItem.due")}: ${formatDate(dateDue, $_, currentLanguage)}`,
+        getDueText(dateDue, $_, currentLanguage),
     ]);
     
     // Get the current background color based on hover and other states
@@ -173,7 +176,7 @@
                     class="p-0 m-0"
                     style="color: {textColor};"
                 >
-                    Memo:
+                    {$_("taskItem.memo")}:
                 </P>
                 <P
                     class="line-clamp-1 p-0 m-0"

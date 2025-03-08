@@ -160,5 +160,11 @@
         "invalidDate": "無効な日付",
         "noDueDate": "期限なし",
         "invalidDueDate": "無効な期限"
+    },
+    "taskItem": {
+        "status": "ステータス",
+        "created": "作成日時",
+        "due": "期限",
+        "memo": "メモ"
     }
 }

@@ -7,7 +7,8 @@
     import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte";
     import { Heading, P, Hr } from "svelte-5-ui-lib";
     import { _ } from "svelte-i18n";
-    
+    import { preferencesState } from "$lib/app/appPreferences.svelte";
+
     // Get taskId from query parameter instead of route param
     let taskId = $derived(page.url.searchParams.get("id"));
 
@@ -19,6 +20,7 @@
 });
 
     let task = $derived(taskState.tasks.find((t) => t.id === taskId));
+    let currentLanguage = $derived(preferencesState.language);
 </script>
 
 <main class="flex h-full select-enabled">
@@ -31,9 +33,9 @@
             <div class="space-y-4 max-w-full">
                 <P>{$_("taskDetail.id")}: {task.id}</P>
                 <P>{$_("taskDetail.status")}: {task.status}</P>
-                <P>{$_("taskDetail.created")}: {formatDate(task.dateCreated)}</P>
-                <P>{$_("taskDetail.due")}: {formatDate(task.dateDue)}</P>
-                <P>{$_("taskDetail.dueIn")}: {getDueText(task.dateDue)}</P>
+                <P>{$_("taskDetail.created")}: {formatDate(task.dateCreated, $_, currentLanguage)}</P>
+                <P>{$_("taskDetail.due")}: {formatDate(task.dateDue, $_, currentLanguage)}</P>
+                <P>{$_("taskDetail.dueIn")}: {getDueText(task.dateDue, $_, currentLanguage)}</P>
                 <P class="break-words">
                     {$_("taskDetail.description")}:
                     {task.description}
