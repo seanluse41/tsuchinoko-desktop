@@ -77,6 +77,7 @@ export function isFilterActive(filter) {
 }
 
 export function resetFiltersAndSort() {
+    viewState.activeFilters = [];
     viewState.sortField = null;
     viewState.sortDirection = null;
 }

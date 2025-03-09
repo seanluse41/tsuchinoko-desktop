@@ -16,6 +16,9 @@
   import { ChevronDownOutline, LanguageOutline } from "flowbite-svelte-icons";
   import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
   import { preferencesState } from "$lib/app/appPreferences.svelte";
+  import { searchState } from "$lib/app/appSearchState.svelte.js";
+  import { resetFiltersAndSort } from "$lib/app/appTaskFilters.svelte.js";
+  import { folderState, selectFolder } from "$lib/app/appFolderManager.svelte.js";
 
   let activeUrl = $state(page.url.pathname);
   let nav = uiHelpers();
@@ -26,6 +29,9 @@
   let dropdown = uiHelpers();
   let dropdownStatus = $state(false);
   let closeDropdown = dropdown.close;
+  
+  // Reference to the SearchBar component
+  let searchBarComponent;
 
   $effect(() => {
     navStatus = nav.isOpen;
@@ -37,6 +43,24 @@
     trackNavigation(path);
     closeDropdown();
   };
+  
+  // Handler for clicking the brand/logo
+  function handleBrandClick() {
+    // If we're going to the home page, reset everything
+    if (page.url.pathname === '/home') {
+      // Reset search if we have a reference to the component
+      if (searchBarComponent && typeof searchBarComponent.resetSearch === 'function') {
+        searchBarComponent.resetSearch();
+      }
+      
+      // Reset filters and folder
+      resetFiltersAndSort();
+      selectFolder('All');
+    }
+    
+    // Navigate to home
+    trackNav('/home');
+  }
 </script>
 
 <Navbar
@@ -48,12 +72,12 @@
   style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
 >
   {#snippet brand()}
-    <NavBrand siteName="Tsuuchinoko" class="text-ebony-800"></NavBrand>
+    <NavBrand siteName="Tsuuchinoko" class="text-ebony-800 cursor-pointer" onclick={handleBrandClick}></NavBrand>
   {/snippet}
 
   <NavUl {activeUrl} class="text-ebony-800 items-center">
     <div>
-      <SearchBar />
+      <SearchBar bind:this={searchBarComponent} />
     </div>
     <NavLi
       href="/home"
