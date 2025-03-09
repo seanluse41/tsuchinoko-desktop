@@ -73,6 +73,7 @@
                 </Toggle>
             </div>
 
+            <!-- compact view -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <span class="text-lg font-medium">{$_("preferences.compactView")}</span>
@@ -99,6 +100,39 @@
                     {/snippet}
                     <div
                         class={preferencesState.compact ? "font-semibold" : ""}
+                    >
+                        {$_("preferences.on")}
+                    </div>
+                </Toggle>
+            </div>
+
+            <!-- keep filter on search -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg font-medium">{$_("preferences.keepFilterOnSearch")}</span>
+                    <InfoCircleSolid
+                        id="keepFilter-info"
+                        class="h-5 w-5 text-slate-600"
+                    />
+                    <Tooltip triggeredBy="#keepFilter-info"
+                        >{$_("preferences.keepFilterOnSearchTooltip")}</Tooltip
+                    >
+                </div>
+                <Toggle
+                    spanClass="w-16 h-10 after:top-1 after:left-[4px]  after:h-8 after:w-8"
+                    bind:checked={preferencesState.keepFilterOnSearch}
+                >
+                    {#snippet leftLabel()}
+                        <div
+                            class="me-4 {!preferencesState.keepFilterOnSearch
+                                ? 'font-semibold'
+                                : ''}"
+                        >
+                            {$_("preferences.off")}
+                        </div>
+                    {/snippet}
+                    <div
+                        class={preferencesState.keepFilterOnSearch ? "font-semibold" : ""}
                     >
                         {$_("preferences.on")}
                     </div>

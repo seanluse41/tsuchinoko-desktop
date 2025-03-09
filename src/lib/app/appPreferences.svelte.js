@@ -5,6 +5,7 @@ export const preferencesState = $state({
     loggingEnabled: true,
     language: "en",
     compact: false,
+    keepFilterOnSearch: true,
     syncTimer: "15",
     completedTaskColor: "#829650",
     registeredTaskColor: "#ffbf00",
@@ -65,6 +66,7 @@ export const resetAllPreferences = () => {
     preferencesState.loggingEnabled = true;
     preferencesState.language = "en";
     preferencesState.compact = false;
+    preferencesState.keepFilterOnSearch = true;
     preferencesState.syncTimer = "15";
     preferencesState.completedTaskColor = "#829650";
     preferencesState.registeredTaskColor = "#ffbf00";

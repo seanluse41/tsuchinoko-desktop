@@ -40,6 +40,8 @@
         "on": "On",
         "compactView": "Compact View",
         "compactViewTooltip": "Reduce spacing between task items",
+        "keepFilterOnSearch": "Keep Filters on Search",
+        "keepFilterOnSearchTooltip": "When off, global search will search through all tasks, no matter the current filter or folder state.",
         "syncInterval": "Sync Interval (minutes)",
         "syncIntervalTooltip": "How often to check for task updates",
         "currentInterval": "Current: {interval} minutes",
