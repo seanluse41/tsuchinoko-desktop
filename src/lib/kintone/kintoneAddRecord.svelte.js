@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { authState } from '../app//appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
 import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte.js";
+import { taskState } from "$lib/app/appTaskManager.svelte.js";
 
 function formatDateTime(dateString) {
     if (!dateString) return "";
@@ -61,8 +62,27 @@ export async function addRecord(formData) {
             }
         });
 
-        console.log(response)
-        trackTaskAction([response.id], "create")
+        console.log(response);
+        trackTaskAction([response.id], "create");
+        
+        // Add the new task to local state
+        const newTask = {
+            id: response.id,
+            name: formData.notificationTitle,
+            status: formData.taskStatus,
+            description: formData.notificationContent,
+            memo: formData.taskMemo,
+            dateCreated: now,
+            dateDue: formatDateTime(formData.taskDeadline),
+            priority: formData.taskPriority,
+            folder: "",
+            link: `https://${authState.user.subdomain}.${authState.user.domain}/k/${authState.user.appId}/show#record=${response.id}`,
+            completionMemo: ""
+        };
+        
+        // Update the tasks array with the new task
+        taskState.tasks = [newTask, ...taskState.tasks];
+        
         return response;
 
     } catch (error) {

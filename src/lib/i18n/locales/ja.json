@@ -22,7 +22,8 @@
         "sort": "並べ替え",
         "dateCreated": "作成日",
         "dueDate": "期限日",
-        "sync": "同期"
+        "sync": "同期",
+        "syncing": "同期中..."
     },
     "taskDetailsButtons": {
         "addToFolder": "フォルダに追加",

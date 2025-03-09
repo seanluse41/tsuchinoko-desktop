@@ -22,7 +22,8 @@
         "sort": "Sort",
         "dateCreated": "Date Created",
         "dueDate": "Due Date",
-        "sync": "Sync"
+        "sync": "Sync",
+        "syncing": "Syncing..."
     },
     "taskDetailsButtons": {
         "addToFolder": "Add to Folder",
