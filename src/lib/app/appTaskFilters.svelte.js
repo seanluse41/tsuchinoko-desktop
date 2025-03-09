@@ -9,12 +9,15 @@ export const viewState = $state({
 });
 
 const tasksView = $derived.by(() => {
+    // Guard against taskState being undefined or not fully initialized
+    if (!taskState || !Array.isArray(taskState.tasks)) {
+        return [];
+    }
+
     let result = [...taskState.tasks];
     
-    const uniqueStatuses = [...new Set(result.map(task => task.status))];
-    
     // First, apply folder filtering
-    if (folderState.selectedFolder !== 'All') {
+    if (folderState && folderState.selectedFolder !== 'All') {
         result = result.filter(task => task.folder === folderState.selectedFolder);
     }
     
@@ -59,7 +62,6 @@ export function toggleSort(field) {
 }
 
 export function toggleFilter(filter) {
-  
     if (viewState.activeFilters.includes(filter)) {
         // Remove the filter if it's already active
         viewState.activeFilters = viewState.activeFilters.filter(f => f !== filter);
@@ -69,7 +71,9 @@ export function toggleFilter(filter) {
     }
    
     // Clear selection when filters change
-    taskState.selectedTasks = [];
+    if (taskState && Array.isArray(taskState.selectedTasks)) {
+        taskState.selectedTasks = [];
+    }
 }
 
 export function isFilterActive(filter) {

@@ -10,7 +10,8 @@ export const taskState = $state({
     tasks: [],
     selectedTasks: [],
     isLoading: false,
-    error: null
+    error: null,
+    hasLoadedInitially: false
 });
 
 export async function loadTasks() {
@@ -36,18 +37,18 @@ export async function loadTasks() {
             }
         }
 
-        // Attempt to get records - this may fail if app was deleted
         try {
             const response = await getRecords("");
             taskState.tasks = response.list;
             taskState.selectedTasks = [];
+            taskState.hasLoadedInitially = true;
 
             // Update available folders
             folderState.folders = ['All', ...new Set(response.list.map(task => task.folder).filter(Boolean))];
         } catch (error) {
             // Check if error indicates app not found/deleted
             if (error.toString().includes("GAIA_APP")) {
-                // App likely deleted, clear ID and redirect
+                // App deleted? clears id
                 console.log("App appears to be deleted, clearing app ID");
                 authState.user.appId = null;
                 await secretManager.storeCredentials();

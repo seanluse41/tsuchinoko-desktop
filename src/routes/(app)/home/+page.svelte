@@ -6,11 +6,34 @@
   import { taskState, loadTasks } from "$lib/app/appTaskManager.svelte";
   import { navigationState } from "$lib/app/appNavigationTracker.svelte";
   import { authState } from "$lib/app/appLoginManager.svelte.js";
+  import { 
+    startSyncTimer, 
+    isSyncTimerElapsed, 
+    resetSyncTimer, 
+    checkPendingSync 
+  } from "$lib/app/appSyncTimer.svelte.js";
 
-  // In src/routes/(app)/home/+page.svelte
-  $effect(() => {
+  // Handle initial page load and timer initialization
+  $effect(async () => {
+    // Only proceed if authenticated
     if (authState.isAuthenticated && authState.token) {
-      loadTasks();
+      
+      // Check for pending sync or timer elapsed
+      const hasPendingSync = await checkPendingSync();
+      
+      // On first load or if no pending sync was processed but timer elapsed
+      if (!taskState.hasLoadedInitially || (!hasPendingSync && isSyncTimerElapsed())) {
+        console.log("Loading tasks - initial load or timer elapsed");
+        await loadTasks();
+        // Start or reset the timer after loading
+        resetSyncTimer();
+      }
+      
+      // Initialize timer if this is first load
+      if (!taskState.hasLoadedInitially) {
+        console.log("Initializing sync timer");
+        startSyncTimer();
+      }
     }
   });
 </script>

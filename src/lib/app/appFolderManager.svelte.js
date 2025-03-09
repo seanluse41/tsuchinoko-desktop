@@ -10,7 +10,10 @@ export const folderState = $state({
 export function selectFolder(folderId) {
     if (folderState.selectedFolder !== folderId) {
         resetFiltersAndSort();
-        taskState.selectedTasks = [];
+        // Safely check taskState exists and selectedTasks is an array
+        if (taskState && Array.isArray(taskState.selectedTasks)) {
+            taskState.selectedTasks = [];
+        }
         folderState.selectedFolder = folderId;
     }
 }

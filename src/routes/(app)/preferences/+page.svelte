@@ -155,9 +155,9 @@
                 <Range
                     rangeSize="lg"
                     color="violet"
-                    min="5"
-                    max="60"
-                    step="5"
+                    min="1"
+                    max="30"
+                    step="1"
                     bind:value={preferencesState.syncTimer}
                 />
                 <span class="text-sm text-slate-600"
