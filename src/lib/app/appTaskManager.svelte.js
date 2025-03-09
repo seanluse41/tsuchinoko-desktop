@@ -11,7 +11,8 @@ export const taskState = $state({
     selectedTasks: [],
     isLoading: false,
     error: null,
-    hasLoadedInitially: false
+    hasLoadedInitially: false,
+    newTaskIds: [] // Track newly added tasks for animation
 });
 
 export async function loadTasks() {
@@ -39,9 +40,28 @@ export async function loadTasks() {
 
         try {
             const response = await getRecords("");
+            
+            // Find new tasks by comparing with current tasks
+            const currentTaskIds = new Set(taskState.tasks.map(task => task.id));
+            const newTaskIds = response.list
+                .filter(task => !currentTaskIds.has(task.id))
+                .map(task => task.id);
+            
+            // Update tasks
             taskState.tasks = response.list;
             taskState.selectedTasks = [];
             taskState.hasLoadedInitially = true;
+            
+            // Set new task IDs for animation
+            taskState.newTaskIds = newTaskIds;
+            console.log("New tasks detected:", newTaskIds);
+            
+            // Clear new task IDs after animation time
+            if (newTaskIds.length > 0) {
+                setTimeout(() => {
+                    taskState.newTaskIds = [];
+                }, 5000); // Clear after 5 seconds
+            }
 
             // Update available folders
             folderState.folders = ['All', ...new Set(response.list.map(task => task.folder).filter(Boolean))];
@@ -84,4 +104,9 @@ export function allTasksCompleted(selectedIds, tasks) {
     return selectedIds.every(id =>
         tasks.find(task => task.id === id)?.status === 'completed'
     );
+}
+
+// Helper function to check if a task is newly added
+export function isNewTask(taskId) {
+    return taskState.newTaskIds.includes(taskId);
 }

@@ -8,6 +8,7 @@
     import {
         taskState,
         toggleTaskSelection,
+        isNewTask
     } from "$lib/app/appTaskManager.svelte";
     import { clearActiveFolderId } from "$lib/app/appTaskDragState.svelte";
     import { formatDate, getDueText } from "$lib/app/appDateHelpers.js";
@@ -39,12 +40,19 @@
                 taskState.selectedTasks.includes(dndState.draggedItem?.id))
     );
 
+    // Check if task was newly created through task creator
     let wasJustCreated = $derived(
         navigationState.latestAction === "create" &&
             navigationState.latestTaskId?.includes(id) &&
             navigationState.navigationStack[0]?.path === "/home" &&
             navigationState.navigationStack[1]?.path === "/task-create"
     );
+    
+    // Check if task is newly synced
+    let isNewlySynced = $derived(isNewTask(id));
+    
+    // Apply wiggle if either condition is true
+    let shouldWiggle = $derived(wasJustCreated || isNewlySynced);
 
     // Get current language from preferences
     let currentLanguage = $derived(preferencesState.language);
@@ -143,7 +151,7 @@
     onmouseleave={() => isHovered = false}
     class="task-card flex flex-col max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
         ? 'opacity-50'
-        : ''} {wasJustCreated ? 'animate-wiggle' : ''}"
+        : ''} {shouldWiggle ? 'animate-wiggle' : ''}"
     style="background-color: {currentBgColor};"
 >
         <div class="flex gap-12">
