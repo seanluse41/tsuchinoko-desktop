@@ -1,6 +1,5 @@
 // src/lib/app/appPreferences.svelte.js
 import { load } from '@tauri-apps/plugin-store';
-import { updateTimerFromPreferences } from './appSyncTimer.svelte.js';
 
 export const preferencesState = $state({
     loggingEnabled: true,
@@ -31,15 +30,10 @@ export async function savePreferences() {
     try {
         const store = await getStore();
         
-        // Save all preferences as a single object
         await store.set('preferences', preferencesState);
         
-        // Manually save to disk
+        // save to disk
         await store.save();
-        
-        // Update timer when preferences are saved
-        updateTimerFromPreferences();
-        
         console.log('Preferences saved successfully');
     } catch (error) {
         console.error('Failed to save preferences:', error);

@@ -4,35 +4,24 @@
   import TaskCommands from "../../../components/TaskCommands.svelte";
   import TaskList from "../../../components/TaskList.svelte";
   import { taskState, loadTasks } from "$lib/app/appTaskManager.svelte";
-  import { navigationState } from "$lib/app/appNavigationTracker.svelte";
+  import { page } from "$app/state";
   import { authState } from "$lib/app/appLoginManager.svelte.js";
-  import { 
-    startSyncTimer, 
-    isSyncTimerElapsed, 
-    resetSyncTimer, 
-    checkPendingSync 
-  } from "$lib/app/appSyncTimer.svelte.js";
+  import { timerState, checkPendingSync, performSync, initializeTimerService } from "$lib/app/appTimerService.svelte.js";
 
-  // Handle initial page load and timer initialization
-  $effect(async () => {
-    // Only proceed if authenticated
+  // Initialize timer service if needed
+  initializeTimerService();
+  
+  $effect(() => {
+    // When arriving on home page
     if (authState.isAuthenticated && authState.token) {
+      const currentPath = page.url.pathname;
       
-      // Check for pending sync or timer elapsed
-      const hasPendingSync = await checkPendingSync();
-      
-      // On first load or if no pending sync was processed but timer elapsed
-      if (!taskState.hasLoadedInitially || (!hasPendingSync && isSyncTimerElapsed())) {
-        console.log("Loading tasks - initial load or timer elapsed");
-        await loadTasks();
-        // Start or reset the timer after loading
-        resetSyncTimer();
-      }
-      
-      // Initialize timer if this is first load
+      // Check for pending sync or if we need initial load
       if (!taskState.hasLoadedInitially) {
-        console.log("Initializing sync timer");
-        startSyncTimer();
+        console.log("Initial load required");
+        performSync();
+      } else if (currentPath === '/home') {
+        checkPendingSync(currentPath);
       }
     }
   });

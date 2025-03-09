@@ -30,6 +30,7 @@
     import FilterButton from "./HomeTaskButtons/FilterTasks.svelte";
     import SortButton from "./HomeTaskButtons/SortTasks.svelte";
     import SyncButton from "./HomeTaskButtons/SyncTasks.svelte";
+    let { syncButton } = $props();
     import SelectAllButton from "./HomeTaskButtons/SelectAllTasks.svelte";
     import CompleteButton from "./HomeTaskButtons/CompleteTasks.svelte";
     import DeleteButton from "./HomeTaskButtons/DeleteTasks.svelte";
@@ -124,7 +125,7 @@
         <SidebarGroup>
             <FilterButton />
             <SortButton />
-            <SyncButton />
+            <SyncButton bind:this={syncButton} />
         </SidebarGroup>
 
         <SidebarGroup border>
