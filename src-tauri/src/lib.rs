@@ -1,11 +1,18 @@
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 mod commands;
 mod kintone;
+
 use std::fs;
 use tauri::LogicalSize;
 use tauri::Manager;
-#[cfg(any(target_os = "linux", windows))]
 use tauri_plugin_deep_link::DeepLinkExt;
-use tauri_plugin_log::{Target, TargetKind};
+
+fn main() {
+    let _ = fix_path_env::fix();
+    run()
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -45,11 +52,21 @@ pub fn run() {
             app.handle()
                 .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
 
-            // Only register deep-link on Linux and Windows
+            // Register all deep links for development purposes
             #[cfg(any(target_os = "linux", windows))]
             {
-                app.deep_link().register("tsuuchinoko")?;
+                app.deep_link().register_all()?;
             }
+            
+            // Handle deep link events
+            app.deep_link().on_open_url(|event| {
+                for url in event.urls() {
+                    println!("Deep link received: {}", url);
+                    // We can't access window from event directly
+                    // The event is typically sent to the main window anyway
+                }
+            });
+            
             Ok(())
         })
         .plugin(tauri_plugin_deep_link::init())
