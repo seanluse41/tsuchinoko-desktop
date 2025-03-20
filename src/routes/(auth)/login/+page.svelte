@@ -4,7 +4,6 @@
   import { onOpenUrl } from "@tauri-apps/plugin-deep-link";
   import { Card, Heading, P, Img, Button, Spinner } from "svelte-5-ui-lib";
   import { buildAuthUrl } from "$lib/kintone/kintoneAuthRequest";
-  import { handleAuthCallback } from "$lib/app/authCallbackHandler.svelte.js";
   import { authState } from "$lib/app/appLoginManager.svelte.js";
   import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
   let isButtonDisabled = $derived(authState.isLoading || !authState.user.subdomain);

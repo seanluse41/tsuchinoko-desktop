@@ -5,6 +5,9 @@ import { preferencesState } from '$lib/app/appPreferences.svelte';
 import { browser } from '$app/environment';
 import '$lib/i18n';
 import { locale, waitLocale } from 'svelte-i18n';
+import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
+import { goto } from '$app/navigation';
+import { trackNavigation } from '$lib/app/appNavigationTracker.svelte';
 
 export const prerender = true;
 export const ssr = false;
@@ -36,6 +39,36 @@ export async function load() {
     } catch (error) {
         console.error('Failed to initialize application:', error);
     }
+
+    await onOpenUrl((urls) => {
+        console.log('deep link:', urls);
+        
+        // Get the first URL from the array
+        if (!urls || !urls.length) return;
+        const url = urls[0];
+        
+        // Skip OAuth callbacks which are handled elsewhere
+        if (url.includes('oauth') || url.includes('tsuuchinoko-auth')) {
+            console.log('Skipping OAuth callback URL, handled elsewhere');
+            return;
+        }
+        
+        // Extract the path (remove the scheme)
+        const path = url.replace('tsuuchinoko://', '');
+        
+        // Handle empty path as home
+        if (!path || path === '') {
+            trackNavigation('/home');
+            goto('/home');
+            return;
+        }
+        
+        // Navigate to the requested path
+        const route = `/${path}`;
+        console.log(`Navigating to: ${route}`);
+        trackNavigation(route);
+        goto(route);
+    });
 }
 
 // Helper to save preferences 
