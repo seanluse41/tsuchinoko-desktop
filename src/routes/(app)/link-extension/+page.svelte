@@ -39,6 +39,8 @@
             created: new Date().toISOString(),
             expires: expiry
         };
+        console.log("payload")
+        console.log(payload)
         
         token = await createToken(payload);
     }
