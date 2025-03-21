@@ -56,10 +56,6 @@
             console.error("Failed to copy to clipboard:", err);
         }
     }
-
-    $effect(() => {
-        $inspect(authState)
-    })
 </script>
 
 <div class="min-h-screen relative flex items-center justify-center p-4">
