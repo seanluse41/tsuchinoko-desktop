@@ -1,5 +1,5 @@
 <script>
-    import { Card, Heading, Button, P, Input, Tooltip, Textarea } from "svelte-5-ui-lib";
+    import { Card, Heading, Button, P, Textarea, Tooltip } from "svelte-5-ui-lib";
     import { FileCopyOutline, CheckCircleOutline, InfoCircleSolid } from "flowbite-svelte-icons";
     import { writeText } from "@tauri-apps/plugin-clipboard-manager";
     import { authState } from "$lib/app/appLoginManager.svelte.js";
@@ -17,8 +17,9 @@
 
     async function generateToken() {
         // Validate required fields are available
-        if (!authState.user.subdomain || !authState.user.domain || !authState.user.appId || !authState.refreshToken) {
-            token = 'Missing required information. Please ensure you are logged in and have a Tsuuchinoko app configured.';
+        if (!authState.user.subdomain || !authState.user.domain || !authState.user.appId || 
+            !authState.refreshToken || !authState.user.clientId || !authState.user.clientSecret) {
+            token = 'Missing required information. Please ensure you are logged in and have a Tsuuchinoko app configured with proper OAuth credentials.';
             return;
         }
         
@@ -32,6 +33,8 @@
             domain: authState.user.domain,
             username: authState.user.username || 'unknown',
             appId: authState.user.appId,
+            clientId: authState.user.clientId,
+            clientSecret: authState.user.clientSecret,
             refreshToken: authState.refreshToken,
             created: new Date().toISOString(),
             expires: expiry
@@ -51,6 +54,10 @@
             console.error("Failed to copy to clipboard:", err);
         }
     }
+
+    $effect(() => {
+        $inspect(authState)
+    })
 </script>
 
 <div class="min-h-screen relative flex items-center justify-center p-4">

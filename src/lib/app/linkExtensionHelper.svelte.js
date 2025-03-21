@@ -24,8 +24,7 @@ export async function createToken(payload) {
     const encodedHeader = base64UrlEncode(JSON.stringify(header));
     const encodedPayload = base64UrlEncode(JSON.stringify(payload));
     
-    // Create the signature (in a real implementation, you'd use a proper crypto library)
-    // For this demo, we'll create a simpler hash-like signature
+    // Create the signature
     const dataToSign = encodedHeader + "." + encodedPayload;
     const signature = await createSignature(dataToSign, JWT_SECRET);
     
@@ -33,7 +32,7 @@ export async function createToken(payload) {
     return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
-// Simple signature generation
+// Signature generation using Web Crypto API
 async function createSignature(data, secret) {
     // Convert string to bytes for crypto operations
     const encoder = new TextEncoder();
