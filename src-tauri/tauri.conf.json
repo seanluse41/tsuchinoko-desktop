@@ -25,6 +25,7 @@
     }
   },
   "bundle": {
+    "createUpdaterArtifacts": true,
     "active": true,
     "targets": "all",
     "icon": [
@@ -36,6 +37,12 @@
     ]
   },
   "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDIyOUQ0M0RCQjdFQjMzMTAKUldRUU0rdTMyME9kSW5lUE5qZEMzUXZrSWFLSHlzTnVhN2ZTRmVnQW1PZ1hRZUgvQnRKc0lYZkgK",
+      "endpoints": [
+        "https://github.com/sean-kintone/tsuuchinoko/releases/latest/download/latest.json"
+      ]
+    },
     "deep-link": {
       "mobile": [
         {

@@ -17,6 +17,7 @@ fn main() {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let mut builder = tauri::Builder::default()
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_log::Builder::new().build());
@@ -57,7 +58,7 @@ pub fn run() {
             {
                 app.deep_link().register_all()?;
             }
-            
+
             // Handle deep link events
             app.deep_link().on_open_url(|event| {
                 for url in event.urls() {
@@ -66,7 +67,7 @@ pub fn run() {
                     // The event is typically sent to the main window anyway
                 }
             });
-            
+
             Ok(())
         })
         .plugin(tauri_plugin_deep_link::init())
