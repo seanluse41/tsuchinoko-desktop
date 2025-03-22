@@ -27,7 +27,7 @@
 </script>
 
 <div class="flex h-full">
-  <div class="w-64 flex-shrink-0">
+  <div class="max-w-64 md:w-64 flex-shrink-0">
     <TaskCommands />
   </div>
   <div class="flex-1 overflow-y-auto">

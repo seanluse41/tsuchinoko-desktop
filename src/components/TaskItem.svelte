@@ -1,6 +1,6 @@
 <!-- src/components/TaskItem.svelte -->
 <script>
-    import { Card, P, Heading, Listgroup, Hr } from "svelte-5-ui-lib";
+    import { Card, P, Heading, Listgroup, Hr, Badge } from "svelte-5-ui-lib";
     import { CheckCircleOutline } from "flowbite-svelte-icons";
     import { goto } from "$app/navigation";
     import { dndState, draggable } from "@thisux/sveltednd";
@@ -146,7 +146,6 @@
 <Card
     onclick={handleClick}
     padding="none"
-    size="xl"
     onmouseenter={() => isHovered = true}
     onmouseleave={() => isHovered = false}
     class="task-card flex flex-col max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
@@ -154,7 +153,7 @@
         : ''} {shouldWiggle ? 'animate-wiggle' : ''}"
     style="background-color: {currentBgColor};"
 >
-        <div class="flex gap-12">
+        <div class="flex gap-4 lg:gap-12">
             <div
                 class="flex items-center justify-center h-10 w-10 min-w-8 mt-1 rounded-full border border-slate-700 bg-white"
             >
@@ -168,35 +167,53 @@
             <div class="flex-1 max-w-full overflow-hidden">
                 <Heading
                     tag="h3"
-                    class="text-5xl font-bold mb-8"
+                    class="text-2xl lg:text-5xl font-bold lg:mb-8 sm:truncate"
                     style="color: {textColor};"
                 >
                     {name}
                 </Heading>
                 <P
-                    class="mt-4 line-clamp-1"
+                    class="mt-2 lg:mt-4 line-clamp-1"
                     style="color: {textColor};"
                 >
                     {description}
                 </P>
-                <Hr hrClass="mt-6 mb-2" />
+                <Hr hrClass="mt-2 lg:mt-6 mb-2" />
                 <P
-                    class="p-0 m-0"
+                    class="p-0 m-0 lg:block hidden"
                     style="color: {textColor};"
                 >
                     {$_("taskItem.memo")}:
                 </P>
                 <P
-                    class="line-clamp-1 p-0 m-0"
+                    class="line-clamp-1 p-0 m-0 lg:block hidden"
                     style="color: {textColor};"
                 >
                     {memo}
                 </P>
+
+                <!-- Mobile: Memo on one line -->
+                <P class="p-0 m-0 lg:hidden inline" style="color: {textColor};">
+                    {$_("taskItem.memo")}: <span class="line-clamp-1 inline">{memo}</span>
+                </P>
+                
+                <!-- Mobile badges for status, date, etc. -->
+                <div class="flex flex-wrap gap-2 mt-4 lg:hidden">
+                    <Badge color={status === "completed" ? "green" : status === "overdue" ? "red" : "yellow"}>
+                        {status}
+                    </Badge>
+                    <Badge color="blue">
+                        {formatDate(dateCreated, $_, currentLanguage).split(' ')[0]}
+                    </Badge>
+                    <Badge color="purple">
+                        {getDueText(dateDue, $_, currentLanguage)}
+                    </Badge>
+                </div>
             </div>
 
             <Listgroup
                 items={statusItems}
-                class="bg-white"
+                class="bg-white hidden lg:block"
                 itemClass="border bg-transparent hover:bg-transparent p-4 font-bold hover:text-slate-700"
             />
         </div>
