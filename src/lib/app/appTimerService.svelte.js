@@ -2,13 +2,15 @@
 import { browser } from '$app/environment';
 import { loadTasks } from './appTaskManager.svelte';
 import { preferencesState } from './appPreferences.svelte';
+import { checkForOverdueTasks } from '../kintone/kintoneOverdueTasks.svelte.js';
 
 export const timerState = $state({
     lastSyncTime: Date.now(),
     timeDisplay: "00:00",
     syncDue: false,
     syncPending: false,
-    isInitialized: false
+    isInitialized: false,
+    isSyncing: false // Add flag to track if sync is in progress
 });
 
 let intervalId = null;
@@ -55,13 +57,35 @@ export function initializeTimerService() {
 
 // Handle sync action (called from components)
 export async function performSync() {
+    // Prevent duplicate syncs
+    if (timerState.isSyncing) {
+        console.log("Sync already in progress, skipping");
+        return;
+    }
+    
     console.log("Performing sync");
+    
+    // Set syncing flag immediately
+    timerState.isSyncing = true;
+    
     try {
+        // First check for overdue tasks and update them
+        const overdueResult = await checkForOverdueTasks();
+        if (overdueResult.updated > 0) {
+            console.log(`Updated ${overdueResult.updated} tasks to overdue status`);
+        }
+        
+        // Then perform normal sync to get any other changes
         await loadTasks();
+        
+        // Reset timer after successful sync
         resetTimer();
         console.log("Sync completed successfully");
     } catch (error) {
         console.error("Sync failed:", error);
+    } finally {
+        // Always reset syncing flag when done
+        timerState.isSyncing = false;
     }
 }
 
@@ -75,6 +99,12 @@ export function resetTimer() {
 
 // Check for pending sync and process if on home page
 export function checkPendingSync(currentPath) {
+    // Skip if already syncing
+    if (timerState.isSyncing) {
+        console.log("Sync already in progress, skipping pending sync check");
+        return false;
+    }
+    
     if ((timerState.syncPending || timerState.syncDue) && currentPath === '/home') {
         console.log("Processing pending sync on home page");
         performSync();
