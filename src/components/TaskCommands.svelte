@@ -6,6 +6,7 @@
         SidebarButton,
         uiHelpers,
         Modal,
+        P
     } from "svelte-5-ui-lib";
     import { goto } from "$app/navigation";
     import {
@@ -152,6 +153,9 @@
         </SidebarGroup>
         <SidebarGroup border>
             <HelpButton />
+        </SidebarGroup>
+        <SidebarGroup border>
+            <P class="text-slate-700 font-bold">Current Tasks: {taskState.tasks.length} / 100</P>
         </SidebarGroup>
     </Sidebar>
 </div>
