@@ -18,9 +18,17 @@
     import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { _ } from "svelte-i18n";
+    import UpdaterModal from "../../../components/UpdaterModal.svelte";
+    import { 
+        checkForUpdates, 
+        updaterState 
+    } from "$lib/os/updater.svelte.js";
 
     let isChecking = $state(false);
     let appVersion = $state('Loading...');
+    
+    // Add state for controlling the modal visibility
+    let showUpdateModal = $state(false);
     
     // Use effect to load the version asynchronously
     $effect(async () => {
@@ -31,6 +39,7 @@
             appVersion = 'Unknown';
         }
     });
+    
     // List of libraries used in the project
     const libraries = [
         {
@@ -75,19 +84,42 @@
         },
     ];
 
-    function checkForUpdates() {
-        console.log(appVersion);
-        console.log("Checking for updates...");
-        isChecking = true;
-
-        // Simulate checking process
-        setTimeout(() => {
+    // Update the checkForUpdates function
+    async function handleCheckForUpdates() {
+        try {
+            isChecking = true;
+            
+            // Call the updater module's checkForUpdates
+            const updateAvailable = await checkForUpdates();
+            
+            // If updates are available, show the modal
+            if (updateAvailable) {
+                showUpdateModal = true;
+            } else {
+                // If no updates are available, show a message
+                alert("You're running the latest version!");
+            }
+            
+        } catch (error) {
+            console.error("Error checking for updates:", error);
+            alert(`Error checking for updates: ${error.message || 'Unknown error'}`);
+        } finally {
             isChecking = false;
-        }, 2000);
+        }
+    }
+    
+    // Function to close the update modal
+    function closeUpdateModal() {
+        showUpdateModal = false;
     }
 </script>
 
 <div class="relative w-full h-full overflow-auto z-10 py-16 px-32">
+    <UpdaterModal 
+        modalStatus={showUpdateModal} 
+        closeModal={closeUpdateModal} 
+    />
+    
     <Card
         class="max-w-none mx-auto mb-8 relative p-8"
         style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
@@ -103,7 +135,7 @@
                 >
                 <div class="text-lg text-slate-600 mb-4">Version {appVersion}</div>
                 <Button
-                    onclick={checkForUpdates}
+                    onclick={handleCheckForUpdates}
                     disabled={isChecking}
                     class="bg-thistle hover:bg-thistle-600 text-slate-700"
                 >
