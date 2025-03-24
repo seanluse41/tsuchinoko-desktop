@@ -11,10 +11,15 @@
         AccordionItem,
         List,
         Li,
+        Button,
+        Spinner,
     } from "svelte-5-ui-lib";
+    import { version } from "$app/environment";
     import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { _ } from "svelte-i18n";
+
+    let isChecking = $state(false);
 
     // List of libraries used in the project
     const libraries = [
@@ -59,6 +64,16 @@
             url: "https://www.npmjs.com/package/air-datepicker",
         },
     ];
+
+    function checkForUpdates() {
+        console.log("Checking for updates...");
+        isChecking = true;
+
+        // Simulate checking process
+        setTimeout(() => {
+            isChecking = false;
+        }, 2000);
+    }
 </script>
 
 <div class="relative w-full h-full overflow-auto z-10 py-16 px-32">
@@ -75,6 +90,21 @@
                     class="text-5xl font-bold mb-2 text-slate-800"
                     >{$_("about.aboutTsuuchinoko")}</Heading
                 >
+                <div class="text-lg text-slate-600">Version {version}</div>
+                <Button
+                    onclick={checkForUpdates}
+                    class="bg-thistle hover:bg-thistle-600 text-slate-700"
+                >
+                    {#if isChecking}
+                        <Spinner
+                            class="me-3"
+                            size="4"
+                            color="teal"
+                        />Checking...
+                    {:else}
+                        Check for Updates
+                    {/if}
+                </Button>
             </div>
 
             <Card class="max-w-none p-6 border border-slate-200">
@@ -128,7 +158,8 @@
                 </P>
                 <div class="p-4 bg-white rounded-lg border border-red-200">
                     <P class="mb-0 text-red-800">
-                        <strong>*{$_("about.securityNote")}</strong> {$_("about.securityDescription")}
+                        <strong>*{$_("about.securityNote")}</strong>
+                        {$_("about.securityDescription")}
                     </P>
                 </div>
             </Card>
@@ -146,12 +177,11 @@
                 </P>
                 <div class="p-4 bg-white rounded-lg border border-slate-200">
                     <List class="space-y-2 mb-0">
-                        <Li class="text-slate-600"
-                            >{$_("about.futurePlan1")}</Li
+                        <Li class="text-slate-600">{$_("about.futurePlan1")}</Li
                         >
-                        <Li class="text-slate-600">{$_("about.futurePlan2")}</Li>
-                        <Li class="text-slate-600"
-                            >{$_("about.futurePlan3")}</Li
+                        <Li class="text-slate-600">{$_("about.futurePlan2")}</Li
+                        >
+                        <Li class="text-slate-600">{$_("about.futurePlan3")}</Li
                         >
                     </List>
                 </div>
