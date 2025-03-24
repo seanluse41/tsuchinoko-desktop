@@ -12,9 +12,6 @@ const pkg = JSON.parse(json);
 const config = {
   kit: {
     adapter: adapter(),
-    version: {
-      name: pkg.version
-    }
   },
   preprocess: [vitePreprocess({})],
 };

@@ -14,13 +14,23 @@
         Button,
         Spinner,
     } from "svelte-5-ui-lib";
-    import { version } from "$app/environment";
+    import { getVersion } from '@tauri-apps/api/app';
     import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { _ } from "svelte-i18n";
 
     let isChecking = $state(false);
-
+    let appVersion = $state('Loading...');
+    
+    // Use effect to load the version asynchronously
+    $effect(async () => {
+        try {
+            appVersion = await getVersion();
+        } catch (error) {
+            console.error('Error getting app version:', error);
+            appVersion = 'Unknown';
+        }
+    });
     // List of libraries used in the project
     const libraries = [
         {
@@ -66,6 +76,7 @@
     ];
 
     function checkForUpdates() {
+        console.log(appVersion);
         console.log("Checking for updates...");
         isChecking = true;
 
@@ -90,9 +101,10 @@
                     class="text-5xl font-bold mb-2 text-slate-800"
                     >{$_("about.aboutTsuuchinoko")}</Heading
                 >
-                <div class="text-lg text-slate-600">Version {version}</div>
+                <div class="text-lg text-slate-600 mb-4">Version {appVersion}</div>
                 <Button
                     onclick={checkForUpdates}
+                    disabled={isChecking}
                     class="bg-thistle hover:bg-thistle-600 text-slate-700"
                 >
                     {#if isChecking}
