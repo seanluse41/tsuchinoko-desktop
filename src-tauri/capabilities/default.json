@@ -18,7 +18,8 @@
           "args": [
             "https://**.kintone.com/**",
             "https://**.cybozu.com/**",
-            "https://seanbase.com/**"
+            "https://seanbase.com/**",
+            "https://github.com/seanluse41/**"
           ]
         }
       ]
@@ -29,6 +30,7 @@
     "clipboard-manager:allow-write-text",
     "log:default",
     "store:default",
-    "updater:default"
+    "updater:default",
+    "process:default"
   ]
 }
