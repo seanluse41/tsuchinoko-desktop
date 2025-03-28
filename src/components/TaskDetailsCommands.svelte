@@ -69,7 +69,7 @@
         backdrop={false}
         {isOpen}
         {closeSidebar}
-        class="z-10 h-full border-r-2 border-ebony"
+        class="h-full border-r-2 border-ebony"
         divClass="bg-transparent px-6 py-20 overflow-y-auto"
         style="background-color: {preferencesState.menuColor}"
     >

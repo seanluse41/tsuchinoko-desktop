@@ -82,7 +82,7 @@
         <div>
             <p class="mb-2 font-bold text-slate-700">{$_("taskDetail.status")}</p>
             <!-- Flex column on mobile, row on desktop -->
-            <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex flex-col md:flex-row gap-1 md:gap-4">
                 {#each ["registered", "completed", "overdue"] as status}
                     <Radio
                         name="status"
@@ -98,7 +98,7 @@
         <div>
             <p class="mb-2 font-bold text-slate-700">{$_("taskDetail.priority")}</p>
             <!-- Flex column on mobile, row on desktop -->
-            <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex flex-col md:flex-row gap-1 md:gap-4">
                 {#each ["normal", "high", "urgent"] as priority}
                     <Radio
                         name="priority"
@@ -132,7 +132,7 @@
             bind:value={formData.folder}
             class="w-full mt-1"
         >
-            <option value="">{$_("taskDetail.noFolder")}</option>
+            <option value="All">{$_("taskDetail.noFolder")}</option>
             {#each availableFolders as folder}
                 {#if folder}
                     <option value={folder}>{folder}</option>

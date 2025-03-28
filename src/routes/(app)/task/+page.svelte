@@ -66,11 +66,11 @@
 </script>
 
 <main class="flex h-full select-enabled relative">
-    <div class="md:w-64 flex-shrink-0 z-20">
+    <div class="md:w-64 flex-shrink-0">
         <TaskDetailsCommands taskId={task?.id} />
     </div>
     {#if task}
-        <div class="flex-1 overflow-y-auto py-8 px-2 lg:p-8 z-10">
+        <div class="flex-1 overflow-y-auto py-8 px-2 lg:p-8">
             {#if isEditing}
                 <TaskDetailsEdit 
                     {task} 
