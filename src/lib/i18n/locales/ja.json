@@ -164,7 +164,9 @@
         "priority": "優先度",
         "folder": "フォルダ",
         "noFolder": "フォルダなし",
-        "selectDate": "日時を選択"
+        "selectDate": "日時を選択",
+        "saving": "保存中...",
+        "saveFailed": "変更の保存に失敗しました。もう一度お試しください。"
     },
     "dateHelpers": {
         "notSet": "未設定",

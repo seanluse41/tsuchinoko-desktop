@@ -164,7 +164,9 @@
         "priority": "Priority",
         "folder": "Folder",
         "noFolder": "No folder",
-        "selectDate": "Select date and time"
+        "selectDate": "Select date and time",
+        "saving": "Saving...",
+        "saveFailed": "Failed to save changes. Please try again."
     },
     "dateHelpers": {
         "notSet": "Not set",

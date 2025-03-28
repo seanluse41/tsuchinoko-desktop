@@ -6,15 +6,18 @@
     import TaskDetailsView from "../../../components/TaskDetailsView.svelte";
     import TaskDetailsEdit from "../../../components/TaskDetailsEdit.svelte";
     import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte";
-    import { Button } from "svelte-5-ui-lib";
+    import { Button, Alert } from "svelte-5-ui-lib";
     import { _ } from "svelte-i18n";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
+    import { updateTask } from "$lib/kintone/kintoneUpdateTask.svelte.js";
 
     // Get taskId from query parameter instead of route param
     let taskId = $derived(page.url.searchParams.get("id"));
     
     // Editing state
     let isEditing = $state(false);
+    let isSubmitting = $state(false);
+    let errorMessage = $state('');
     let formData = $state({
         name: '',
         status: '',
@@ -33,6 +36,7 @@
         trackTaskAction([taskId], "view")
     });
 
+    // Always get the latest task data directly from the tasks array
     let task = $derived(taskState.tasks.find((t) => t.id === taskId));
     let currentLanguage = $derived(preferencesState.language);
     
@@ -55,28 +59,60 @@
     // Toggle edit mode
     function toggleEditMode() {
         isEditing = !isEditing;
+        errorMessage = '';
     }
     
-    // Save changes (we'll implement this later)
-    function saveChanges() {
-        // TODO: Implement saving logic
-        console.log("Saving changes:", formData);
-        isEditing = false;
+    // Save changes
+    async function saveChanges() {
+        if (!task || !taskId) return;
+        
+        try {
+            isSubmitting = true;
+            errorMessage = '';
+            
+            // Map form data fields to Kintone field names
+            const kintoneFields = {
+                notificationTitle: formData.name,
+                taskStatus: formData.status,
+                taskDeadline: formData.dateDue,
+                notificationContent: formData.description,
+                taskMemo: formData.memo,
+                taskPriority: formData.priority,
+                taskCompletionMemo: formData.completionMemo,
+                taskFolder: formData.folder === "All" ? "" : formData.folder
+            };
+            
+            // Update the task
+            await updateTask(taskId, kintoneFields, 'edit');
+            
+            // Exit edit mode
+            isEditing = false;
+        } catch (err) {
+            console.error("Failed to save task:", err);
+            errorMessage = err.message || $_("taskDetail.saveFailed");
+        } finally {
+            isSubmitting = false;
+        }
     }
 </script>
 
-<main class="flex h-full select-enabled relative">
-    <div class="md:w-64 flex-shrink-0">
+<main class="flex h-full select-enabled">
+    <div class="w-64 flex-shrink-0">
         <TaskDetailsCommands taskId={task?.id} />
     </div>
     {#if task}
-        <div class="flex-1 overflow-y-auto py-8 px-2 lg:p-8">
+        <div class="flex-1 overflow-y-auto p-8 z-10">
+            {#if errorMessage}
+                <Alert color="red" class="mb-4">{errorMessage}</Alert>
+            {/if}
+            
             {#if isEditing}
                 <TaskDetailsEdit 
                     {task} 
                     bind:formData 
                     onSave={saveChanges} 
-                    onCancel={toggleEditMode} 
+                    onCancel={toggleEditMode}
+                    {isSubmitting}
                 />
             {:else}
                 <div class="flex items-center justify-between mb-4">
