@@ -148,17 +148,17 @@
     padding="none"
     onmouseenter={() => isHovered = true}
     onmouseleave={() => isHovered = false}
-    class="task-card flex flex-col max-w-none border border-ebony-200 rounded-lg cursor-move px-4 py-6 relative {shouldFade
+    class="task-card flex flex-col max-w-none border border-ebony-200 rounded-lg cursor-move p-2 md:px-4 md:py-6 relative {shouldFade
         ? 'opacity-50'
         : ''} {shouldWiggle ? 'animate-wiggle' : ''}"
     style="background-color: {currentBgColor};"
 >
-        <div class="flex gap-4 lg:gap-12">
+        <div class="flex gap-1 md:gap-4 lg:gap-12">
             <div
-                class="flex items-center justify-center h-10 w-10 min-w-8 mt-1 rounded-full border border-slate-700 bg-white"
+                class="flex items-center justify-center h-6 w-6 md:h-10 md:w-10 md:min-w-8 mt-1 rounded-full border border-slate-700 bg-white text-sm"
             >
                 {#if isSelected}
-                    <CheckCircleOutline class="h-8 w-8 text-moss_green-600" />
+                    <CheckCircleOutline class="h-5 w-5 md:h-8 md:w-8 text-moss_green-600" />
                 {:else}
                     {id}
                 {/if}
@@ -167,13 +167,13 @@
             <div class="flex-1 max-w-full overflow-hidden">
                 <Heading
                     tag="h3"
-                    class="text-2xl lg:text-5xl font-bold lg:mb-8 sm:truncate"
+                    class="text-xl md:text-3xl lg:text-4xl font-bold lg:mb-8 sm:truncate"
                     style="color: {textColor};"
                 >
                     {name}
                 </Heading>
                 <P
-                    class="mt-2 lg:mt-4 line-clamp-1"
+                    class="mt-2 lg:mt-4 line-clamp-1 md:line-clamp-3"
                     style="color: {textColor};"
                 >
                     {description}
@@ -193,7 +193,7 @@
                 </P>
 
                 <!-- Mobile: Memo on one line -->
-                <P class="p-0 m-0 lg:hidden inline" style="color: {textColor};">
+                <P class="p-0 m-0 lg:hidden inline line-clamp-1 md:line-clamp-3" style="color: {textColor};">
                     {$_("taskItem.memo")}: <span class="line-clamp-1 inline">{memo}</span>
                 </P>
                 
