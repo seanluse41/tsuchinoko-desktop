@@ -156,7 +156,15 @@
         "description": "Description",
         "memo": "Memo",
         "completionNotes": "Completion Notes",
-        "taskNotFound": "Task not found"
+        "taskNotFound": "Task not found",
+        "edit": "Edit Task",
+        "saveChanges": "Save Changes",
+        "cancel": "Cancel",
+        "name": "Title",
+        "priority": "Priority",
+        "folder": "Folder",
+        "noFolder": "No folder",
+        "selectDate": "Select date and time"
     },
     "dateHelpers": {
         "notSet": "Not set",

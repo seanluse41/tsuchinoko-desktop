@@ -2,54 +2,94 @@
 <script>
     import { page } from "$app/state";
     import { taskState } from "$lib/app/appTaskManager.svelte";
-    import { formatDate, getDueText } from "$lib/app/appDateHelpers.js";
     import TaskDetailsCommands from "../../../components/TaskDetailsCommands.svelte";
+    import TaskDetailsView from "../../../components/TaskDetailsView.svelte";
+    import TaskDetailsEdit from "../../../components/TaskDetailsEdit.svelte";
     import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte";
-    import { Heading, P, Hr } from "svelte-5-ui-lib";
+    import { Button } from "svelte-5-ui-lib";
     import { _ } from "svelte-i18n";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
 
     // Get taskId from query parameter instead of route param
     let taskId = $derived(page.url.searchParams.get("id"));
+    
+    // Editing state
+    let isEditing = $state(false);
+    let formData = $state({
+        name: '',
+        status: '',
+        dateDue: '',
+        description: '',
+        memo: '',
+        priority: '',
+        completionMemo: '',
+        folder: ''
+    });
 
     $effect(() => {  
-    if (taskId) {
-        taskState.selectedTasks = [taskId];
-    }
-    trackTaskAction([taskId], "view")
-});
+        if (taskId) {
+            taskState.selectedTasks = [taskId];
+        }
+        trackTaskAction([taskId], "view")
+    });
 
     let task = $derived(taskState.tasks.find((t) => t.id === taskId));
     let currentLanguage = $derived(preferencesState.language);
+    
+    // Initialize form data when task changes
+    $effect(() => {
+        if (task) {
+            formData = {
+                name: task.name || '',
+                status: task.status || '',
+                dateDue: task.dateDue || '',
+                description: task.description || '',
+                memo: task.memo || '',
+                priority: task.priority || 'normal',
+                completionMemo: task.completionMemo || '',
+                folder: task.folder || ''
+            };
+        }
+    });
+    
+    // Toggle edit mode
+    function toggleEditMode() {
+        isEditing = !isEditing;
+    }
+    
+    // Save changes (we'll implement this later)
+    function saveChanges() {
+        // TODO: Implement saving logic
+        console.log("Saving changes:", formData);
+        isEditing = false;
+    }
 </script>
 
-<main class="flex h-full select-enabled">
-    <div class="w-64 flex-shrink-0">
+<main class="flex h-full select-enabled relative">
+    <div class="md:w-64 flex-shrink-0 z-20">
         <TaskDetailsCommands taskId={task?.id} />
     </div>
     {#if task}
-        <div class="flex-1 overflow-y-auto p-8 z-10">
-            <Heading class="text-5xl font-bold mb-4">{task.name}</Heading>
-            <div class="space-y-4 max-w-full">
-                <P>{$_("taskDetail.id")}: {task.id}</P>
-                <P>{$_("taskDetail.status")}: {task.status}</P>
-                <P>{$_("taskDetail.created")}: {formatDate(task.dateCreated, $_, currentLanguage)}</P>
-                <P>{$_("taskDetail.due")}: {formatDate(task.dateDue, $_, currentLanguage)}</P>
-                <P>{$_("taskDetail.dueIn")}: {getDueText(task.dateDue, $_, currentLanguage)}</P>
-                <P class="break-words">
-                    {$_("taskDetail.description")}:
-                    {task.description}
-                </P>
-                <P class="break-words">{$_("taskDetail.memo")}: {task.memo}</P>
-                <Hr />
-                {#if task.status === 'completed'}
-                    <div class="p-4 bg-moss_green-500 border border-slate-700 rounded-lg mt-4">
-                        <Heading class="font-medium text-white">{$_("taskDetail.completionNotes")}:</Heading>
-                        <Hr class="mb-8 mt-4" />
-                        <P class="break-words text-white">{task.completionMemo}</P>
-                    </div>
-                {/if}
-            </div>
+        <div class="flex-1 overflow-y-auto py-8 px-2 lg:p-8 z-10">
+            {#if isEditing}
+                <TaskDetailsEdit 
+                    {task} 
+                    bind:formData 
+                    onSave={saveChanges} 
+                    onCancel={toggleEditMode} 
+                />
+            {:else}
+                <div class="flex items-center justify-between mb-4">
+                    <div></div> <!-- Spacer -->
+                    <Button 
+                        onclick={toggleEditMode}
+                        class="bg-thistle hover:bg-thistle-700"
+                    >
+                        {$_("taskDetail.edit")}
+                    </Button>
+                </div>
+                <TaskDetailsView {task} {currentLanguage} />
+            {/if}
         </div>
     {:else}
         <div class="p-8">

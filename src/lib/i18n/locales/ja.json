@@ -156,7 +156,15 @@
         "description": "詳細",
         "memo": "メモ",
         "completionNotes": "完了メモ",
-        "taskNotFound": "タスクが見つかりません"
+        "taskNotFound": "タスクが見つかりません",
+        "edit": "タスクを編集",
+        "saveChanges": "変更を保存",
+        "cancel": "キャンセル",
+        "name": "タイトル",
+        "priority": "優先度",
+        "folder": "フォルダ",
+        "noFolder": "フォルダなし",
+        "selectDate": "日時を選択"
     },
     "dateHelpers": {
         "notSet": "未設定",
