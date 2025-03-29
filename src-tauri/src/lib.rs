@@ -5,6 +5,7 @@ mod commands;
 mod kintone;
 
 use std::fs;
+#[cfg(desktop)]
 use tauri::LogicalSize;
 use tauri::Manager;
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -18,7 +19,6 @@ fn main() {
 pub fn run() {
     let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_log::Builder::new().build());
@@ -32,15 +32,19 @@ pub fn run() {
                 .set_focus();
             println!("new instance started with arguments: {argv:?}");
         }));
+        
+        builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
     }
 
     builder
         .setup(|app| {
+            #[cfg(desktop)]
             if let Some(window) = app.get_webview_window("main") {
                 window
                     .set_min_size(Some(LogicalSize::new(640, 480)))
                     .expect("Failed to set minimum window size");
             }
+            
             // Get the app local data directory and ensure it exists
             let app_local_dir = app
                 .path()
