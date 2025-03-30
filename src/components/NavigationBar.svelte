@@ -18,7 +18,10 @@
   import { preferencesState } from "$lib/app/appPreferences.svelte";
   import { searchState } from "$lib/app/appSearchState.svelte.js";
   import { resetFiltersAndSort } from "$lib/app/appTaskFilters.svelte.js";
-  import { folderState, selectFolder } from "$lib/app/appFolderManager.svelte.js";
+  import {
+    folderState,
+    selectFolder,
+  } from "$lib/app/appFolderManager.svelte.js";
 
   let activeUrl = $state(page.url.pathname);
   let nav = uiHelpers();
@@ -29,7 +32,7 @@
   let dropdown = uiHelpers();
   let dropdownStatus = $state(false);
   let closeDropdown = dropdown.close;
-  
+
   // Reference to the SearchBar component
   let searchBarComponent;
 
@@ -43,23 +46,26 @@
     trackNavigation(path);
     closeDropdown();
   };
-  
+
   // Handler for clicking the brand/logo
   function handleBrandClick() {
     // If we're going to the home page, reset everything
-    if (page.url.pathname === '/home') {
+    if (page.url.pathname === "/home") {
       // Reset search if we have a reference to the component
-      if (searchBarComponent && typeof searchBarComponent.resetSearch === 'function') {
+      if (
+        searchBarComponent &&
+        typeof searchBarComponent.resetSearch === "function"
+      ) {
         searchBarComponent.resetSearch();
       }
-      
+
       // Reset filters and folder
       resetFiltersAndSort();
-      selectFolder('All');
+      selectFolder("All");
     }
-    
+
     // Navigate to home
-    trackNav('/home');
+    trackNav("/home");
   }
 </script>
 
@@ -72,7 +78,11 @@
   style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
 >
   {#snippet brand()}
-    <NavBrand siteName="Tsuuchinoko" class="text-ebony-800 cursor-pointer" onclick={handleBrandClick}></NavBrand>
+    <NavBrand
+      siteName="Tsuuchinoko"
+      class="text-ebony-800 cursor-pointer"
+      onclick={handleBrandClick}
+    ></NavBrand>
   {/snippet}
 
   <NavUl {activeUrl} class="text-ebony-800 items-center">
@@ -88,6 +98,11 @@
       href="/task-create"
       onclick={() => trackNav("/task-create")}
       class="hover:text-moss_green-600">{$_("nav.create")}</NavLi
+    >
+    <NavLi
+      href="/clock"
+      onclick={() => trackNav("/clock")}
+      class="hover:text-moss_green-600">{$_("nav.clock")}</NavLi
     >
     <NavLi
       onclick={dropdown.toggle}

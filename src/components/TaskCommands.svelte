@@ -27,6 +27,8 @@
     import { folderState } from "$lib/app/appFolderManager.svelte.js";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { _ } from "svelte-i18n";
+    // Import timer state and functions
+    import { timerState, formatTime } from "$lib/app/appEggTimer.svelte.js";
 
     import FilterButton from "./HomeTaskButtons/FilterTasks.svelte";
     import SortButton from "./HomeTaskButtons/SortTasks.svelte";
@@ -110,6 +112,12 @@
     let shouldShowGroupOutline = $derived(
         dndState.isDragging && !dragState.activeFolderId,
     );
+    
+    // Function to navigate to timer page
+    function goToTimer() {
+        trackNavigation("/clock");
+        goto("/clock");
+    }
 </script>
 
 <div class="relative">
@@ -156,6 +164,25 @@
         </SidebarGroup>
         <SidebarGroup border>
             <P class="text-slate-700 font-bold">Current Tasks: {taskState.tasks.length} / 100</P>
+            
+            <!-- Timer status display -->
+            <div 
+                class="mt-2 p-3 bg-white rounded-lg border border-slate-300 
+                       flex items-center justify-between cursor-pointer hover:bg-slate-100"
+                onclick={goToTimer}
+            >
+                <div class="flex items-center">
+                    <span class="w-3 h-3 rounded-full {timerState.isRunning ? 'bg-moss_green-600 animate-pulse' : 
+                    timerState.isExpired ? 'bg-red-500' : 'bg-slate-400'}"></span>
+                    <span class="ml-2 text-sm font-medium text-slate-700">Timer:</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-lg font-bold {timerState.isExpired ? 'text-red-500' : 
+                    timerState.isRunning ? 'text-moss_green-600' : 'text-slate-700'}">
+                        {formatTime(timerState.remainingSeconds)}
+                    </span>
+                </div>
+            </div>
         </SidebarGroup>
     </Sidebar>
 </div>
