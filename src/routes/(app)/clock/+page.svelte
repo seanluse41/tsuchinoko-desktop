@@ -17,7 +17,7 @@
             <p class="text-slate-700">Set a timer and get things done!</p>
         </div>
         
-        <div class="flex flex-col items-center">
+        <div class="flex flex-col">
             <EggTimer />
         </div>
     </Card>

@@ -10,8 +10,21 @@ export const timerState = $state({
     isRunning: false,
     isExpired: false,
     remainingSeconds: 60,
-    intervalId: null
+    intervalId: null,
+    alarmPlayed: false, // Track if the alarm has played for the current expiration
+    alarmSound: 'digitalTimer.mp3', // Default alarm sound
+    loopAlarm: false // Whether to loop the alarm sound
 });
+
+// Set the alarm sound
+export function setAlarmSound(soundFile) {
+    timerState.alarmSound = soundFile;
+}
+
+// Set the loop alarm option
+export function setLoopAlarm(shouldLoop) {
+    timerState.loopAlarm = shouldLoop;
+}
 
 // Start the timer with the current duration
 export function startTimer() {
@@ -23,6 +36,7 @@ export function startTimer() {
     timerState.endTime = new Date(now.getTime() + timerState.remainingSeconds * 1000);
     timerState.isRunning = true;
     timerState.isExpired = false;
+    timerState.alarmPlayed = false;
     
     // Start interval
     timerState.intervalId = setInterval(updateTimer, 100); // Check more frequently for smooth display
@@ -34,6 +48,7 @@ export function stopTimer() {
     if (!timerState.isRunning) return;
     
     clearInterval(timerState.intervalId);
+    timerState.intervalId = null;
     timerState.isRunning = false;
     
     // Save the remaining time
@@ -47,6 +62,7 @@ export function clearTimer() {
     stopTimer();
     timerState.remainingSeconds = timerState.duration;
     timerState.isExpired = false;
+    timerState.alarmPlayed = false;
 }
 
 // Set a new duration (in seconds)
@@ -56,15 +72,17 @@ export function setDuration(seconds) {
     // Reset remaining seconds to match the new duration
     timerState.remainingSeconds = seconds;
     timerState.isExpired = false;
+    timerState.alarmPlayed = false;
 }
 
-// Add time to the timer
+// Add time to the timer (works whether running or not)
 export function addTimeToTimer(secondsToAdd) {
     if (secondsToAdd <= 0) return;
     
     // If the timer is expired, restart it
     if (timerState.isExpired) {
         timerState.isExpired = false;
+        timerState.alarmPlayed = false;
     }
     
     // Calculate new total time, ensuring we don't exceed max duration
@@ -76,7 +94,7 @@ export function addTimeToTimer(secondsToAdd) {
     // Update the remaining seconds
     timerState.remainingSeconds = newTotalSeconds;
     
-    // Update the duration to match the new total time
+    // Update the duration to match the new total time - THIS IS THE KEY FIX
     timerState.duration = newTotalSeconds;
     
     // If the timer is running, update the end time
@@ -98,7 +116,10 @@ function updateTimer() {
         timerState.remainingSeconds = 0;
         timerState.isRunning = false;
         timerState.isExpired = true;
-        clearInterval(timerState.intervalId);
+        if (timerState.intervalId) {
+            clearInterval(timerState.intervalId);
+            timerState.intervalId = null;
+        }
     } else {
         // Update remaining time
         timerState.remainingSeconds = Math.floor(remaining / 1000);
