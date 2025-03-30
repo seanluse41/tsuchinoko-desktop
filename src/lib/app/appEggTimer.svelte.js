@@ -58,7 +58,7 @@ export function setDuration(seconds) {
     timerState.isExpired = false;
 }
 
-// Add time to the timer (works whether running or not)
+// Add time to the timer
 export function addTimeToTimer(secondsToAdd) {
     if (secondsToAdd <= 0) return;
     
@@ -75,6 +75,9 @@ export function addTimeToTimer(secondsToAdd) {
     
     // Update the remaining seconds
     timerState.remainingSeconds = newTotalSeconds;
+    
+    // Update the duration to match the new total time
+    timerState.duration = newTotalSeconds;
     
     // If the timer is running, update the end time
     if (timerState.isRunning && timerState.endTime) {

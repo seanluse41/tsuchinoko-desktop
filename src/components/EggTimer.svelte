@@ -107,7 +107,7 @@
                rounded-full border-8 border-slate-300 bg-white
                w-64 h-64 md:w-80 md:h-80 overflow-hidden shadow-md
                transition-colors duration-300 
-               {!timerState.isRunning ? 'cursor-pointer hover:border-amber-300' : ''}"
+               {!timerState.isRunning ? 'cursor-pointer hover:border-slate-700' : ''}"
         onclick={toggleEditMode}
     >
         <!-- Timer fill gradient -->

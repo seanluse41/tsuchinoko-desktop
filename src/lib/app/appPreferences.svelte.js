@@ -6,6 +6,7 @@ export const preferencesState = $state({
     language: "en",
     compact: false,
     keepFilterOnSearch: true,
+    eggTimerSound: true,
     syncTimer: "15",
     completedTaskColor: "#829650",
     registeredTaskColor: "#ffbf00",
@@ -66,6 +67,7 @@ export const resetAllPreferences = () => {
     preferencesState.language = "en";
     preferencesState.compact = false;
     preferencesState.keepFilterOnSearch = true;
+    preferencesState.eggTimerSound = true;
     preferencesState.syncTimer = "15";
     preferencesState.completedTaskColor = "#829650";
     preferencesState.registeredTaskColor = "#ffbf00";
