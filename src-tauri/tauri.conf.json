@@ -44,9 +44,9 @@
     "deep-link": {
       "mobile": [
         {
-          "host": "seanbase.com/tsuuchinoko-auth",
+          "host": "seanbase.com",
           "pathPrefix": [
-            "/open"
+            "/tsuuchinoko-auth"
           ]
         }
       ],

@@ -32,7 +32,7 @@ pub fn run() {
                 .set_focus();
             println!("new instance started with arguments: {argv:?}");
         }));
-        
+
         builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
     }
 
@@ -44,7 +44,7 @@ pub fn run() {
                     .set_min_size(Some(LogicalSize::new(640, 480)))
                     .expect("Failed to set minimum window size");
             }
-            
+
             // Get the app local data directory and ensure it exists
             let app_local_dir = app
                 .path()
