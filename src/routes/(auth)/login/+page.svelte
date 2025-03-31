@@ -34,13 +34,13 @@
   });
 </script>
 
-<main class="flex min-h-screen w-full items-center justify-center bg-amber-900">
-  <Card class="max-w-none w-3/4 p-8 z-10">
+<main class="flex min-h-screen w-full items-center justify-center p-2 bg-amber-900">
+  <Card class="max-w-none md:w-3/4 p-2 md:p-8 z-10">
     <div class="mb-8 flex justify-center">
-      <Img src="logo_kintone_mark_rgb.png" alt="Kintone Logo" class="h-12 w-auto" size="md" />
+      <Img src="logo_kintone_mark_rgb.png" alt="Kintone Logo" class="h-12 w-auto" />
     </div>
     <div class="flex flex-col items-center gap-8">
-      <Heading level={1} class="mb-6 text-center text-ebony-200">
+      <Heading tag="h1" class="mb-6 text-center text-slate-700">
         Tsuuchinoko
       </Heading>
       
@@ -53,16 +53,14 @@
       {/if}
 
       {#if !authState.user.subdomain}
-        <div class="mb-4 w-full rounded-md bg-amber-50 p-4">
-          <div class="ml-3">
-            <P class="text-sm font-medium text-center text-ebony">Please complete the First Time Setup to configure your Kintone subdomain.</P>
-          </div>
+        <div class="mb-4 w-full rounded-md bg-amber-50 p-4 px-8">
+            <P class="text-sm font-medium text-center text-slate-700">Please complete the First Time Setup to configure your Kintone subdomain.</P>
         </div>
       {/if}
 
       <div class="flex flex-col gap-4 w-full justify-center items-center">
         <Button
-          class="lg:w-3/4 rounded-lg bg-amber px-8 py-8 text-black hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-thistle focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          class="w-full md:w-3/4 rounded-lg bg-amber p-6 text-slate-700 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-thistle focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           onclick={initiateKintoneLogin}
           disabled={isButtonDisabled}
           size="xl"
@@ -74,7 +72,7 @@
         </Button>
 
         <Button
-          class="lg:w-3/4 rounded-lg bg-thistle px-8 py-8 text-black hover:bg-thistle-700 focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
+          class="w-full md:w-3/4 rounded-lg bg-thistle p-6 text-slate-700 hover:bg-thistle-700 focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
           href="/setup"
           size="xl"
           onclick={() => trackNavigation('/setup')}

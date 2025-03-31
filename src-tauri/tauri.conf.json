@@ -15,8 +15,6 @@
         "title": "tsuuchinoko",
         "width": 800,
         "height": 600,
-        "minWidth": 640,
-        "minHeight": 480,
         "dragDropEnabled": false
       }
     ],
@@ -46,9 +44,9 @@
     "deep-link": {
       "mobile": [
         {
-          "host": "seanbase.com/tsuuchinoko-auth",
+          "host": "seanbase.com",
           "pathPrefix": [
-            "/open"
+            "/tsuuchinoko-auth"
           ]
         }
       ],
