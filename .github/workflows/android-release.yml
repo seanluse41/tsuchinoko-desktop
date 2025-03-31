@@ -87,7 +87,7 @@ jobs:
       - name: Build Android App (APK and AAB) - Using Gradle Signing Config
         # We removed the TAURI_ANDROID_* env vars as Gradle now reads the properties file
         # Keep verbosity (-vvv) and RUST_LOG=debug for now in case of other issues
-        run: npm run tauri android build --release -vvv # Or use npx if preferred
+        run: npm run tauri android build
         env:
           # NDK_HOME still needed for Rust build part
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
