@@ -1,60 +1,59 @@
-name: 'publish'
+name: 'Android Release'
 
 on:
-    push:
-        branches:
-            - master
-
-    workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
-    publish-android:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
-        steps:
-            - uses: actions/checkout@v4
+  build-android:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
 
-            - uses: pnpm/action-setup@v4
-              with:
-                  version: 8
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
 
-            - name: Setup Java
-              uses: actions/setup-java@v4
-              with:
-                  distribution: 'zulu'
-                  java-version: '17'
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
-            - name: Setup Android SDK
-              uses: android-actions/setup-android@v3
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-            - name: Install NDK
-              run: sdkmanager "ndk;27.0.11902837"
+      - name: Install NDK
+        run: sdkmanager "ndk;25.2.9519653"
 
-            - name: setup node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: lts/*
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
 
-            - name: install Rust stable
-              uses: dtolnay/rust-toolchain@stable
-              with:
-                  targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Install dependencies
-              run: pnpm install
+      - name: Extract app version
+        id: app_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-            - name: Build app bundle
-              run: pnpm tauri android build -v
-              env:
-                  NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837
+      - name: Build Android app in release mode
+        run: npm run tauri android build -v
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
 
-            - name: Extract android signing key from env
-              run: |
-                  echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" > src-tauri/gen/android/release.jks.base64
-                  base64 -d src-tauri/gen/android/release.jks.base64 > src-tauri/gen/android/release.decrypted.jks
+      - name: Extract Android signing key
+        run: |
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" > android-release.jks.base64
+          base64 -d android-release.jks.base64 > android-release.jks
 
-            - name: Sign APK
+      - name: Sign APK
               run: |
                   ${{ env.ANDROID_HOME }}/build-tools/34.0.0/apksigner sign --ks src-tauri/gen/android/release.decrypted.jks \
                     --ks-key-alias ${{ secrets.ANDROID_RELEASE_KEY }} \
@@ -63,20 +62,26 @@ jobs:
                     --out src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-signed.apk \
                     src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
 
-            - name: Get Node project version
-              id: package-version
-              uses: martinbeentjes/npm-get-version-action@v1.3.1
+      - name: Sign and rename AAB
+        run: |
+          ${{ env.ANDROID_HOME }}/build-tools/34.0.0/jarsigner -keystore android-release.jks \
+            -storepass ${{ secrets.ANDROID_RELEASE_PASSWORD }} \
+            -keypass ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} \
+            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab ${{ secrets.ANDROID_RELEASE_KEY }}
+          
+          mv src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab \
+            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/tsuuchinoko-${{ steps.app_version.outputs.version }}.aab
 
-            - name: Rename APK file
-              run: |
-                  mv ./src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-signed.apk ./src-tauri/gen/android/app/build/outputs/apk/universal/release/myappliation-${{ steps.package-version.outputs.current-version}}.apk
-
-            - name: Publish
-              uses: softprops/action-gh-release@v1
-              with:
-                  draft: true
-                  name: App v${{ steps.package-version.outputs.current-version}}
-                  tag_name: v${{ steps.package-version.outputs.current-version}}
-                  generate_release_notes: true
-                  files: |
-                      ./src-tauri/gen/android/app/build/outputs/apk/universal/release/myapplication-${{ steps.package-version.outputs.current-version}}.apk
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.app_version.outputs.version }}
+          name: Tsuuchinoko v${{ steps.app_version.outputs.version }}
+          draft: false
+          prerelease: false
+          files: |
+            src-tauri/gen/android/app/build/outputs/apk/universal/release/tsuuchinoko-${{ steps.app_version.outputs.version }}-signed.apk
+            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/tsuuchinoko-${{ steps.app_version.outputs.version }}.aab
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
