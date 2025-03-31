@@ -44,9 +44,23 @@ jobs:
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Build Android app in release mode
-        run: npm run tauri android build -v
+        run: |
+          npm run tauri android build -v
+          ls -l src-tauri/gen/android/app/build/outputs/apk/universal/release/
+          ls -l src-tauri/gen/android/app/build/outputs/bundle/universalRelease/
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
+
+      - name: Check for build outputs
+        run: |
+          if [ ! -f src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk ]; then
+            echo "Error: app-universal-release-unsigned.apk not found!"
+            exit 1
+          fi
+          if [ ! -f src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab ]; then
+            echo "Error: app-universal-release.aab not found!"
+            exit 1
+          fi
 
       - name: Extract Android signing keystore
         run: |
