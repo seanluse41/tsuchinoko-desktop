@@ -60,9 +60,9 @@ jobs:
             --ks-pass pass:${{ secrets.ANDROID_RELEASE_PASSWORD }} \
             --key-pass pass:${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} \
             --out src-tauri/gen/android/app/build/outputs/apk/universal/release/tsuuchinoko-${{ steps.app_version.outputs.version }}-signed.apk \
-            src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
+            src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release.apk
 
-      - name: Sign AAB
+      - name: Sign and rename AAB
         run: |
           ${{ env.ANDROID_HOME }}/build-tools/34.0.0/jarsigner -keystore android-release.jks \
             -storepass ${{ secrets.ANDROID_RELEASE_PASSWORD }} \
