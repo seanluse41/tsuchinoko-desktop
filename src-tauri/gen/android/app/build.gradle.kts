@@ -26,20 +26,20 @@ android {
         versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
     }
     
-    // Add this signing config block before buildTypes
-    signingConfigs {
-        create("release") {
-            val keystorePropertiesFile = rootProject.file("keystore.properties")
-            val keystoreProperties = Properties()
-            if (keystorePropertiesFile.exists()) {
-                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+        signingConfigs {
+            create("release") {
+                val keystorePropertiesFile = rootProject.file("keystore.properties")
+                val keystoreProperties = Properties()
+                if (keystorePropertiesFile.exists()) {
+                    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+                }
+        
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["password"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["password"] as String
             }
-            keyAlias = keystoreProperties["keyAlias"] as String? ?: ""
-            keyPassword = keystoreProperties["password"] as String? ?: ""
-            storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
-            storePassword = keystoreProperties["password"] as String? ?: ""
         }
-    }
     
     buildTypes {
         getByName("debug") {
@@ -55,7 +55,6 @@ android {
             }
         }
         getByName("release") {
-            // Add this line to use the signing config
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             proguardFiles(
