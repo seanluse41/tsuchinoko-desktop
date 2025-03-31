@@ -43,11 +43,16 @@ jobs:
         id: app_version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      - name: Build Android app in release mode
+      - name: Clean Tauri Cache
+        run: npm run tauri cache clean
+
+      - name: Create output directories
         run: |
-          npm run tauri android build -v
-          ls -l src-tauri/gen/android/app/build/outputs/apk/universal/release/
-          ls -l src-tauri/gen/android/app/build/outputs/bundle/universalRelease/
+          mkdir -p src-tauri/gen/android/app/build/outputs/apk/universal/release/
+          mkdir -p src-tauri/gen/android/app/build/outputs/bundle/universalRelease/
+
+      - name: Build Android app in release mode
+        run: npm run tauri android build -v
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
 
