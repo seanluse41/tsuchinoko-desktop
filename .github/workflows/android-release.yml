@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: setup node
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
@@ -31,7 +31,7 @@ jobs:
       - name: Install NDK
         run: sdkmanager "ndk;25.2.9519653"
 
-      - name: install Rust stable
+      - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
@@ -48,27 +48,28 @@ jobs:
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
 
-      - name: Extract Android signing key
+      - name: Extract Android signing keystore
         run: |
-          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" > android-release.jks.base64
-          base64 -d android-release.jks.base64 > android-release.jks
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 -d > android-release.jks
 
       - name: Sign APK
         run: |
-            ${{ env.ANDROID_HOME }}/build-tools/34.0.0/apksigner sign --ks src-tauri/gen/android/release.decrypted.jks \
-              --ks-key-alias ${{ secrets.ANDROID_RELEASE_KEY }} \
-              --ks-pass pass:${{ secrets.ANDROID_RELEASE_PASSWORD }} \
-              --key-pass pass:${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} \
-              --out src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-signed.apk \
-              src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
+          ${{ env.ANDROID_HOME }}/build-tools/34.0.0/apksigner sign \
+            --ks android-release.jks \
+            --ks-key-alias ${{ secrets.ANDROID_RELEASE_KEY }} \
+            --ks-pass pass:${{ secrets.ANDROID_RELEASE_PASSWORD }} \
+            --key-pass pass:${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} \
+            --out src-tauri/gen/android/app/build/outputs/apk/universal/release/tsuuchinoko-${{ steps.app_version.outputs.version }}-signed.apk \
+            src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
 
       - name: Sign and rename AAB
         run: |
-          ${{ env.ANDROID_HOME }}/build-tools/34.0.0/jarsigner -keystore android-release.jks \
+          ${{ env.ANDROID_HOME }}/build-tools/34.0.0/jarsigner \
+            -keystore android-release.jks \
             -storepass ${{ secrets.ANDROID_RELEASE_PASSWORD }} \
             -keypass ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} \
             src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab ${{ secrets.ANDROID_RELEASE_KEY }}
-          
+
           mv src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab \
             src-tauri/gen/android/app/build/outputs/bundle/universalRelease/tsuuchinoko-${{ steps.app_version.outputs.version }}.aab
 
