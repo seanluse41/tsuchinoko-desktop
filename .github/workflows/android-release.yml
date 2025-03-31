@@ -4,16 +4,20 @@ on:
   push:
     branches:
       - master
+  # Consider triggering on tags (e.g., v1.0.0) for releases:
+  # push:
+  #   tags:
+  #     - 'v*.*.*'
 
 jobs:
   build-android:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Needed to create GitHub releases
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
@@ -23,85 +27,81 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '17' # Ensure this matches Tauri/Android requirements
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install NDK
+      - name: Install specific NDK version
+        # Installs NDK side-by-side. Adjust version if needed.
         run: sdkmanager "ndk;25.2.9519653"
 
-      - name: Install Rust stable
+      - name: Install Rust stable toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
+          # Add all Android targets you need to build for
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
         run: npm ci
 
       - name: Extract app version
         id: app_version
+        # Gets version from package.json, adjust if your version is elsewhere
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      - name: Clean Tauri Cache
-        run: npm run tauri cache clean
-
-      - name: Create output directories
+      - name: Decode Android keystore
+        id: decode_keystore
+        # Decode the base64 encoded keystore from secrets
+        # Tauri expects the actual keystore file, not base64
         run: |
-          mkdir -p src-tauri/gen/android/app/build/outputs/apk/universal/release/
-          mkdir -p src-tauri/gen/android/app/build/outputs/bundle/universalRelease/
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 --decode > android-release.jks
+          # Output the path for the build step's environment variable
+          echo "keystore_path=$(pwd)/android-release.jks" >> $GITHUB_OUTPUT
+        shell: bash
 
-      - name: Build Android app in release mode
-        run: npm run tauri android build -v
+      - name: Build Signed Android App (APK and AAB)
+        # Tauri handles signing internally using these env vars
+        run: npm run tauri android build --release -v
         env:
+          # Set NDK_HOME. Ensure the installed NDK version matches this path.
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/25.2.9519653
+          # Tauri signing environment variables
+          TAURI_ANDROID_KEYSTORE_PATH: ${{ steps.decode_keystore.outputs.keystore_path }}
+          TAURI_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_PASSWORD }}
+          TAURI_ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY }}
+          TAURI_ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+          # Force non-interactive build (useful in CI)
+          CI: true
 
-      - name: Check for build outputs
+      # --- Artifact Renaming (Optional but Recommended) ---
+      # Rename the output files to include the version number before releasing
+      # Adjust the source paths if Tauri outputs them differently (check build logs)
+      - name: Rename APK artifact
         run: |
-          if [ ! -f src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk ]; then
-            echo "Error: app-universal-release-unsigned.apk not found!"
-            exit 1
-          fi
-          if [ ! -f src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab ]; then
-            echo "Error: app-universal-release.aab not found!"
-            exit 1
-          fi
+          mv src-tauri/target/release/android-artifacts/app-universal-release-signed.apk tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
+        # Continue even if the specific file doesn't exist (e.g., if only AAB was built)
+        continue-on-error: true
 
-      - name: Extract Android signing keystore
+      - name: Rename AAB artifact
         run: |
-          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 -d > android-release.jks
+           mv src-tauri/target/release/android-artifacts/app-universal-release.aab tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
+        # Continue even if the specific file doesn't exist (e.g., if only APK was built)
+        continue-on-error: true
 
-      - name: Sign APK
-        run: |
-          ${{ env.ANDROID_HOME }}/build-tools/34.0.0/apksigner sign \
-            --ks android-release.jks \
-            --ks-key-alias ${{ secrets.ANDROID_RELEASE_KEY }} \
-            --ks-pass pass:${{ secrets.ANDROID_RELEASE_PASSWORD }} \
-            --key-pass pass:${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} \
-            --out src-tauri/gen/android/app/build/outputs/apk/universal/release/tsuuchinoko-${{ steps.app_version.outputs.version }}-signed.apk \
-            src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk
-
-      - name: Sign and rename AAB
-        run: |
-          ${{ env.ANDROID_HOME }}/build-tools/34.0.0/jarsigner \
-            -keystore android-release.jks \
-            -storepass ${{ secrets.ANDROID_RELEASE_PASSWORD }} \
-            -keypass ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} \
-            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab ${{ secrets.ANDROID_RELEASE_KEY }}
-
-          mv src-tauri/gen/android/app/build/outputs/bundle/universalRelease/app-universal-release.aab \
-            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/tsuuchinoko-${{ steps.app_version.outputs.version }}.aab
-
+      # --- Create GitHub Release ---
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
+          # Use the extracted version for tag and name
           tag_name: v${{ steps.app_version.outputs.version }}
           name: Tsuuchinoko v${{ steps.app_version.outputs.version }}
           draft: false
           prerelease: false
+          # Point to the renamed artifacts in the root directory
           files: |
-            src-tauri/gen/android/app/build/outputs/apk/universal/release/tsuuchinoko-${{ steps.app_version.outputs.version }}-signed.apk
-            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/tsuuchinoko-${{ steps.app_version.outputs.version }}.aab
-          generate_release_notes: true
+            tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
+            tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
+          generate_release_notes: true # Optional: auto-generate release notes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Built-in token
