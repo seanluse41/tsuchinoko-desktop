@@ -1,11 +1,9 @@
-name: 'Android Release Debug'
+name: "Android Release Debug"
 
 on:
   push:
     branches:
-      - master # Or your testing branch
-  workflow_dispatch: # Allow manual trigger
-
+      - master
 jobs:
   build-android-debug:
     runs-on: ubuntu-latest
@@ -18,19 +16,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'npm'
+          cache: "npm"
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: "zulu"
+          java-version: "17"
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Install specific NDK version (Trying NDK 26)
-        # Let's try a slightly newer NDK version, just in case
         run: sdkmanager "ndk;26.1.10909125"
 
       - name: Install Rust stable toolchain
@@ -47,37 +44,56 @@ jobs:
 
       - name: Decode Android keystore
         id: decode_keystore
+        # Decode keystore to the root directory
         run: |
           echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 --decode > android-release.jks
-          echo "keystore_path=$(pwd)/android-release.jks" >> $GITHUB_OUTPUT
+          echo "Decoded keystore to $(pwd)/android-release.jks"
         shell: bash
 
+      # *** NEW STEP ***
+      - name: Create keystore.properties for Gradle
+        run: |
+          echo "Creating keystore.properties for Gradle build..."
+          # Define the path to the keystore file relative to the Android project root (src-tauri/gen/android/)
+          # It needs to point back up to the repository root where android-release.jks is.
+          KEYSTORE_REL_PATH="../../android-release.jks"
+
+          # Ensure the target directory exists (Tauri might create it, but being safe)
+          mkdir -p src-tauri/gen/android
+
+          # Create the keystore.properties file
+          cat <<EOF > src-tauri/gen/android/keystore.properties
+          # Properties read by build.gradle.kts
+          storeFile=${KEYSTORE_REL_PATH}
+          password=${{ secrets.ANDROID_RELEASE_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_RELEASE_KEY }}
+          # keyPassword=${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} # Gradle uses 'password' for both store and key
+          EOF
+
+          echo "keystore.properties created in src-tauri/gen/android/ with content:"
+          cat src-tauri/gen/android/keystore.properties
+        shell: bash
+      # *** END NEW STEP ***
+
       - name: DEBUG - Check package.json script and run tauri info
+        # (Keep this debug step for now)
         run: |
           echo "--- package.json scripts ---"
           node -p "require('./package.json').scripts" || echo "Could not read package.json scripts"
           echo "--- npx tauri info ---"
-          # Run tauri info to check environment detection
           npx tauri info
-          echo "--- Running build command directly with max verbosity ---"
+          echo "--- Running build command ---"
 
-      - name: Build Signed Android App (APK and AAB) - MAX VERBOSITY
-        # Use npx for direct execution, add -vvv for max tauri verbosity
-        # Add RUST_LOG=debug for verbose Rust/Cargo output
-        run: npm run tauri android build
+      - name: Build Android App (APK and AAB) - Using Gradle Signing Config
+        # We removed the TAURI_ANDROID_* env vars as Gradle now reads the properties file
+        # Keep verbosity (-vvv) and RUST_LOG=debug for now in case of other issues
+        run: npm run tauri android build --release -vvv # Or use npx if preferred
         env:
-          # Ensure NDK_HOME matches the installed NDK version
-          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125 # Updated to NDK 26 path
-          TAURI_ANDROID_KEYSTORE_PATH: ${{ steps.decode_keystore.outputs.keystore_path }}
-          TAURI_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_PASSWORD }}
-          TAURI_ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY }}
-          TAURI_ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+          # NDK_HOME still needed for Rust build part
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
           CI: true
-          # Add Rust debug logging
           RUST_LOG: debug
-          # Potentially force specific tool versions if needed (usually not required)
-          # GRADLE_HOME: ...
-          # JAVA_HOME: ... (already set by setup-java)
+          # No TAURI_ANDROID_* variables needed here anymore
 
       - name: DEBUG - List build artifacts directory
         # Run this regardless of previous step outcome to see if anything was created
@@ -90,7 +106,6 @@ jobs:
           echo "--- Finding apk/aab files everywhere ---"
           find . -name "*.apk" -o -name "*.aab" || echo "No apk or aab files found anywhere"
 
-
       # --- Renaming and Release Steps ---
       # Removing continue-on-error for clearer debugging for now.
       # These steps will likely fail if the build step continues to fail silently.
@@ -102,9 +117,9 @@ jobs:
 
       - name: Rename AAB artifact
         run: |
-           # Add ls before mv
-           ls -l src-tauri/target/release/android-artifacts/app-universal-release.aab
-           mv src-tauri/target/release/android-artifacts/app-universal-release.aab tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
+          # Add ls before mv
+          ls -l src-tauri/target/release/android-artifacts/app-universal-release.aab
+          mv src-tauri/target/release/android-artifacts/app-universal-release.aab tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
 
       - name: Create GitHub Release
         # Only run if build and rename likely succeeded
