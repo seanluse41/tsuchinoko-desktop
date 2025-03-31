@@ -28,9 +28,9 @@
         trackTaskAction([], "view")
         datepicker = new AirDatepicker(dateInput, {
             timepicker: true,
+            isMobile: true,
             locale: localeJa,
             inline: false,
-            position: "top left",
             onSelect({ date }) {
                 updateDeadline(date?.toISOString() || "");
             },
@@ -68,9 +68,9 @@
     }
 </script>
 
-<div class="pt-8 p-32">
-    <Card class="max-w-none bg-moss_green-700 relative p-10">
-        <h1 class="text-5xl font-bold mb-6 text-slate-700">{$_("taskCreate.createNewTask")}</h1>
+<div class="pt-8 p-4 h-full md:p-32 overflow-y-auto">
+    <Card class="max-w-none bg-moss_green-700 relative md:p-10">
+        <h1 class="text-4xl md:text-5xl text-center font-bold mb-6 text-slate-700">{$_("taskCreate.createNewTask")}</h1>
 
         {#if error}
             <Alert color="red" class="mb-4">{error}</Alert>
@@ -90,7 +90,7 @@
                 />
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="flex-col md:flex gap-4 mb-6">
                 <div>
                     <Label for="content" class="font-bold text-slate-700">{$_("taskCreate.content")}</Label>
                     <textarea
@@ -194,10 +194,9 @@
 
             <div class="w-full flex items-center justify-center">
                 <Button
-                    size="lg"
                     type="submit"
                     disabled={isSubmitting}
-                    class="w-1/3 text-slate-700 font-bold rounded-lg border border-slate-700 p-4 hover:bg-slate-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full md:w-1/3 text-slate-700 font-bold rounded-lg border border-slate-700 p-4 hover:bg-slate-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? $_("taskCreate.creating") : $_("taskCreate.createTask")}
                 </Button>

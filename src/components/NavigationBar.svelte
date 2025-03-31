@@ -45,6 +45,7 @@
   const trackNav = async (path) => {
     trackNavigation(path);
     closeDropdown();
+    closeNav();
   };
 
   // Handler for clicking the brand/logo
@@ -116,7 +117,7 @@
       <Dropdown
         {dropdownStatus}
         {closeDropdown}
-        class="absolute -top-[20px] left-[100px] md:-left-[170px] md:top-[20px] bg-white"
+        class="block md:absolute -left-0 top-0 md:-left-[170px] md:top-[20px] bg-white"
       >
         <DropdownUl>
           <DropdownLi

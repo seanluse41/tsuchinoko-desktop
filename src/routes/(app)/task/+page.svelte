@@ -11,7 +11,6 @@
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { updateTask } from "$lib/kintone/kintoneUpdateTask.svelte.js";
 
-    // Get taskId from query parameter instead of route param
     let taskId = $derived(page.url.searchParams.get("id"));
     
     // Editing state
@@ -97,7 +96,7 @@
 </script>
 
 <main class="flex h-full select-enabled">
-    <div class="w-64 flex-shrink-0">
+    <div class="md:w-64 flex-shrink-0">
         <TaskDetailsCommands taskId={task?.id} />
     </div>
     {#if task}

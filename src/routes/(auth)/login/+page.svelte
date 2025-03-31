@@ -79,6 +79,14 @@
         >
           <P class="text-xl">First Time Setup</P>
         </Button>
+        <Button
+        class="w-full md:w-3/4 rounded-lg bg-thistle p-6 text-slate-700 hover:bg-thistle-700 focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-2"
+        href="/home"
+        size="xl"
+        onclick={() => trackNavigation('/home')}
+      >
+        <P class="text-xl">Fake Login</P>
+      </Button>
       </div>
     </div>
   </Card>
