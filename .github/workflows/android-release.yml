@@ -64,7 +64,7 @@ jobs:
       - name: Build Signed Android App (APK and AAB) - MAX VERBOSITY
         # Use npx for direct execution, add -vvv for max tauri verbosity
         # Add RUST_LOG=debug for verbose Rust/Cargo output
-        run: npx tauri android build --release -vvv
+        run: npm run tauri android build
         env:
           # Ensure NDK_HOME matches the installed NDK version
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125 # Updated to NDK 26 path
