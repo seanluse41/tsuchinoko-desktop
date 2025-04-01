@@ -95,11 +95,11 @@ jobs:
         if: success()
         run: |
           mkdir -p release-artifacts
-          # Use find to locate the APK file
-          APK_FILE=$(find src-tauri -name "*-release-signed.apk" | head -1)
+          # Use the correct APK path found in the logs
+          APK_FILE=$(find src-tauri -name "app-universal-release.apk" | head -1)
           if [ -n "$APK_FILE" ]; then
             cp "$APK_FILE" release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
-            echo "APK file found and copied to release artifacts"
+            echo "APK file found and copied to release artifacts: $APK_FILE"
           else
             echo "No APK file found" && exit 1
           fi
@@ -107,11 +107,11 @@ jobs:
       - name: Rename and collect AAB artifact
         if: success()
         run: |
-          # Use find to locate the AAB file
-          AAB_FILE=$(find src-tauri -name "*-release.aab" | head -1)
+          # Use the correct AAB path found in the logs
+          AAB_FILE=$(find src-tauri -name "app-universal-release.aab" | head -1)
           if [ -n "$AAB_FILE" ]; then
             cp "$AAB_FILE" release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
-            echo "AAB file found and copied to release artifacts"
+            echo "AAB file found and copied to release artifacts: $AAB_FILE"
           else
             echo "No AAB file found" && exit 1
           fi
