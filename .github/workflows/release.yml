@@ -1,4 +1,4 @@
-name: 'Release'
+name: 'Unified Release'
 
 on:
   push:
@@ -6,7 +6,18 @@ on:
       - master
 
 jobs:
-  publish-tauri:
+  extract-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get app version
+        id: get_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+  publish-desktop:
+    needs: extract-version
     permissions:
       contents: write
     strategy:
@@ -52,9 +63,104 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
-          tagName: v__VERSION__
-          releaseName: 'Tsuuchinoko v__VERSION__'
+          tagName: v${{ needs.extract-version.outputs.version }}
+          releaseName: 'Tsuuchinoko v${{ needs.extract-version.outputs.version }}'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
+
+  publish-android:
+    needs: extract-version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK
+        run: sdkmanager "ndk;26.1.10909125"
+
+      - name: Install Rust stable toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Only include ARM architectures (covers ~99.7% of devices)
+          targets: aarch64-linux-android,armv7-linux-androideabi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup keystore for signing
+        run: |
+          KEYSTORE_PATH="${GITHUB_WORKSPACE}/tsuuchinoko-keystore.jks"
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 --decode > ${KEYSTORE_PATH}
+          chmod 600 ${KEYSTORE_PATH}
+          
+          mkdir -p src-tauri/gen/android
+          cat <<EOF > src-tauri/gen/android/keystore.properties
+          keyAlias=${{ secrets.ANDROID_RELEASE_KEY }}
+          password=${{ secrets.ANDROID_RELEASE_PASSWORD }}
+          storeFile=${KEYSTORE_PATH}
+          EOF
+
+      # Build ARM-only APK for testing
+      - name: Build Android APK (ARM only for testing)
+        run: npm run tauri android build -- --target aarch64-linux-android
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
+          CI: true
+
+      # Build AAB for Play Store with just ARM architectures
+      - name: Build Android App Bundle for Play Store
+        run: |
+          # Create a combined build with only ARM architectures
+          npm run tauri android build -- --target aarch64-linux-android,armv7-linux-androideabi --bundle
+        env:
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
+          CI: true
+
+      - name: Prepare Android artifacts
+        run: |
+          mkdir -p android-artifacts
+          
+          # Find ARM APK for testing on Pixel
+          APK_ARM64=$(find src-tauri -name "*aarch64*.apk" | head -1)
+          if [ -n "$APK_ARM64" ]; then
+            cp "$APK_ARM64" android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-arm64.apk
+          else
+            echo "ARM64 APK not found" && exit 1
+          fi
+          
+          # Find AAB for Play Store submission
+          AAB_FILE=$(find src-tauri -name "*.aab" | head -1)
+          if [ -n "$AAB_FILE" ]; then
+            cp "$AAB_FILE" android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-arm.aab
+          else
+            echo "AAB file not found" && exit 1
+          fi
+
+      - name: Upload Android artifacts to release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.extract-version.outputs.version }}
+          files: |
+            android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-arm64.apk
+            android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-arm.aab
+          append_body: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

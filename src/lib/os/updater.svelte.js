@@ -23,53 +23,55 @@ export async function checkForUpdates() {
         updaterState.error = null;
         console.log("Checking for updates...");
         
-        // Import the check function for updates
         const { check } = await import('@tauri-apps/plugin-updater');
-        
-        // Get the current app version
         const { getVersion } = await import('@tauri-apps/api/app');
+        
         const currentVersion = await getVersion();
         console.log(`Current version: ${currentVersion}`);
         
-        // Check for updates
-        const update = await check();
-        
-        if (update) {
-            console.log(`Update available! Latest version: ${update.version}`);
-            console.log(`Release notes: ${update.body || 'No release notes'}`);
+        try {
+            const update = await check();
             
-            // Get the date from the raw JSON which has the proper ISO format
-            let formattedDate = 'Unknown date';
-            if (update.rawJson && update.rawJson.pub_date) {
-                try {
-                    const dateObj = new Date(update.rawJson.pub_date);
-                    if (!isNaN(dateObj.getTime())) {
-                        formattedDate = dateObj.toLocaleString();
+            if (update) {
+                console.log(`Update available! Latest version: ${update.version}`);
+                
+                // Process update info
+                let formattedDate = 'Unknown date';
+                if (update.rawJson && update.rawJson.pub_date) {
+                    try {
+                        const dateObj = new Date(update.rawJson.pub_date);
+                        if (!isNaN(dateObj.getTime())) {
+                            formattedDate = dateObj.toLocaleString();
+                        }
+                    } catch (dateError) {
+                        console.error("Error formatting date:", dateError);
                     }
-                } catch (error) {
-                    console.error("Error parsing pub_date from rawJson:", error);
                 }
+                
+                updaterState.updateAvailable = true;
+                updaterState.updateInfo = {
+                    version: update.version || 'Unknown',
+                    date: formattedDate,
+                    notes: (update.body) ? update.body : 'No release notes available'
+                };
+                
+                // Store the update object for later use
+                currentUpdateObject = update;
+                
+                return true;
+            } else {
+                console.log("No updates available. You're running the latest version.");
+                updaterState.updateAvailable = false;
+                return false;
             }
-            
-            updaterState.updateAvailable = true;
-            updaterState.updateInfo = {
-                version: update.version,
-                date: formattedDate,
-                notes: update.body || 'No release notes available'
-            };
-            
-            // Store the update object for later use
-            currentUpdateObject = update;
-            
-            return true;
-        } else {
-            console.log("No updates available. You're running the latest version.");
-            updaterState.updateAvailable = false;
-            return false;
+        } catch (checkError) {
+            console.error("Error during update check:", checkError);
+            // Don't modify the error message at all
+            throw checkError;
         }
     } catch (error) {
-        console.error("Error checking for updates:", error);
-        updaterState.error = error.message || 'Unknown error during update check';
+        console.error("Final error catch:", error);
+        updaterState.error = error.message || "Unknown error during update check";
         throw error;
     } finally {
         updaterState.isChecking = false;
@@ -82,16 +84,16 @@ export async function downloadAndInstallUpdate() {
             updaterState.error = "No update available to install";
             return false;
         }
-        
+
         // Reset state
         updaterState.isDownloading = true;
         updaterState.downloadStatus = "Preparing download...";
         updaterState.downloadProgress = 0;
         updaterState.error = null;
-        
+
         let downloaded = 0;
         let contentLength = 0;
-        
+
         // Download and install
         await currentUpdateObject.downloadAndInstall((event) => {
             switch (event.event) {
@@ -115,12 +117,12 @@ export async function downloadAndInstallUpdate() {
                     break;
             }
         });
-        
+
         console.log('Update installed successfully');
         updaterState.isDownloading = false;
         updaterState.installComplete = true;
         return true;
-        
+
     } catch (error) {
         console.error('Error during download or install:', error);
         updaterState.isDownloading = false;

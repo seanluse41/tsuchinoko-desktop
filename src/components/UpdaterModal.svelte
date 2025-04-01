@@ -1,6 +1,6 @@
 <!-- src/components/UpdaterModal.svelte -->
 <script>
-    import { Modal, Button, P, Heading } from "svelte-5-ui-lib";
+    import { Modal, Button, P, Heading, Alert } from "svelte-5-ui-lib";
     import { 
         updaterState, 
         downloadAndInstallUpdate, 
@@ -39,10 +39,10 @@
     <div class="text-center">
         {#if updaterState.error}
             <!-- Error state -->
-            <div class="mb-4 p-4 bg-redwood-100 text-redwood-800 rounded-lg">
+            <Alert color="red" class="mb-4">
                 <Heading level={2} class="mb-2 text-xl font-semibold">Update Error</Heading>
                 <P>{updaterState.error}</P>
-            </div>
+            </Alert>
             <Button 
                 onclick={closeModal}
                 class="bg-thistle hover:bg-thistle-700"

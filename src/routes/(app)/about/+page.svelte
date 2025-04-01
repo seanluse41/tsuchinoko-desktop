@@ -13,33 +13,37 @@
         Li,
         Button,
         Spinner,
+        Alert, // Added Alert component
     } from "svelte-5-ui-lib";
-    import { getVersion } from '@tauri-apps/api/app';
+    import { platform } from "@tauri-apps/plugin-os";
+    import { getVersion } from "@tauri-apps/api/app";
     import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { _ } from "svelte-i18n";
     import UpdaterModal from "../../../components/UpdaterModal.svelte";
-    import { 
-        checkForUpdates, 
-        updaterState 
-    } from "$lib/os/updater.svelte.js";
+    import { checkForUpdates, updaterState } from "$lib/os/updater.svelte.js";
 
     let isChecking = $state(false);
-    let appVersion = $state('Loading...');
-    
+    let appVersion = $state("Loading...");
+    let updateError = $state(null); // Added state for error alerts
+    let isMobileApp = $state(false); // State to track if we're running on mobile
+
     // Add state for controlling the modal visibility
     let showUpdateModal = $state(false);
-    
-    // Use effect to load the version asynchronously
+
+    // Use effect to load the version asynchronously and detect platform
     $effect(async () => {
         try {
             appVersion = await getVersion();
+            // Detect if we're on mobile
+            const platformType = await platform();
+            isMobileApp = platformType === "android" || platformType === "ios";
         } catch (error) {
-            console.error('Error getting app version:', error);
-            appVersion = 'Unknown';
+            console.error("Error getting app version:", error);
+            appVersion = "Unknown";
         }
     });
-    
+
     // List of libraries used in the project
     const libraries = [
         {
@@ -84,30 +88,46 @@
         },
     ];
 
-    // Update the checkForUpdates function
     async function handleCheckForUpdates() {
         try {
             isChecking = true;
-            
-            // Call the updater module's checkForUpdates
+            updateError = null;
+
             const updateAvailable = await checkForUpdates();
-            
-            // If updates are available, show the modal
+
             if (updateAvailable) {
                 showUpdateModal = true;
             } else {
-                // If no updates are available, show a message
-                alert("You're running the latest version!");
+                updateError = {
+                    type: "success",
+                    message: "You're running the latest version!",
+                };
             }
-            
         } catch (error) {
             console.error("Error checking for updates:", error);
-            alert(`Error checking for updates: ${error.message || 'Unknown error'}`);
+
+            updateError = {
+                type: "failure",
+                message: "Unable to fetch version info. Please contact the developers.",
+            };
         } finally {
             isChecking = false;
         }
     }
-    
+
+    // Function to dismiss the alert
+    function dismissAlert() {
+        updateError = null;
+    }
+
+    // Function to open GitHub releases page (for mobile)
+    function openGitHubReleases() {
+        window.open(
+            "https://github.com/seanluse41/tsuchinoko-desktop/releases",
+            "_blank",
+        );
+    }
+
     // Function to close the update modal
     function closeUpdateModal() {
         showUpdateModal = false;
@@ -115,11 +135,8 @@
 </script>
 
 <div class="relative w-full h-full overflow-auto p-4 md:py-16 md:px-32">
-    <UpdaterModal 
-        modalStatus={showUpdateModal} 
-        closeModal={closeUpdateModal} 
-    />
-    
+    <UpdaterModal modalStatus={showUpdateModal} closeModal={closeUpdateModal} />
+
     <Card
         class="max-w-none mx-auto mb-8 relative p-0 md:p-8"
         style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
@@ -133,22 +150,52 @@
                     class="text-3xl md:text-5xl font-bold mb-2 text-slate-800"
                     >{$_("about.aboutTsuuchinoko")}</Heading
                 >
-                <div class="text-lg text-slate-600 mb-4">Version {appVersion}</div>
-                <Button
-                    onclick={handleCheckForUpdates}
-                    disabled={isChecking}
-                    class="bg-thistle hover:bg-thistle-600 text-slate-700"
-                >
-                    {#if isChecking}
-                        <Spinner
-                            class="me-3"
-                            size="4"
-                            color="teal"
-                        />Checking...
-                    {:else}
-                        Check for Updates
+                <div class="text-lg text-slate-600 mb-4">
+                    Version {appVersion}
+                </div>
+
+                <!-- Alert for update messages -->
+                {#if updateError}
+                    <Alert
+                        color={updateError.type === "failure" ? "red" : "green"}
+                        class="mb-4"
+                        dismissable={true}
+                        ondismiss={dismissAlert}
+                    >
+                        {updateError.message}
+                    </Alert>
+                {/if}
+
+                <div class="flex flex-col md:flex-row justify-center gap-3">
+                    <!-- Desktop update button (when not on mobile) -->
+                    {#if !isMobileApp}
+                        <Button
+                            onclick={handleCheckForUpdates}
+                            disabled={isChecking}
+                            class="bg-thistle hover:bg-thistle-600 text-slate-700"
+                        >
+                            {#if isChecking}
+                                <Spinner
+                                    class="me-3"
+                                    size="4"
+                                    color="teal"
+                                />Checking...
+                            {:else}
+                                Check for Updates
+                            {/if}
+                        </Button>
                     {/if}
-                </Button>
+
+                    <!-- Mobile release link button (always visible, but primary on mobile) -->
+                    <Button
+                        onclick={openGitHubReleases}
+                        class="{isMobileApp
+                            ? 'bg-thistle hover:bg-thistle-600'
+                            : 'bg-slate-200 hover:bg-slate-300'} text-slate-700"
+                    >
+                        View Latest Releases
+                    </Button>
+                </div>
             </div>
 
             <Card class="max-w-none p-6 border border-slate-200">

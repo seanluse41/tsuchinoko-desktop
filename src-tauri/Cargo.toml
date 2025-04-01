@@ -27,6 +27,7 @@ tauri-plugin-clipboard-manager = "2.2.1"
 tauri-plugin-log = "2"
 tauri-plugin-store = "2"
 tauri-plugin-process = "2"
+tauri-plugin-os = "2"
 
 [target."cfg(any(target_os = \"macos\", windows, target_os = \"linux\"))".dependencies]
 tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }

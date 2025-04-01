@@ -1893,6 +1893,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "gethostname"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed7131e57abbde63513e0e6636f76668a1ca9798dcae2df4e283cae9ee83859e"
+dependencies = [
+ "rustix 1.0.3",
+ "windows-targets 0.52.6",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2274,9 +2284,9 @@ dependencies = [
 
 [[package]]
 name = "hyper-util"
-version = "0.1.10"
+version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df2dcfbe0677734ab2f3ffa7fa7bfd4706bfdc1ef393f2ee30184aed67e631b4"
+checksum = "497bbc33a26fdd4af9ed9c70d63f61cf56a938375fbb32df34db9b1cd6d643f2"
 dependencies = [
  "bytes",
  "futures-channel",
@@ -2284,6 +2294,7 @@ dependencies = [
  "http",
  "http-body",
  "hyper",
+ "libc",
  "pin-project-lite",
  "socket2",
  "tokio",
@@ -2293,9 +2304,9 @@ dependencies = [
 
 [[package]]
 name = "iana-time-zone"
-version = "0.1.62"
+version = "0.1.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b2fd658b06e56721792c5df4475705b6cda790e9298d19d2f8af083457bcd127"
+checksum = "b0c919e5debc312ad217002b8048a17b7d83f80703865bbfcfebb0458b0b27d8"
 dependencies = [
  "android_system_properties",
  "core-foundation-sys",
@@ -2303,7 +2314,7 @@ dependencies = [
  "js-sys",
  "log",
  "wasm-bindgen",
- "windows-core 0.52.0",
+ "windows-core 0.61.0",
 ]
 
 [[package]]
@@ -3445,6 +3456,17 @@ checksum = "9aa2b01e1d916879f73a53d01d1d6cee68adbb31d6d9177a8cfce093cced1d50"
 dependencies = [
  "futures-core",
  "pin-project-lite",
+]
+
+[[package]]
+name = "os_info"
+version = "3.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2a604e53c24761286860eba4e2c8b23a0161526476b1de520139d69cdb85a6b5"
+dependencies = [
+ "log",
+ "serde",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -5025,6 +5047,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sys-locale"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8eab9a99a024a169fe8a903cf9d4a3b3601109bcc13bd9e3c6fff259138626c4"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "system-deps"
 version = "6.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5317,6 +5348,24 @@ dependencies = [
  "url",
  "windows 0.60.0",
  "zbus",
+]
+
+[[package]]
+name = "tauri-plugin-os"
+version = "2.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "424f19432397850c2ddd42aa58078630c15287bbce3866eb1d90e7dbee680637"
+dependencies = [
+ "gethostname 1.0.1",
+ "log",
+ "os_info",
+ "serde",
+ "serde_json",
+ "serialize-to-javascript",
+ "sys-locale",
+ "tauri",
+ "tauri-plugin",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -5904,6 +5953,7 @@ dependencies = [
  "tauri-plugin-deep-link",
  "tauri-plugin-log",
  "tauri-plugin-opener",
+ "tauri-plugin-os",
  "tauri-plugin-process",
  "tauri-plugin-shell",
  "tauri-plugin-single-instance",
@@ -6413,7 +6463,7 @@ dependencies = [
  "webview2-com-sys",
  "windows 0.60.0",
  "windows-core 0.60.1",
- "windows-implement",
+ "windows-implement 0.59.0",
  "windows-interface",
 ]
 
@@ -6528,24 +6578,28 @@ dependencies = [
 
 [[package]]
 name = "windows-core"
-version = "0.52.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "33ab640c8d7e35bf8ba19b884ba838ceb4fba93a4e8c65a9059d08afcfc683d9"
-dependencies = [
- "windows-targets 0.52.6",
-]
-
-[[package]]
-name = "windows-core"
 version = "0.60.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca21a92a9cae9bf4ccae5cf8368dce0837100ddf6e6d57936749e85f152f6247"
 dependencies = [
- "windows-implement",
+ "windows-implement 0.59.0",
  "windows-interface",
  "windows-link",
  "windows-result 0.3.2",
  "windows-strings 0.3.1",
+]
+
+[[package]]
+name = "windows-core"
+version = "0.61.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4763c1de310c86d75a878046489e2e5ba02c649d185f21c67d4cf8a56d098980"
+dependencies = [
+ "windows-implement 0.60.0",
+ "windows-interface",
+ "windows-link",
+ "windows-result 0.3.2",
+ "windows-strings 0.4.0",
 ]
 
 [[package]]
@@ -6563,6 +6617,17 @@ name = "windows-implement"
 version = "0.59.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83577b051e2f49a058c308f17f273b570a6a758386fc291b5f6a934dd84e48c1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.100",
+]
+
+[[package]]
+name = "windows-implement"
+version = "0.60.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a47fddd13af08290e67f4acabf4b459f647552718f683a7b415d290ac744a836"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6650,6 +6715,15 @@ name = "windows-strings"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "87fa48cc5d406560701792be122a10132491cff9d0aeb23583cc2dcafc847319"
+dependencies = [
+ "windows-link",
+]
+
+[[package]]
+name = "windows-strings"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a2ba9642430ee452d5a7aa78d72907ebe8cfda358e8cb7918a2050581322f97"
 dependencies = [
  "windows-link",
 ]
@@ -7120,7 +7194,7 @@ version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d91ffca73ee7f68ce055750bf9f6eca0780b8c85eff9bc046a3b0da41755e12"
 dependencies = [
- "gethostname",
+ "gethostname 0.4.3",
  "rustix 0.38.44",
  "x11rb-protocol",
 ]
