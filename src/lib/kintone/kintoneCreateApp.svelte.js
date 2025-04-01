@@ -7,10 +7,6 @@ import { secretManager } from '../app/appSecretManager.svelte.js';
 import { getRecords } from './kintoneGetRecords.svelte.js';
 import { addRecord } from './kintoneAddRecord.svelte.js';
 
-/**
- * Creates a new Tsuuchinoko app in Kintone
- * @returns {Promise<Object>} Result of the creation process
- */
 export async function createTsuuchinokoApp() {
     try {
         // Step 1: Create preview app

@@ -114,23 +114,23 @@
     }
 </script>
 
-<div class="relative w-full h-full overflow-auto z-10 py-16 px-32">
+<div class="relative w-full h-full overflow-auto p-4 md:py-16 md:px-32">
     <UpdaterModal 
         modalStatus={showUpdateModal} 
         closeModal={closeUpdateModal} 
     />
     
     <Card
-        class="max-w-none mx-auto mb-8 relative p-8"
+        class="max-w-none mx-auto mb-8 relative p-0 md:p-8"
         style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
     >
-        <div class="space-y-8 p-4">
+        <div class="space-y-8">
             <div
                 class="text-center mb-8 p-6 bg-white rounded-lg border border-slate-200"
             >
                 <Heading
                     level={1}
-                    class="text-5xl font-bold mb-2 text-slate-800"
+                    class="text-3xl md:text-5xl font-bold mb-2 text-slate-800"
                     >{$_("about.aboutTsuuchinoko")}</Heading
                 >
                 <div class="text-lg text-slate-600 mb-4">Version {appVersion}</div>
@@ -233,7 +233,7 @@
 
             <Hr hrClass="my-8" />
 
-            <Card class="max-w-none p-6 border border-slate-200">
+            <Card class="max-w-none p-2 border border-slate-200">
                 <Heading
                     level={2}
                     class="text-2xl font-bold mb-4 text-slate-700"
@@ -287,7 +287,7 @@
 
             <Hr hrClass="my-8" />
 
-            <Card class="max-w-none p-6 border border-slate-200">
+            <Card class="max-w-none p-2 md:p-6 border border-slate-200">
                 <Heading
                     level={2}
                     class="text-2xl font-bold mb-4 text-slate-700"

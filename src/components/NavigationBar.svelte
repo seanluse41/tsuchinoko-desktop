@@ -117,7 +117,7 @@
       <Dropdown
         {dropdownStatus}
         {closeDropdown}
-        class="block md:absolute -left-0 top-0 md:-left-[170px] md:top-[20px] bg-white"
+        class="relative md:absolute -left-0 top-0 md:-left-[170px] md:top-[20px] bg-white"
       >
         <DropdownUl>
           <DropdownLi

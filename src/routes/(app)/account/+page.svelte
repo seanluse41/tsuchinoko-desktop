@@ -19,8 +19,6 @@
     import { authState } from "$lib/app/appLoginManager.svelte.js";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { secretManager } from "$lib/app/appSecretManager.svelte.js";
-    import { checkForTsuuchinokoApp } from "$lib/kintone/kintoneCheckForApp.svelte.js";
-    import { createTsuuchinokoApp } from "$lib/kintone/kintoneCreateApp.svelte.js";
     import {
         diagnoseApp,
         repairApp,
@@ -162,98 +160,6 @@
         }
     }
 
-    async function detectApp() {
-        try {
-            isProcessing = true;
-            alertStatus = false;
-
-            const result = await checkForTsuuchinokoApp();
-            console.log("Check for app result:", result);
-
-            if (result.exists) {
-                showSuccessAlert(
-                    $_("account.foundApp", { values: { appId: result.appId } }),
-                    [$_("account.appConnectionEstablished")],
-                );
-                // Clear any previous diagnosis
-                diagnosisResult = null;
-            } else {
-                showErrorModal(
-                    $_("account.appNotFound"),
-                    $_("account.appNotDetected"),
-                    [$_("account.createNewApp")],
-                );
-            }
-        } catch (error) {
-            console.error("Error checking for app:", error);
-            showErrorModal(
-                $_("account.detectionError"),
-                `${$_("account.error")}: ${error.message || error}`,
-                [String(error)],
-            );
-        } finally {
-            isProcessing = false;
-        }
-    }
-
-    async function createApp() {
-        try {
-            isProcessing = true;
-            alertStatus = false;
-
-            const result = await createTsuuchinokoApp();
-
-            if (result.success) {
-                showSuccessAlert(
-                    $_("account.createdApp", { values: { appId: result.appId } }),
-                    [$_("account.appCreatedSuccessfully")],
-                );
-                // Clear any previous diagnosis
-                diagnosisResult = null;
-            } else {
-                showErrorModal($_("account.creationFailed"), `${$_("account.error")}: ${result.error}`, [
-                    result.message || $_("account.failedToCreateApp"),
-                ]);
-            }
-        } catch (error) {
-            console.error("Error creating app:", error);
-            showErrorModal(
-                $_("account.creationError"),
-                `${$_("account.error")}: ${error.message || error}`,
-                [String(error)],
-            );
-        } finally {
-            isProcessing = false;
-        }
-    }
-
-    async function removeApp() {
-        try {
-            isProcessing = true;
-            alertStatus = false;
-
-            const result = await removeTsuuchinokoApp();
-
-            // Also save to secure storage
-            if (result.status === "success") {
-                await secretManager.storeCredentials();
-                diagnosisResult = null;
-                showSuccessAlert(result.message);
-            } else {
-                showErrorModal($_("account.removalFailed"), result.message);
-            }
-        } catch (error) {
-            console.error("Error removing app:", error);
-            showErrorModal(
-                $_("account.removalError"),
-                `${$_("account.error")}: ${error.message || error}`,
-                [String(error)],
-            );
-        } finally {
-            isProcessing = false;
-        }
-    }
-
     function closeAlert() {
         alertStatus = false;
     }
@@ -261,12 +167,12 @@
     let canRepair = $derived(diagnosisResult && diagnosisResult.needsRepair);
 </script>
 
-<div class="relative w-full h-full overflow-auto p-8">
+<div class="relative w-full h-full overflow-auto p-4 md:p-8">
     <Card
-        class="max-w-none p-8"
+        class="max-w-none p-0 md:p-8"
         style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
     >
-        <Heading level={1} class="text-4xl font-bold mb-6 text-slate-700"
+        <Heading level={1} class="text-3xl md:text-5xl text-center font-bold mb-6 text-slate-700"
             >{$_("account.accountSettings")}</Heading
         >
 
