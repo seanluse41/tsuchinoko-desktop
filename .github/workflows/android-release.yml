@@ -44,25 +44,32 @@ jobs:
 
       - name: Decode Android keystore
         id: decode_keystore
-        # Decode keystore directly to the path Gradle expects
+        # Place the keystore in the workspace root for simplicity
         run: |
-          mkdir -p src-tauri/gen/android
-          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 --decode > src-tauri/gen/android/android-release.jks
-          echo "Decoded keystore to src-tauri/gen/android/android-release.jks"
+          # Create a keystore directly in the workspace
+          KEYSTORE_PATH="${GITHUB_WORKSPACE}/tsuuchinoko-keystore.jks"
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 --decode > ${KEYSTORE_PATH}
+          chmod 600 ${KEYSTORE_PATH}
+          echo "keystore_path=${KEYSTORE_PATH}" >> $GITHUB_OUTPUT
+          echo "Decoded keystore to ${KEYSTORE_PATH}"
         shell: bash
 
-      - name: Create keystore.properties for Gradle
+      - name: Create keystore.properties
         run: |
-          echo "Creating keystore.properties for Gradle build..."
-          # Use a path relative to the build.gradle.kts file location (which is inside src-tauri/gen/android/)
+          # Ensure directory exists
+          mkdir -p src-tauri/gen/android
+          
+          # Create the properties file with absolute path to the keystore
+          echo "Creating keystore.properties..."
           cat <<EOF > src-tauri/gen/android/keystore.properties
-          storeFile=android-release.jks
-          password=${{ secrets.ANDROID_RELEASE_PASSWORD }}
           keyAlias=${{ secrets.ANDROID_RELEASE_KEY }}
-          keyPassword=${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+          password=${{ secrets.ANDROID_RELEASE_PASSWORD }}
+          storeFile=${{ steps.decode_keystore.outputs.keystore_path }}
           EOF
           
-          echo "keystore.properties created with correct path"
+          # Double-check the file content (hiding sensitive values)
+          echo "keystore.properties created at $(pwd)/src-tauri/gen/android/keystore.properties"
+          echo "storeFile value is: ${{ steps.decode_keystore.outputs.keystore_path }}"
         shell: bash
 
       - name: Build Android App
@@ -72,22 +79,42 @@ jobs:
           CI: true
           RUST_LOG: debug
 
-      - name: List build artifacts
+      - name: Debug - List files and directories
         if: always()
         run: |
+          echo "--- Verifying keystore file exists ---"
+          ls -la ${{ steps.decode_keystore.outputs.keystore_path }} || echo "Keystore not found!"
+          
+          echo "--- Checking keystore.properties content (sanitized) ---"
+          grep -v "password" src-tauri/gen/android/keystore.properties || echo "Properties file not found!"
+          
           echo "--- Checking for built APK/AAB files ---"
           find src-tauri -name "*.apk" -o -name "*.aab"
 
-      - name: Rename APK artifact
+      - name: Rename and collect APK artifact
         if: success()
         run: |
           mkdir -p release-artifacts
-          cp src-tauri/target/release/android-artifacts/app-universal-release-signed.apk release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
+          # Use find to locate the APK file
+          APK_FILE=$(find src-tauri -name "*-release-signed.apk" | head -1)
+          if [ -n "$APK_FILE" ]; then
+            cp "$APK_FILE" release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
+            echo "APK file found and copied to release artifacts"
+          else
+            echo "No APK file found" && exit 1
+          fi
 
-      - name: Rename AAB artifact
+      - name: Rename and collect AAB artifact
         if: success()
         run: |
-          cp src-tauri/target/release/android-artifacts/app-universal-release.aab release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
+          # Use find to locate the AAB file
+          AAB_FILE=$(find src-tauri -name "*-release.aab" | head -1)
+          if [ -n "$AAB_FILE" ]; then
+            cp "$AAB_FILE" release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
+            echo "AAB file found and copied to release artifacts"
+          else
+            echo "No AAB file found" && exit 1
+          fi
 
       - name: Create GitHub Release
         if: success()
