@@ -1,11 +1,11 @@
-name: "Android Release Debug"
+name: "Android Release"
 
 on:
   push:
     branches:
       - master
 jobs:
-  build-android-debug:
+  build-android-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -27,7 +27,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install specific NDK version (Trying NDK 26)
+      - name: Install specific NDK version
         run: sdkmanager "ndk;26.1.10909125"
 
       - name: Install Rust stable toolchain
@@ -44,95 +44,62 @@ jobs:
 
       - name: Decode Android keystore
         id: decode_keystore
-        # Decode keystore to the root directory
+        # Decode keystore directly to the path Gradle expects
         run: |
-          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 --decode > android-release.jks
-          echo "Decoded keystore to $(pwd)/android-release.jks"
+          mkdir -p src-tauri/gen/android
+          echo "${{ secrets.ANDROID_RELEASE_KEYSTORE }}" | base64 --decode > src-tauri/gen/android/android-release.jks
+          echo "Decoded keystore to src-tauri/gen/android/android-release.jks"
         shell: bash
 
-      # *** NEW STEP ***
       - name: Create keystore.properties for Gradle
         run: |
           echo "Creating keystore.properties for Gradle build..."
-          # Define the path to the keystore file relative to the Android project root (src-tauri/gen/android/)
-          # It needs to point back up to the repository root where android-release.jks is.
-          KEYSTORE_REL_PATH="../../android-release.jks"
-
-          # Ensure the target directory exists (Tauri might create it, but being safe)
-          mkdir -p src-tauri/gen/android
-
-          # Create the keystore.properties file
+          # Use a path relative to the build.gradle.kts file location (which is inside src-tauri/gen/android/)
           cat <<EOF > src-tauri/gen/android/keystore.properties
-          # Properties read by build.gradle.kts
-          storeFile=${KEYSTORE_REL_PATH}
+          storeFile=android-release.jks
           password=${{ secrets.ANDROID_RELEASE_PASSWORD }}
           keyAlias=${{ secrets.ANDROID_RELEASE_KEY }}
-          # keyPassword=${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }} # Gradle uses 'password' for both store and key
+          keyPassword=${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
           EOF
-
-          echo "keystore.properties created in src-tauri/gen/android/ with content:"
-          cat src-tauri/gen/android/keystore.properties
+          
+          echo "keystore.properties created with correct path"
         shell: bash
-      # *** END NEW STEP ***
 
-      - name: DEBUG - Check package.json script and run tauri info
-        # (Keep this debug step for now)
-        run: |
-          echo "--- package.json scripts ---"
-          node -p "require('./package.json').scripts" || echo "Could not read package.json scripts"
-          echo "--- npx tauri info ---"
-          npx tauri info
-          echo "--- Running build command ---"
-
-      - name: Build Android App (APK and AAB) - Using Gradle Signing Config
-        # We removed the TAURI_ANDROID_* env vars as Gradle now reads the properties file
-        # Keep verbosity (-vvv) and RUST_LOG=debug for now in case of other issues
+      - name: Build Android App
         run: npm run tauri android build
         env:
-          # NDK_HOME still needed for Rust build part
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
           CI: true
           RUST_LOG: debug
-          # No TAURI_ANDROID_* variables needed here anymore
 
-      - name: DEBUG - List build artifacts directory
-        # Run this regardless of previous step outcome to see if anything was created
+      - name: List build artifacts
         if: always()
         run: |
-          echo "--- Listing src-tauri/target/release (if exists) ---"
-          ls -lR src-tauri/target/release || echo "src-tauri/target/release not found or empty"
-          echo "--- Finding apk/aab files in src-tauri ---"
-          find src-tauri -name "*.apk" -o -name "*.aab" || echo "No apk or aab files found in src-tauri"
-          echo "--- Finding apk/aab files everywhere ---"
-          find . -name "*.apk" -o -name "*.aab" || echo "No apk or aab files found anywhere"
+          echo "--- Checking for built APK/AAB files ---"
+          find src-tauri -name "*.apk" -o -name "*.aab"
 
-      # --- Renaming and Release Steps ---
-      # Removing continue-on-error for clearer debugging for now.
-      # These steps will likely fail if the build step continues to fail silently.
       - name: Rename APK artifact
+        if: success()
         run: |
-          # Add ls before mv to see if the file exists just before trying to move it
-          ls -l src-tauri/target/release/android-artifacts/app-universal-release-signed.apk
-          mv src-tauri/target/release/android-artifacts/app-universal-release-signed.apk tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
+          mkdir -p release-artifacts
+          cp src-tauri/target/release/android-artifacts/app-universal-release-signed.apk release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
 
       - name: Rename AAB artifact
+        if: success()
         run: |
-          # Add ls before mv
-          ls -l src-tauri/target/release/android-artifacts/app-universal-release.aab
-          mv src-tauri/target/release/android-artifacts/app-universal-release.aab tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
+          cp src-tauri/target/release/android-artifacts/app-universal-release.aab release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
 
       - name: Create GitHub Release
-        # Only run if build and rename likely succeeded
         if: success()
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.app_version.outputs.version }}
-          name: Tsuuchinoko v${{ steps.app_version.outputs.version }}
+          tag_name: android-v${{ steps.app_version.outputs.version }}
+          name: Tsuuchinoko Android v${{ steps.app_version.outputs.version }}
           draft: false
           prerelease: false
           files: |
-            tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
-            tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
+            release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.apk
+            release-artifacts/tsuuchinoko-v${{ steps.app_version.outputs.version }}-universal.aab
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
