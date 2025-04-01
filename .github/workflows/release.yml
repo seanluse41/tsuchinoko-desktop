@@ -117,18 +117,8 @@ jobs:
           storeFile=${KEYSTORE_PATH}
           EOF
 
-      # Build ARM-only APK for testing
-      - name: Build Android APK (ARM only for testing)
-        run: npm run tauri android build -- --target aarch64
-        env:
-          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
-          CI: true
-
-      # Build AAB for Play Store with just ARM architectures
-      - name: Build Android App Bundle for Play Store
-        run: |
-          # Create a combined build with only ARM architectures
-          npm run tauri android build -- --target aarch64-linux-android,armv7-linux-androideabi --bundle
+      - name: Build Android App
+        run: npm run tauri android build -- --target aarch64 armv7
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
           CI: true
@@ -136,21 +126,22 @@ jobs:
       - name: Prepare Android artifacts
         run: |
           mkdir -p android-artifacts
-          
-          # Find ARM APK for testing on Pixel
-          APK_ARM64=$(find src-tauri -name "*aarch64*.apk" | head -1)
-          if [ -n "$APK_ARM64" ]; then
-            cp "$APK_ARM64" android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-arm64.apk
+
+          # Find ARM APKs and AABs
+          APK_FILES=$(find src-tauri -name "*.apk" | grep -v "unsigned")
+          AAB_FILES=$(find src-tauri -name "*.aab")
+
+          if [ -n "$APK_FILES" ] && [ -n "$AAB_FILES" ]; then
+            cp $APK_FILES android-artifacts/
+            cp $AAB_FILES android-artifacts/
+
+            # Rename files for clarity
+            for file in android-artifacts/*; do
+              new_name=$(echo "$file" | sed "s/app/tsuuchinoko-v${{ needs.extract-version.outputs.version }}/g")
+              mv "$file" "$new_name"
+            done
           else
-            echo "ARM64 APK not found" && exit 1
-          fi
-          
-          # Find AAB for Play Store submission
-          AAB_FILE=$(find src-tauri -name "*.aab" | head -1)
-          if [ -n "$AAB_FILE" ]; then
-            cp "$AAB_FILE" android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-arm.aab
-          else
-            echo "AAB file not found" && exit 1
+            echo "APK or AAB files not found" && exit 1
           fi
 
       - name: Upload Android artifacts to release
