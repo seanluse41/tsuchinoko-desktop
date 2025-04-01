@@ -120,14 +120,6 @@
         updateError = null;
     }
 
-    // Function to open GitHub releases page (for mobile)
-    function openGitHubReleases() {
-        window.open(
-            "https://github.com/seanluse41/tsuchinoko-desktop/releases",
-            "_blank",
-        );
-    }
-
     // Function to close the update modal
     function closeUpdateModal() {
         showUpdateModal = false;
@@ -188,7 +180,8 @@
 
                     <!-- Mobile release link button (always visible, but primary on mobile) -->
                     <Button
-                        onclick={openGitHubReleases}
+                        href="https://github.com/seanluse41/tsuchinoko-desktop/releases"
+                        target="_blank"
                         class="{isMobileApp
                             ? 'bg-thistle hover:bg-thistle-600'
                             : 'bg-slate-200 hover:bg-slate-300'} text-slate-700"

@@ -147,8 +147,8 @@ jobs:
         with:
           tag_name: v${{ needs.extract-version.outputs.version }}
           files: |
-            android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-arm64.apk
-            android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-arm.aab
+            android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-android.apk
+            android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-android.aab
           append_body: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
