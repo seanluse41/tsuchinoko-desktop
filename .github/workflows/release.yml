@@ -126,20 +126,18 @@ jobs:
       - name: Prepare Android artifacts
         run: |
           mkdir -p android-artifacts
-
-          # Find ARM APKs and AABs
-          APK_FILES=$(find src-tauri -name "*.apk" | grep -v "unsigned")
-          AAB_FILES=$(find src-tauri -name "*.aab")
-
-          if [ -n "$APK_FILES" ] && [ -n "$AAB_FILES" ]; then
-            cp $APK_FILES android-artifacts/
-            cp $AAB_FILES android-artifacts/
-
-            # Rename files for clarity
-            for file in android-artifacts/*; do
-              new_name=$(echo "$file" | sed "s/app/tsuuchinoko-v${{ needs.extract-version.outputs.version }}/g")
-              mv "$file" "$new_name"
-            done
+          
+          # Find the main APK and AAB files
+          APK_FILE=$(find src-tauri -name "app-universal-release.apk" | head -1)
+          AAB_FILE=$(find src-tauri -name "app-universal-release.aab" | head -1)
+          
+          if [ -n "$APK_FILE" ] && [ -n "$AAB_FILE" ]; then
+            # Copy and rename the files directly
+            cp "$APK_FILE" "android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-android.apk"
+            cp "$AAB_FILE" "android-artifacts/tsuuchinoko-v${{ needs.extract-version.outputs.version }}-android.aab"
+            
+            echo "Files prepared successfully:"
+            ls -la android-artifacts/
           else
             echo "APK or AAB files not found" && exit 1
           fi
