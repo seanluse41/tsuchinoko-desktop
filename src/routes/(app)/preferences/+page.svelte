@@ -266,24 +266,21 @@
                 </div>
             </div>
             <Hr hrClass="my-16" />
-            <div class="flex flex-row space-x-8">
+            <div class="flex flex-col md:flex-row gap-3 md:gap-8">
                 <Button
-                    size="lg"
                     color="light"
-                    class="border-slate-700 flex-grow w-1/4"
+                    class="border-slate-700 flex-grow w-full md:w-1/4 py-4"
                     outline
                     onclick={resetColors}>{$_("preferences.resetColors")}</Button
                 >
                 <Button
-                    size="lg"
                     color="light"
-                    class="border-slate-700 w-1/4"
+                    class="border-slate-700 w-full md:w-1/4 py-4"
                     outline
                     onclick={resetAllPreferences}>{$_("preferences.resetAllPreferences")}</Button
                 >
                 <Button
-                    size="lg"
-                    class="border-slate-700 flex-grow w-1/2 mx-8 bg-moss_green-500 hover:bg-moss_green-400 active:bg-moss_green-300 text-white"
+                    class="border-slate-700 py-4 flex-grow w-full md:w-1/2 bg-moss_green-500 hover:bg-moss_green-400 active:bg-moss_green-300 text-white"
                     outline
                     onclick={savePreferences}>{$_("preferences.savePreferences")}</Button
                 >

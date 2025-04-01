@@ -312,11 +312,11 @@
                                     >{lib.name}</span
                                 >
                             {/snippet}
-                            <div class="p-3">
+                            <div class="p-3 break-words">
                                 <A
                                     href={lib.url}
                                     target="_blank"
-                                    class="text-slate-700 hover:text-slate-800"
+                                    class="text-slate-700 hover:text-slate-800 break-all"
                                 >
                                     {lib.url}
                                 </A>
