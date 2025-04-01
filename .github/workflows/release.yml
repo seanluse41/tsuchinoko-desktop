@@ -99,7 +99,6 @@ jobs:
       - name: Install Rust stable toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          # Only include ARM architectures (covers ~99.7% of devices)
           targets: aarch64-linux-android,armv7-linux-androideabi
 
       - name: Install dependencies
@@ -120,7 +119,7 @@ jobs:
 
       # Build ARM-only APK for testing
       - name: Build Android APK (ARM only for testing)
-        run: npm run tauri android build -- --target aarch64-linux-android
+        run: npm run tauri android build -- --target aarch64
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
           CI: true
