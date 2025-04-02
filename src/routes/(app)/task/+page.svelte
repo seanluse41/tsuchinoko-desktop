@@ -97,7 +97,7 @@
 
 <main class="flex h-full select-enabled">
     <div class="md:w-64 flex-shrink-0">
-        <TaskDetailsCommands taskId={task?.id} />
+        <TaskDetailsCommands taskId={task?.id} link={task?.link} />
     </div>
     {#if task}
         <div class="flex-1 overflow-y-auto p-8 relative">

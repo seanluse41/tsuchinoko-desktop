@@ -6,12 +6,10 @@
     import { authState } from "$lib/app/appLoginManager.svelte";
     import { _ } from "svelte-i18n";
 
-    let { taskId } = $props();
-    if (!taskId) throw new Error('taskId prop is required');
+    let { link } = $props();
 
     const viewInKintone = async () => {
-        const url = `https://${authState.user.subdomain}.${authState.user.domain}/k/${authState.user.appId}/show#record=${taskId}`;
-        await open(url);
+        await open(link);
     };
 </script>
 

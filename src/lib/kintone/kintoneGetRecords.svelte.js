@@ -61,7 +61,7 @@ function transformRecords(records, appId) {
                 name: record.notificationTitle.value,
                 id: record.taskID?.value || record['レコード番号']?.value,
                 status: record.taskStatus.value,
-                link: `${record.taskBaseURL.value}/k/${appId}/show#record=${record.taskID.value}`,
+                link: `${authState.subdomain}.${authState.domain}/k/${appId}/show#record=${record.taskID.value}`,
                 dateCreated: record.taskCreationDateTime.value,
                 dateDue: record.taskDeadline.value,
                 description: record.notificationContent.value,
