@@ -411,25 +411,6 @@ export function getFieldDefinitions() {
             "unique": false,
             "defaultValue": ""
         },
-        "baseId": {
-            "type": "SINGLE_LINE_TEXT",
-            "code": "baseId",
-            "label": "baseId",
-            "noLabel": false,
-            "required": false,
-            "unique": true,
-            "maxLength": "64",
-            "defaultValue": ""
-        },
-        "groupKey": {
-            "type": "SINGLE_LINE_TEXT",
-            "code": "groupKey",
-            "label": "groupKey",
-            "noLabel": false,
-            "required": false,
-            "unique": false,
-            "defaultValue": ""
-        },
         "notificationContent": {
             "type": "MULTI_LINE_TEXT",
             "code": "notificationContent",
@@ -557,15 +538,6 @@ export function getFieldDefinitions() {
             "required": false,
             "entities": [],
             "defaultValue": []
-        },
-        "module_id": {
-            "type": "SINGLE_LINE_TEXT",
-            "code": "module_id",
-            "label": "module ID",
-            "noLabel": false,
-            "required": false,
-            "unique": false,
-            "defaultValue": ""
         },
         "ntf_url": {
             "type": "LINK",

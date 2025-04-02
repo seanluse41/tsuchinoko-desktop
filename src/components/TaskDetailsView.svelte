@@ -10,7 +10,7 @@
     import { preferencesState } from "$lib/app/appPreferences.svelte";
 
     let { task, currentLanguage } = $props();
-    let calendarContainer;
+    let calendarContainer = $state();
     let datepicker;
 
     onMount(() => {
