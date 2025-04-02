@@ -31,26 +31,25 @@ export async function getRecords(query = '') {
 
         // Convert error to string to handle both string and object errors
         const errorStr = String(error);
-        
+
         // If the error includes the Kintone error response, parse it
         if (errorStr.includes('GAIA_AP01')) {
             taskState.error = "No tasks found";
             return { list: [] };
         }
-        
+
         // Set error message on task state
         taskState.error = error instanceof Error ? error.message : errorStr;
         return { list: [] };
     }
 }
 
-// Simplified transformRecords function in kintoneGetRecords.svelte.js
 function transformRecords(records, appId) {
     return {
         list: records.map(record => {
             // Extract creator info - only check the default field names
             let creatorInfo = null;
-            
+
             // Check only default creator field names based on locale
             if (record['作成者'] && record['作成者'].value) {
                 creatorInfo = record['作成者'].value;
@@ -62,7 +61,7 @@ function transformRecords(records, appId) {
                 name: record.notificationTitle.value,
                 id: record.taskID?.value || record['レコード番号']?.value,
                 status: record.taskStatus.value,
-                link: `https://${authState.user.subdomain}.${authState.user.domain}/k/${appId}/show#record=${record['レコード番号']?.value}`,
+                link: `https://${authState.user.subdomain}.${authState.user.domain}/k/${appId}/show#record=${record.taskID.value}`,
                 dateCreated: record.taskCreationDateTime.value,
                 dateDue: record.taskDeadline.value,
                 description: record.notificationContent.value,
@@ -70,7 +69,9 @@ function transformRecords(records, appId) {
                 completionMemo: record.taskCompletionMemo?.value,
                 priority: record.taskPriority.value,
                 folder: record.taskFolder.value,
-                creator: creatorInfo
+                creator: creatorInfo,
+                url: record.ntf_url?.value,
+                moduleType: record.module_type?.value,
             }
         })
     };

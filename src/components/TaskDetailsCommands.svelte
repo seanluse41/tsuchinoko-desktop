@@ -24,7 +24,7 @@
     import { trackNavigation } from "$lib/app/appNavigationTracker.svelte";
     import { _ } from "svelte-i18n";
 
-    let { taskId } = $props();
+    let { taskId, link } = $props();
 
     const sidebarUI = uiHelpers();
     const deleteModalUI = uiHelpers();
@@ -77,7 +77,7 @@
             <BackButton />
             <AddToGroupButton />
             <CompleteButton modalUI={completeModalUI} {taskId} />
-            <ViewInKintoneButton {taskId} />
+            <ViewInKintoneButton {link} />
             <ViewNotificationButton />
             <CopyButton />
             <DeleteButton modalUI={deleteModalUI} />

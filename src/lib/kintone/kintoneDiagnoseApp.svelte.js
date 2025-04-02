@@ -144,8 +144,6 @@ export async function diagnoseApp() {
             "notificationTitle",
             "taskCreationDateTime",
             "taskFolder",
-            "baseId",
-            "groupKey",
             "notificationContent",
             "taskHolder",
             "taskCompletionMemo",
@@ -157,7 +155,6 @@ export async function diagnoseApp() {
             "taskPriority",
             "notificationSubtitle",
             "notificationSender",
-            "module_id",
             "ntf_url"
         ];
         
