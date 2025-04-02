@@ -9,6 +9,7 @@
     let { link } = $props();
 
     const viewInKintone = async () => {
+        console.log(link)
         await open(link);
     };
 </script>
