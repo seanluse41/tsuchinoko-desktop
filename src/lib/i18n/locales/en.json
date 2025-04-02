@@ -182,5 +182,19 @@
         "created": "Created",
         "due": "Due",
         "memo": "Memo"
+    },
+    "eggTimer": {
+        "title": "Egg Timer",
+        "subtitle": "Set a timer and get things done!",
+        "alarmSound": "Alarm Sound",
+        "alarmsDisabled": "Alarm sounds are disabled in preferences",
+        "loopAlarm": "Loop alarm until stopped",
+        "clickToEdit": "Click to edit",
+        "clickToEditOrStop": "Click to edit or stop alarm",
+        "enterTime": "Enter time (8h, 5m, 30s, or MM:SS)",
+        "start": "Start",
+        "stop": "Stop",
+        "reset": "Reset", 
+        "timeFormatGuide": "Enter time (8h, 5m, 30s, or MM:SS)"
     }
 }

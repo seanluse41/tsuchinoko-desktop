@@ -56,11 +56,11 @@
             {#snippet iconSlot()}
                 {#if isSelected}
                     <FolderOpenOutline
-                        class="h-5 w-5 text-slate-700 transition-colors hover:text-moss_green-600"
+                        class="h-5 w-5 flex-shrink-0 mr-2 text-slate-700 transition-colors hover:text-moss_green-600"
                     />
                 {:else}
                     <FolderOutline
-                        class="h-5 w-5 text-slate-700 transition-colors hover:text-moss_green-600"
+                        class="h-5 w-5 flex-shrink-0 mr-2 text-slate-700 transition-colors hover:text-moss_green-600"
                     />
                 {/if}
             {/snippet}
@@ -73,6 +73,11 @@
         outline: 2px dashed #227558;
         outline-offset: 1px;
         animation: march 1s linear infinite;
+    }
+
+    /* Simple style to ensure text wraps if needed */
+    :global(.folder-item a span) {
+        word-break: break-word;
     }
 
     @keyframes march {

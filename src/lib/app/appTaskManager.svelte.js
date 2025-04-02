@@ -1,6 +1,6 @@
 // src/lib/app/appTaskManager.svelte.js
 import { getRecords } from '../kintone/kintoneGetRecords.svelte.js';
-import { folderState } from './appFolderManager.svelte.js';
+import { folderState, updateFoldersList, initializeFolders } from './appFolderManager.svelte.js';
 import { checkForTsuuchinokoApp } from '../kintone/kintoneCheckForApp.svelte.js';
 import { goto } from "$app/navigation";
 import { trackNavigation } from './appNavigationTracker.svelte';
@@ -20,6 +20,9 @@ export async function loadTasks() {
     taskState.error = null;
 
     try {
+        // Initialize folders system if not already done
+        await initializeFolders();
+        
         // Only check for app if ID is missing
         if (!authState.user.appId) {
             console.log("No app ID found, attempting to detect Tsuuchinoko app...");
@@ -63,8 +66,14 @@ export async function loadTasks() {
                 }, 5000); // Clear after 5 seconds
             }
 
-            // Update available folders
-            folderState.folders = ['All', ...new Set(response.list.map(task => task.folder).filter(Boolean))];
+            // Extract folder names from tasks and update the folders list
+            const taskFolders = response.list
+                .map(task => task.folder)
+                .filter(Boolean); // Remove empty/null folders
+                
+            // Update folders list with task folders (combines with user folders)
+            updateFoldersList(taskFolders);
+            
         } catch (error) {
             // Check if error indicates app not found/deleted
             if (error.toString().includes("GAIA_APP")) {

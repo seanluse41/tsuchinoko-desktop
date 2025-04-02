@@ -1,7 +1,7 @@
 <script>
     import { Modal, Button, Label, Input, P, uiHelpers } from 'svelte-5-ui-lib';
     import { FolderPlusOutline } from "flowbite-svelte-icons";
-    import { folderState } from '$lib/app/appFolderManager.svelte.js';
+    import { folderState, addUserFolder } from '$lib/app/appFolderManager.svelte.js';
     import { _ } from "svelte-i18n";
 
     let { modalUI = uiHelpers() } = $props();
@@ -9,9 +9,10 @@
     let folderName = $state('');
     let error = $state('');
     let modalStatus = $state(false);
+    let isSubmitting = $state(false);
     
     let charCount = $derived(folderName.length);
-    let isValid = $derived(folderName.trim().length > 0 && folderName.length <= 25);
+    let isValid = $derived(folderName.trim().length > 0 && folderName.length <= 20);
     
     const closeModal = modalUI.close;
 
@@ -21,22 +22,42 @@
         if (modalStatus) {
             folderName = '';
             error = '';
+            isSubmitting = false;
         }
     });
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
         if (!isValid) {
-            error = "Folder name must be between 1-25 characters";
-            return;
-        }     
-        if (folderState.folders.includes(folderName.trim())) {
-            error = "Folder already exists";
+            error = "Folder name must be between 1-20 characters";
             return;
         }
         
-        folderState.folders = [...folderState.folders, folderName.trim()];
-        closeModal();
+        try {
+            isSubmitting = true;
+            error = '';
+            
+            // Check if folder already exists
+            if (folderState.folders.includes(folderName.trim())) {
+                error = "Folder already exists";
+                isSubmitting = false;
+                return;
+            }
+            
+            // Add user folder (persists to storage)
+            const result = await addUserFolder(folderName.trim());
+            
+            if (result) {
+                closeModal();
+            } else {
+                error = "Failed to create folder";
+            }
+        } catch (err) {
+            console.error("Error creating folder:", err);
+            error = "An error occurred creating the folder";
+        } finally {
+            isSubmitting = false;
+        }
     }
 </script>
 
@@ -55,24 +76,23 @@
                 bind:value={folderName}
                 maxlength="20"
                 required 
+                disabled={isSubmitting}
             />
             <div class="flex justify-between">
-                <span class="text-xs text-gray-500">{charCount}/25 characters</span>
+                <span class="text-xs text-gray-500">{charCount}/20 characters</span>
                 {#if error}
                     <span class="text-xs text-red-500">{error}</span>
                 {/if}
             </div>
         </Label>
-
-        <P class="text-red-500">* Folders with no tasks will be deleted.</P>
-        
+       
         <Button
             size="lg" 
             type="submit" 
             class="text-slate-700 font-bold rounded-lg border border-slate-700 p-4 hover:bg-slate-200 bg-white disabled:bg-slate-300 disabled:cursor-not-allowed"
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
         >
-            Add Folder
+            {isSubmitting ? 'Creating...' : 'Add Folder'}
         </Button>
     </form>
 </Modal>

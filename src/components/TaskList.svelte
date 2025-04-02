@@ -8,7 +8,6 @@
 
     let alertStatus = $derived(!!taskState.error);
     
-    // Use search results if searching, otherwise use normal filtered tasks
     let displayTasks = $derived(
         searchState.isSearching 
             ? searchState.searchResults 
@@ -16,7 +15,7 @@
     );
 </script>
 
-<div class="flex flex-col flex-grow w-full p-8 gap-4">
+<div class="flex flex-col flex-grow w-full px-2 md:p-8 gap-4">
     <Task404Alert {alertStatus} />
     
     {#if searchState.noResults}

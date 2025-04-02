@@ -182,5 +182,19 @@
         "created": "作成日時",
         "due": "期限",
         "memo": "メモ"
+    },
+    "eggTimer": {
+        "title": "タイマー",
+        "subtitle": "タスク画面からも確認できます。",
+        "alarmSound": "アラーム音",
+        "alarmsDisabled": "アラーム音は環境設定で無効になっています",
+        "loopAlarm": "アラームを繰り返しする",
+        "clickToEdit": "クリックして編集",
+        "clickToEditOrStop": "クリックで編集または停止",
+        "enterTime": "入力 (8h, 5m, 30s, または MM:SS)",
+        "start": "開始",
+        "stop": "停止",
+        "reset": "リセット",
+        "timeFormatGuide": "時間を入力 (8h, 5m, 30s, または MM:SS)"
     }
 }

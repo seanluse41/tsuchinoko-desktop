@@ -16,6 +16,7 @@
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { Button, Radio, Checkbox } from "svelte-5-ui-lib";
     import { onMount } from "svelte";
+    import { _ } from "svelte-i18n";
 
     // Reference to audio element
     let alarmAudio;
@@ -230,7 +231,7 @@
     <!-- Left side with alarm sound selection - Desktop view -->
     <div class="hidden md:block md:w-48 lg:w-64">
         <p class="mb-4 font-semibold text-slate-700">
-            Alarm Sound: <span class="capitalize"
+            {$_("eggTimer.alarmSound")}: <span class="capitalize"
                 >{timerState.alarmSound.replace(".mp3", "")}</span
             >
         </p>
@@ -239,7 +240,7 @@
             <div
                 class="p-3 bg-amber-50 border border-amber-200 rounded-lg mb-4 text-amber-700 text-sm"
             >
-                Alarm sounds are disabled in preferences
+                {$_("eggTimer.alarmsDisabled")}
             </div>
         {/if}
 
@@ -274,7 +275,7 @@
                 onchange={toggleLoopAlarm}
                 disabled={!isSoundEnabled}
             >
-                Loop alarm until stopped
+                {$_("eggTimer.loopAlarm")}
             </Checkbox>
         </div>
     </div>
@@ -331,7 +332,7 @@
                             ? 'text-red-500'
                             : 'text-slate-500'} text-center mt-1"
                     >
-                        {inputError || `Enter time (8h, 5m, 30s, or MM:SS)`}
+                        {inputError || $_("eggTimer.timeFormatGuide")}
                     </div>
                 </div>
             {:else}
@@ -348,7 +349,9 @@
                     <div
                         class="absolute bottom-6 text-sm text-slate-500 opacity-80"
                     >
-                        Click to edit {isSoundEnabled ? "or stop alarm" : ""}
+                        {isSoundEnabled 
+                            ? $_("eggTimer.clickToEditOrStop")
+                            : $_("eggTimer.clickToEdit")}
                     </div>
                 {/if}
             {/if}
@@ -409,7 +412,7 @@
                   disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                 size="xl"
             >
-                Start
+                {$_("eggTimer.start")}
             </Button>
             <Button
                 onclick={stopTimer}
@@ -421,7 +424,7 @@
                       disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                 size="xl"
             >
-                Stop
+                {$_("eggTimer.stop")}
             </Button>
 
             <Button
@@ -434,14 +437,14 @@
                      disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                 size="xl"
             >
-                Reset
+                {$_("eggTimer.reset")}
             </Button>
         </div>
 
         <!-- Mobile sound selector view - Only shown if sounds are enabled -->
         <div class="mt-6 md:hidden w-full">
             <p class="mb-4 font-semibold text-slate-700">
-                Alarm Sound: <span class="capitalize"
+                {$_("eggTimer.alarmSound")}: <span class="capitalize"
                     >{timerState.alarmSound.replace(".mp3", "")}</span
                 >
             </p>
@@ -450,7 +453,7 @@
                 <div
                     class="p-3 bg-amber-50 border border-amber-200 rounded-lg mb-4 text-amber-700 text-sm"
                 >
-                    Alarm sounds are disabled in preferences
+                    {$_("eggTimer.alarmsDisabled")}
                 </div>
             {:else}
                 <!-- Grid layout for sound options -->
@@ -482,7 +485,7 @@
                         onchange={toggleLoopAlarm}
                         disabled={!isSoundEnabled}
                     >
-                        Loop alarm until stopped
+                        {$_("eggTimer.loopAlarm")}
                     </Checkbox>
                 </div>
             {/if}

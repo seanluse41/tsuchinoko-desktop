@@ -100,7 +100,7 @@
         <TaskDetailsCommands taskId={task?.id} />
     </div>
     {#if task}
-        <div class="flex-1 overflow-y-auto p-8 z-10">
+        <div class="flex-1 overflow-y-auto p-8 relative">
             {#if errorMessage}
                 <Alert color="red" class="mb-4">{errorMessage}</Alert>
             {/if}

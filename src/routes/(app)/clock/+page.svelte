@@ -3,6 +3,7 @@
     import EggTimer from "../../../components/EggTimer.svelte";
     import { timerState, setDuration } from '$lib/app/appEggTimer.svelte.js';
     import { preferencesState } from "$lib/app/appPreferences.svelte";
+    import { _ } from "svelte-i18n";
 </script>
 
 <div class="relative w-full h-full overflow-auto p-8">
@@ -12,9 +13,9 @@
     >
         <div class="text-center mb-8">
             <Heading level={1} class="text-3xl md:text-5xl font-bold text-slate-700 mb-4">
-                Egg Timer
+                {$_("eggTimer.title")}
             </Heading>
-            <p class="text-slate-700">Set a timer and get things done!</p>
+            <p class="text-slate-700">{$_("eggTimer.subtitle")}</p>
         </div>
         
         <div class="flex flex-col">
