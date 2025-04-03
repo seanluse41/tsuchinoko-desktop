@@ -19,7 +19,7 @@
     import { _ } from "svelte-i18n";
 
     // Reference to audio element
-    let alarmAudio;
+    let alarmAudio = $state();
 
     // List of available alarm sounds
     const alarmSounds = [
@@ -33,7 +33,6 @@
         { id: "digitalTimer", label: "Digital", file: "digitalTimer.mp3" },
         { id: "bellTimer", label: "Bell", file: "bellTimer.mp3" },
         { id: "sexyGuy", label: "Sexy Guy", file: "sexyGuy.mp3" },
-        { id: "sexyLady", label: "Sexy Lady", file: "sexyLady.mp3" },
     ];
 
     // Calculate gradient percentage based on time remaining
@@ -358,7 +357,7 @@
         </div>
 
         <!-- Quick-add time buttons -->
-        <div class="flex flex-wrap justify-center gap-2 w-full max-w-md">
+        <div class="flex flex-wrap justify-center mt-4 gap-4 w-full max-w-md">
             <button
                 onclick={addThirtySeconds}
                 class="bg-thistle hover:bg-thistle-700 text-slate-800 px-3 py-1 rounded-full text-sm font-medium
@@ -398,7 +397,7 @@
         </div>
 
         <!-- Control buttons -->
-        <div class="flex w-full max-w-md gap-4 md:gap-6">
+        <div class="flex flex-col md:flex-row items-center w-full max-w-md gap-4 md:gap-6 mt-4">
             <Button
                 onclick={startTimer}
                 disabled={timerState.isRunning ||
@@ -406,7 +405,7 @@
                     timerState.isExpired ||
                     timerState.remainingSeconds <= 0}
                 class="bg-moss_green hover:bg-moss_green-600 active:bg-moss_green-700 
-                  text-white w-1/3 py-6 text-xl font-bold rounded-lg
+                  text-white w-full md:w-1/3 py-4 md:py-6 text-lg md:text-xl font-bold rounded-lg
                   transform transition-all duration-200 
                   hover:shadow-lg hover:-translate-y-1 active:translate-y-0 active:shadow-md
                   disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
@@ -418,7 +417,7 @@
                 onclick={stopTimer}
                 disabled={!timerState.isRunning || isEditing}
                 class="bg-amber hover:bg-amber-600 active:bg-amber-700
-                      text-slate-800 w-1/3 py-6 text-xl font-bold rounded-lg
+                      text-slate-800 w-full md:w-1/3 py-4 md:py-6 text-lg md:text-xl font-bold rounded-lg
                       transform transition-all duration-200 
                       hover:shadow-lg hover:-translate-y-1 active:translate-y-0 active:shadow-md
                       disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
@@ -431,7 +430,7 @@
                 onclick={handleClearTimer}
                 disabled={isEditing}
                 class="bg-redwood hover:bg-redwood-600 active:bg-redwood-700
-                     text-white w-1/3 py-6 text-xl font-bold rounded-lg
+                     text-white w-full md:w-1/3 py-4 md:py-6 text-lg md:text-xl font-bold rounded-lg
                      transform transition-all duration-200 
                      hover:shadow-lg hover:-translate-y-1 active:translate-y-0 active:shadow-md
                      disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"

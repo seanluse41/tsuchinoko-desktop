@@ -6,13 +6,13 @@
     import { _ } from "svelte-i18n";
 </script>
 
-<div class="relative w-full h-full overflow-auto p-8">
+<div class="relative w-full h-full overflow-auto p-4 md:p-8">
     <Card
-        class="max-w-none mx-auto"
+        class="max-w-none mx-auto md:p-10"
         style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
     >
         <div class="text-center mb-8">
-            <Heading level={1} class="text-3xl md:text-5xl font-bold text-slate-700 mb-4">
+            <Heading level={1} class="text-4xl md:text-5xl font-bold text-slate-700 mb-4">
                 {$_("eggTimer.title")}
             </Heading>
             <p class="text-slate-700">{$_("eggTimer.subtitle")}</p>

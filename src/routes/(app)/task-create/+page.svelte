@@ -1,6 +1,6 @@
 <!-- src/routes/(app)/task-create/+page.svelte -->
 <script>
-    import { Card, Input, Label, Button, Radio, Alert } from "svelte-5-ui-lib";
+    import { Card, Input, Label, Button, Radio, Alert, Heading } from "svelte-5-ui-lib";
     import AirDatepicker from "air-datepicker";
     import localeJa from "air-datepicker/locale/ja";
     import "air-datepicker/air-datepicker.css";
@@ -68,9 +68,9 @@
     }
 </script>
 
-<div class="pt-8 p-4 h-full md:p-32 overflow-y-auto">
+<div class="p-4 h-full md:p-8 overflow-y-auto">
     <Card class="max-w-none bg-moss_green-700 relative md:p-10">
-        <h1 class="text-4xl md:text-5xl text-center font-bold mb-6 text-slate-700">{$_("taskCreate.createNewTask")}</h1>
+        <Heading class="text-3xl md:text-5xl text-center font-bold mb-6 text-slate-700">{$_("taskCreate.createNewTask")}</Heading>
 
         {#if error}
             <Alert color="red" class="mb-4">{error}</Alert>
