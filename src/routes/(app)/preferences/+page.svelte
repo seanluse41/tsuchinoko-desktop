@@ -172,6 +172,39 @@
                 </Toggle>
             </div>
 
+            <!-- Notifications Enabled -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-lg font-medium">{$_("preferences.notifications")}</span>
+                    <InfoCircleSolid
+                        id="notifications-info"
+                        class="h-5 w-5 text-slate-600"
+                    />
+                    <Tooltip triggeredBy="#notifications-info"
+                        >{$_("preferences.notificationsTooltip")}</Tooltip
+                    >
+                </div>
+                <Toggle
+                    spanClass="w-16 h-10 after:top-1 after:left-[4px]  after:h-8 after:w-8"
+                    bind:checked={preferencesState.notificationsEnabled}
+                >
+                    {#snippet leftLabel()}
+                        <div
+                            class="me-4 {!preferencesState.notificationsEnabled
+                                ? 'font-semibold'
+                                : ''}"
+                        >
+                            {$_("preferences.off")}
+                        </div>
+                    {/snippet}
+                    <div
+                        class={preferencesState.notificationsEnabled ? "font-semibold" : ""}
+                    >
+                        {$_("preferences.on")}
+                    </div>
+                </Toggle>
+            </div>
+
             <div class="space-y-2">
                 <div class="flex items-center gap-2">
                     <span class="text-lg font-medium"

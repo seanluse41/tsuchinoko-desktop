@@ -4,11 +4,9 @@ import { authState } from '../app/appLoginManager.svelte.js';
 import { refreshToken } from './kintoneRefreshRequest.js';
 import { taskState } from "../app/appTaskManager.svelte.js";
 import { trackTaskAction } from "$lib/app/appNavigationTracker.svelte.js";
+import { sendSingleNotification, sendMultiNotification } from "../os/notificationHandler.svelte.js";
 
-/**
- * Checks for tasks that are past their due date but not marked as overdue
- * and updates their status to "overdue" in Kintone
- */
+
 export async function checkForOverdueTasks() {
     if (!authState.isAuthenticated || !authState.token) {
         console.log('Not authenticated, skipping overdue check');
@@ -16,42 +14,34 @@ export async function checkForOverdueTasks() {
     }
 
     try {
-        // Find tasks that are past due but not marked as overdue or completed
         const now = new Date();
-        const overdueTaskIds = taskState.tasks
+        const overdueTasksData = taskState.tasks
             .filter(task => {
-                // Skip tasks that are already overdue or completed
                 if (task.status === 'overdue' || task.status === 'completed') {
                     return false;
                 }
-                
-                // Check if task has a due date
-                if (!task.dateDue) {
+                                if (!task.dateDue) {
                     return false;
                 }
                 
                 // Check if due date is in the past
                 const dueDate = new Date(task.dateDue);
                 return !isNaN(dueDate.getTime()) && dueDate < now;
-            })
-            .map(task => task.id);
+            });
         
-        // If no overdue tasks, return early
+        const overdueTaskIds = overdueTasksData.map(task => task.id);
+        
         if (overdueTaskIds.length === 0) {
             console.log('No new overdue tasks found');
             return { updated: 0 };
         }
-        
-        console.log(`Found ${overdueTaskIds.length} tasks that are now overdue`);
-        
-        // Update local state first
+                
         taskState.tasks = taskState.tasks.map(task =>
             overdueTaskIds.includes(task.id)
                 ? { ...task, status: "overdue" }
                 : task
         );
         
-        // Prepare records for update in Kintone
         const recordsToUpdate = overdueTaskIds.map(id => ({
             id: id,
             record: {
@@ -61,7 +51,6 @@ export async function checkForOverdueTasks() {
             }
         }));
         
-        // Update the tasks in Kintone
         await invoke("kintone_update_records", {
             appId: authState.user.appId,
             records: recordsToUpdate,
@@ -74,6 +63,14 @@ export async function checkForOverdueTasks() {
         
         // Track the action
         trackTaskAction(overdueTaskIds, "overdue-update");
+        
+        // Send notification about overdue tasks
+        if (overdueTaskIds.length === 1) {
+            const taskData = overdueTasksData[0];
+            sendSingleNotification(taskData.id, 'becomeOverdue', taskData);
+        } else if (overdueTaskIds.length > 1) {
+            sendMultiNotification(overdueTaskIds, 'becomeOverdue', overdueTaskIds.length);
+        }
         
         return { updated: overdueTaskIds.length };
     } catch (error) {
