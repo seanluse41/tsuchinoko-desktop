@@ -29,6 +29,7 @@
     "clipboard-manager:allow-write-text",
     "log:default",
     "store:default",
-    "process:default"
+    "process:default",
+    "notification:default"
   ]
 }

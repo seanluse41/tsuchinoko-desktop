@@ -46,6 +46,8 @@
         "keepFilterOnSearchTooltip": "検索バーを使用する際に、現在のフィルター、並べ替え、フォルダ選択を維持する",
         "eggTimerSound": "タイマー切れ時音",
         "eggTimerSoundTooltip": "オンにすると、タイマーは０になると音が鳴る",
+        "notifications": "通知",
+        "notificationsTooltip": "システム通知を表示する",
         "syncInterval": "同期間隔（分）",
         "syncIntervalTooltip": "タスクの更新を確認する頻度",
         "currentInterval": "現在: {interval} 分",

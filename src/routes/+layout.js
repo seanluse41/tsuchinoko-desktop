@@ -8,6 +8,7 @@ import { locale, waitLocale } from 'svelte-i18n';
 import { onOpenUrl } from '@tauri-apps/plugin-deep-link';
 import { goto } from '$app/navigation';
 import { trackNavigation } from '$lib/app/appNavigationTracker.svelte';
+import { initNotifications } from '$lib/os/notificationHandler.svelte.js';
 
 export const prerender = true;
 export const ssr = false;
@@ -17,7 +18,9 @@ export async function load() {
         // First initialize core services
         await secretManager.initialize();
         await initializePreferences();
-        
+        // Initialize notifications system
+        await initNotifications();
+        // Rest of your existing load function...
         if (browser) {
             // Set locale from preferences if available
             if (preferencesState.language) {
