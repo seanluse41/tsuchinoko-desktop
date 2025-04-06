@@ -160,13 +160,33 @@ pub async fn kintone_add_record(
 }
 
 #[tauri::command]
-pub async fn kintone_get_apps(config: GetRecordsConfig) -> Result<GetAppsResponse, String> {
+pub async fn kintone_get_apps(
+    spaceIds: Option<Vec<String>>,
+    config: GetRecordsConfig,
+) -> Result<GetAppsResponse, String> {
     let client = reqwest::Client::new();
 
-    let url = format!(
+    // Start building the URL
+    let mut url = format!(
         "https://{}.{}/k/v1/apps.json",
         config.subdomain, config.domain
     );
+
+    // Add query parameters if spaceIds is provided
+    if let Some(space_ids) = spaceIds {
+        if !space_ids.is_empty() {
+            // Start with a query marker
+            url.push('?');
+            
+            // Add each space ID as a query parameter
+            for (i, id) in space_ids.iter().enumerate() {
+                if i > 0 {
+                    url.push_str("&");
+                }
+                url.push_str(&format!("spaceIds[{}]={}", i, id));
+            }
+        }
+    }
 
     println!("Get apps URL: {}", url);
 
@@ -492,6 +512,46 @@ pub async fn kintone_get_deploy_status(
         .send()
         .await
         .map_err(|e| format!("Failed to get deployment status: {}", e))?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.map_err(|e| e.to_string())?;
+
+        if status == reqwest::StatusCode::UNAUTHORIZED {
+            return Err("token_expired".to_string());
+        }
+        return Err(format!("API request failed: {}", text));
+    }
+
+    response
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| format!("Failed to parse response: {}", e))
+}
+
+#[tauri::command]
+pub async fn kintone_create_space(
+    space_name: String,
+    config: GetRecordsConfig,
+) -> Result<serde_json::Value, String> {
+    let client = Client::new();
+
+    let url = format!(
+        "https://{}.{}/k/v1/space.json",
+        config.subdomain, config.domain
+    );
+
+    let body = serde_json::json!({
+        "name": space_name
+    });
+
+    let response = client
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", config.access_token))
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to create space: {}", e))?;
 
     if !response.status().is_success() {
         let status = response.status();

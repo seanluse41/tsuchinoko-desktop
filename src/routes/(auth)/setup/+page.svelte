@@ -27,6 +27,7 @@
         domain = "cybozu.com",
         clientId,
         clientSecret,
+        spaceId,
     } = $state(authState.user);
     let showSecret = $state(false);
 
@@ -52,7 +53,7 @@
 
     async function handleSubmit() {
         try {
-            if (!subdomain || !clientId || !clientSecret) {
+            if (!subdomain || !clientId || !clientSecret || !spaceId) {
                 authState.error = "Please fill in all fields";
                 authState.isLoading = false;
                 return;
@@ -61,7 +62,13 @@
             Object.assign(authState, {
                 isLoading: true,
                 error: null,
-                user: { subdomain, domain, clientId, clientSecret },
+                user: {
+                    subdomain,
+                    domain,
+                    clientId,
+                    clientSecret,
+                    spaceId,
+                },
             });
 
             await open(buildAuthUrl(subdomain, clientId, domain).toString());
@@ -160,9 +167,7 @@
                         >4. After registering, copy your credentials:</P
                     >
                     <div class="space-y-4">
-                        <Label for="client-id" class="mb-1"
-                            >Client ID</Label
-                        >
+                        <Label for="client-id" class="mb-1">Client ID</Label>
                         <Input
                             id="client-id"
                             bind:value={clientId}
@@ -201,6 +206,31 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Space ID Input -->
+        <div class="flex flex-col gap-4 items-center mt-4 mb-4">
+            <div class="w-full max-w-md">
+                <Label for="space-id" class="mb-1"
+                    >5. TSUUCHINOKO space ID:</Label
+                >
+                <Input
+                    id="space-id"
+                    type="text"
+                    bind:value={spaceId}
+                    placeholder="Enter space ID"
+                    maxlength="3"
+                    pattern="[0-9]{(1, 3)}"
+                    required
+                    class="w-full"
+                />
+                <span class="text-xs text-slate-500 mt-1">
+                    Please enter the ID of your TSUUCHINOKO space (1-3 digits)
+                </span>
+                <span class="text-xs text-slate-500 mt-1">
+                    Example: {`https://${subdomain}.${domain}/k/#/space/4/`}
+                </span>
             </div>
         </div>
 

@@ -12,6 +12,7 @@ export const authState = $state({
       clientId: null,
       clientSecret: null,
       appId: null,
-      username: null
+      username: null,
+      spaceId: null
   }
 });

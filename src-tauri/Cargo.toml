@@ -29,6 +29,7 @@ tauri-plugin-store = "2"
 tauri-plugin-process = "2"
 tauri-plugin-os = "2"
 tauri-plugin-notification = "2"
+macos-app-nap = "=0.0.1"
 
 [target."cfg(any(target_os = \"macos\", windows, target_os = \"linux\"))".dependencies]
 tauri-plugin-single-instance = { version = "2.0.0", features = ["deep-link"] }
