@@ -26,7 +26,7 @@ export async function handleAuthCallback(url) {
             refreshToken: tokenResponse.refresh_token,
             isAuthenticated: true,
             error: null,
-            isLoading: false
+            isLoading: true
         });
         
         // Only check for app if we don't already have an app ID

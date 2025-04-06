@@ -19,11 +19,13 @@
     import { authState } from "$lib/app/appLoginManager.svelte.js";
     import { preferencesState } from "$lib/app/appPreferences.svelte";
     import { secretManager } from "$lib/app/appSecretManager.svelte.js";
+    import SelectKintoneAppModal from "../../../components/SelectKintoneAppModal.svelte";
     import {
         diagnoseApp,
         repairApp,
         removeTsuuchinokoApp,
     } from "$lib/kintone/kintoneDiagnoseApp.svelte.js";
+    import { createSpace } from "$lib/kintone/kintoneCreateSpace.svelte.js";
     import { _ } from "svelte-i18n";
 
     // Alert state
@@ -34,6 +36,7 @@
 
     // Modal state
     const errorModal = uiHelpers();
+    const selectAppModalUI = uiHelpers();
     let modalStatus = $state(false);
     let errorTitle = $state("");
     let errorMessage = $state("");
@@ -70,10 +73,36 @@
         showErrorModal(
             $_("account.featureComingSoon"),
             $_("account.importFeatureUnavailable"),
-            [
-                $_("account.importFutureFeature"),
-            ],
+            [$_("account.importFutureFeature")],
         );
+    }
+
+    async function testCreateSpace() {
+        console.log("Testing space creation...");
+        try {
+            const result = await createSpace("Tsuuchinoko Test Space");
+            if (result.success) {
+                console.log(
+                    `Space created successfully! Space ID: ${result.spaceId}`,
+                );
+                // You could also show a success alert here if you want
+                showSuccessAlert("Space created successfully!", [
+                    `Space ID: ${result.spaceId}`,
+                ]);
+            } else {
+                console.error("Failed to create space");
+                // Or show an error modal
+                showErrorModal("Debug Error", "Failed to create space", [
+                    "This could be due to permissions or API limitations",
+                ]);
+            }
+        } catch (error) {
+            console.error("Error in space creation test:", error);
+            showErrorModal(
+                "Debug Error",
+                `Error creating space: ${error.message || error}`,
+            );
+        }
     }
 
     async function diagnoseKintoneApp() {
@@ -152,9 +181,11 @@
             }
         } catch (error) {
             console.error("Error repairing app:", error);
-            showErrorModal($_("account.repairError"), `${$_("account.error")}: ${error.message || error}`, [
-                String(error),
-            ]);
+            showErrorModal(
+                $_("account.repairError"),
+                `${$_("account.error")}: ${error.message || error}`,
+                [String(error)],
+            );
         } finally {
             isProcessing = false;
         }
@@ -172,7 +203,9 @@
         class="max-w-none p-0 md:p-8"
         style="background-color: {preferencesState.menuColor || '#D1C1E9'}"
     >
-        <Heading level={1} class="text-3xl md:text-5xl text-center font-bold mb-6 text-slate-700"
+        <Heading
+            level={1}
+            class="text-3xl md:text-5xl text-center font-bold mb-6 text-slate-700"
             >{$_("account.accountSettings")}</Heading
         >
 
@@ -251,19 +284,27 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <P class="font-semibold">{$_("account.subdomain")}:</P>
-                    <P class="mb-4">{authState.user.subdomain || $_("account.notSet")}</P>
+                    <P class="mb-4"
+                        >{authState.user.subdomain || $_("account.notSet")}</P
+                    >
                 </div>
                 <div>
                     <P class="font-semibold">{$_("account.domain")}:</P>
-                    <P class="mb-4">{authState.user.domain || $_("account.notSet")}</P>
+                    <P class="mb-4"
+                        >{authState.user.domain || $_("account.notSet")}</P
+                    >
                 </div>
                 <div>
                     <P class="font-semibold">{$_("account.appId")}:</P>
-                    <P class="mb-4">{authState.user.appId || $_("account.notSet")}</P>
+                    <P class="mb-4"
+                        >{authState.user.appId || $_("account.notSet")}</P
+                    >
                 </div>
                 <div>
                     <P class="font-semibold">{$_("account.username")}:</P>
-                    <P class="mb-4">{authState.user.username || $_("account.notSet")}</P>
+                    <P class="mb-4"
+                        >{authState.user.username || $_("account.notSet")}</P
+                    >
                 </div>
             </div>
         </div>
@@ -278,10 +319,17 @@
                 {$_("account.appManagementDescription")}
             </P>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col md:flex-row gap-3 md:gap-4 mb-4">
+                <Button
+                    onclick={selectAppModalUI.toggle}
+                    class="bg-thistle hover:bg-thistle-600 text-slate-700 md:w-1/2"
+                    disabled={isProcessing}
+                >
+                    {$_("account.selectConnectedApp")}
+                </Button>
                 <Button
                     onclick={diagnoseKintoneApp}
-                    class="bg-amber hover:bg-amber-600 mb-4 text-slate-700"
+                    class="bg-amber hover:bg-amber-600 text-slate-700 md:w-1/4"
                     disabled={isProcessing || !authState.user.appId}
                 >
                     {$_("account.diagnoseApp")}
@@ -289,7 +337,7 @@
 
                 <Button
                     onclick={importTasks}
-                    class="bg-thistle hover:bg-thistle-600 mb-4 text-slate-700"
+                    class="bg-moss_green hover:bg-moss_green-600  text-white md:w-1/4"
                     disabled={isProcessing || !authState.user.appId}
                 >
                     {$_("account.importTasks")}
@@ -300,9 +348,12 @@
                 class="mt-4 p-4 bg-amber-100 rounded-lg border border-amber-300"
             >
                 <P class="text-amber-800">
-                    <strong>{$_("account.note")}:</strong> {$_("account.diagnoseAppDescription")}
+                    <strong>{$_("account.note")}:</strong>
+                    {$_("account.diagnoseAppDescription")}
                 </P>
             </div>
         </div>
     </Card>
 </div>
+
+<SelectKintoneAppModal modalUI={selectAppModalUI} />

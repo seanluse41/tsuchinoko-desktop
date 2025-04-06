@@ -17,6 +17,11 @@ fn main() {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+
+    // Prevent AppNap on macOS only
+    #[cfg(target_os = "macos")]
+    macos_app_nap::prevent();
+    
     let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_os::init())
@@ -95,7 +100,8 @@ pub fn run() {
             commands::kintone_get_form_fields,
             commands::kintone_update_app_settings,
             commands::kintone_get_app_settings,
-            commands::kintone_get_deploy_status
+            commands::kintone_get_deploy_status,
+            commands::kintone_create_space
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

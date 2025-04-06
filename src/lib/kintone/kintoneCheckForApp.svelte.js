@@ -5,24 +5,32 @@ import { refreshToken } from './kintoneRefreshRequest.js';
 import { secretManager } from '../app/appSecretManager.svelte.js';
 import { createTsuuchinokoApp } from './kintoneCreateApp.svelte.js';
 
+
 // Function to get all apps from Kintone
 export async function getAllApps() {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
 
+    // Ensure we have a space ID
+    if (!authState.user.spaceId) {
+        throw new Error('Space ID is required');
+    }
+
     try {
+        // Always include the space ID in the query
         const response = await invoke("kintone_get_apps", {
+            spaceIds: [authState.user.spaceId],  // Pass as an array
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
                 access_token: authState.token
             }
         });
-        
+
         console.log("Get apps response:", response);
         return response.apps || [];
-        
+
     } catch (error) {
         if (error === "token_expired" && authState.refreshToken) {
             await refreshToken();
@@ -38,31 +46,31 @@ export async function checkForTsuuchinokoApp() {
     try {
         const apps = await getAllApps();
         console.log("All apps:", apps);
-        
+
         // Look for app with "TSUUCHINOKO - [username]" pattern
         const userName = authState.user.username;
         const expectedAppName = `TSUUCHINOKO - ${userName}`;
-        
-        const tsuuchinokoApp = apps.find(app => 
+
+        const tsuuchinokoApp = apps.find(app =>
             app.name === expectedAppName
         );
-        
+
         if (tsuuchinokoApp) {
             console.log("Found Tsuuchinoko app:", tsuuchinokoApp);
-            
+
             // Store the app ID in auth state
             authState.user.appId = tsuuchinokoApp.appId;
-            
+
             return {
                 exists: true,
                 appId: tsuuchinokoApp.appId,
                 app: tsuuchinokoApp
             };
         }
-        
+
         console.log("Tsuuchinoko app not found, attempting to create one...");
         const createResult = await createTsuuchinokoApp();
-        
+
         if (createResult.success) {
             return {
                 exists: true,
@@ -82,7 +90,7 @@ export async function checkForTsuuchinokoApp() {
                 error: createResult.error
             };
         }
-        
+
     } catch (error) {
         console.error("Error checking for Tsuuchinoko app:", error);
         throw error;

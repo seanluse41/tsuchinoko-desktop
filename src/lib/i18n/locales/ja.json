@@ -198,5 +198,63 @@
         "stop": "停止",
         "reset": "リセット",
         "timeFormatGuide": "時間を入力 (8h, 5m, 30s, または MM:SS)"
+    },
+    "faq": {
+        "title": "よくある質問",
+        "dataStorage": {
+            "title": "このデータはどこに保存されますか？",
+            "content1": "kintoneとの認証のために、OAuth Client ID、Client Secret、サブドメイン、ドメイン、TsuuchinokoスペースID、ユーザー名、および生成されたOAuthアクセストークンがハッシュ化されてこのマシンにローカルに保存されます。",
+            "content2": "タスクデータはマシンには保存されず、kintoneにのみ保存されます。"
+        },
+        "dataUsage": {
+            "title": "このデータはどこで使用されますか？",
+            "content1": "OAuthトークンはタスクの取得と更新時に使用されます。OAuth Client IDとClient Secretは、OAuthトークンの更新時に使用されます。",
+            "content2": "通信は登録されたkintoneドメインとTsuuchinokoの間でのみ行われ、決して第三者に送信されることはありません。"
+        },
+        "apiUsage": {
+            "title": "kintone APIはどのくらい使用されますか？",
+            "content1": "タスク同期はデフォルトで15分ごとに設定されていますが、1分ごとから60分ごとまで調整できます。タスク同期ボタンはいつでも手動で押すこともできます。",
+            "content2": "タスクが同期されると、期限切れのタスクが検出され更新されます。また、ユーザーは手動でタスクを完了または削除することもできます。",
+            "content3": "自動API呼び出しの数は以下のように表現できます：",
+            "formula": "1時間あたりのAPI呼び出し数 = (ユーザー数 × 手動操作数) + (ユーザー数 × 60 ÷ 同期間隔（分）)",
+            "example": "例：50人のユーザーが15分の同期時間で1時間に2つのタスクを完了する場合、平均して1時間あたり300のAPIリクエストになります。"
+        },
+        "dataRemoval": {
+            "title": "すべてのデータを削除できますか？",
+            "content1": "ログイン後、アカウントページからすべてのデータを消去できます。Tsuuchinokoアプリは自身のユーザーのリポジトリアプリも削除できます。Tsuuchinokoスペースは手動で削除する必要があります。",
+            "locationsTitle": "保存されたすべてのデータは次の場所に保存され、手動で削除することもできます：",
+            "windows": "Windows: %APPDATA%\\com.tsuuchinoko.app\\",
+            "mac": "macOS: ~/Library/Application Support/com.tsuuchinoko.app/",
+            "linux": "Linux: ~/.local/share/com.tsuuchinoko.app/",
+            "android": "Android: 設定 > アプリ > Tsuuchinoko > ストレージとキャッシュ > ストレージを消去 / キャッシュを消去",
+            "ios": "iOS: 設定 > Tsuuchinoko > アプリデータを消去（またはアプリを再インストール）"
+        }
+    },
+    "setup": {
+        "title": "初回セットアップ",
+        "back": "戻る",
+        "processing": "処理中...",
+        "completeSetup": "セットアップを完了",
+        "failedAdminPage": "Kintone管理ページを開けませんでした。もう一度お試しください。",
+        "fillAllFields": "すべてのフィールドに入力してください",
+        "setupFailed": "セットアップに失敗しました。もう一度お試しください。",
+        "step1": "1. あなたのKintoneサブドメインを入力する：",
+        "subdomainPlaceholder": "あなたのサブドメイン",
+        "step2": "2. KintoneのOAuth設定ページを開く：",
+        "openOAuthSettings": "OAuth設定を開く",
+        "step3": "3. 「OAuthクライアントを追加」をクリックする：",
+        "clientName": "• クライアント名: Tsuuchinoko",
+        "redirectEndpoint": "• リダイレクトエンドポイント: https://seanbase.com/tsuuchinoko-auth",
+        "step4": "4. 登録後、認証情報を貼り付ける：",
+        "clientId": "クライアントID",
+        "clientIdPlaceholder": "クライアントIDを入力",
+        "clientSecret": "クライアントシークレット",
+        "clientSecretPlaceholder": "クライアントシークレットを入力",
+        "step5": "5. TSUUCHINOKOスペースID：",
+        "spaceIdPlaceholder": "スペースIDを入力",
+        "spaceIdHelp": "TSUUCHINOKOスペースのID（1〜3桁）を入力する",
+        "spaceIdExample": "例: https://{subdomain}.{domain}/k/#/space/4/ → スペースIDは「4」",
+        "yourSubdomain": "あなたのサブドメイン",
+        "readMore": "Kintone OAuthセットアップについて詳しく読む"
     }
 }

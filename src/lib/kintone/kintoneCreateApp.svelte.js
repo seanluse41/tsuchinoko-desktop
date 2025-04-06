@@ -123,7 +123,8 @@ export async function createPreviewApp() {
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
-                access_token: authState.token
+                access_token: authState.token,
+                space: authState.user.spaceId
             }
         });
         return response;

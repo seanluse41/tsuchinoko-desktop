@@ -196,7 +196,65 @@
         "enterTime": "Enter time (8h, 5m, 30s, or MM:SS)",
         "start": "Start",
         "stop": "Stop",
-        "reset": "Reset", 
+        "reset": "Reset",
         "timeFormatGuide": "Enter time (8h, 5m, 30s, or MM:SS)"
+    },
+    "faq": {
+        "title": "Frequently Asked Questions",
+        "dataStorage": {
+            "title": "Where is this data stored?",
+            "content1": "For authentication with Kintone, the OAuth Client ID, Client Secret, subdomain, domain, Tsuuchinoko Space ID, user's username, and the resulting OAuth Access Tokens are hashed and stored locally on this machine.",
+            "content2": "Task data is not stored on the machine, only in Kintone."
+        },
+        "dataUsage": {
+            "title": "Where is this data used?",
+            "content1": "The OAuth tokens are used when fetching and updating tasks. The OAuth Client ID and Client Secret are used when renewing the OAuth Tokens.",
+            "content2": "Communication only happens between the registered Kintone domain and Tsuuchinoko, and is not sent to 3rd parties in any way."
+        },
+        "apiUsage": {
+            "title": "How much is the Kintone API used?",
+            "content1": "Task syncing defaults to once every 15 minutes, but can be adjusted from every 1 minute to once every 60 minutes. The task sync button can also be pressed at any time.",
+            "content2": "When tasks are synced, overdue tasks are detected and updated. Additionally, tasks can be completed or deleted by users manually.",
+            "content3": "The number of automatic API calls can be expressed as:",
+            "formula": "API calls per hour = (Users × Manual operations) + (Users × 60 ÷ Sync interval in minutes)",
+            "example": "Example: 50 users with a sync time of 15 minutes completing 2 tasks per hour would total 300 API requests per hour on average."
+        },
+        "dataRemoval": {
+            "title": "Can all data be removed?",
+            "content1": "All data can be erased from the Account page after logging in. The Tsuuchinoko App can also delete its own user's repository app. The Tsuuchinoko space must be deleted manually.",
+            "locationsTitle": "All stored data is saved in the following locations, and can be deleted manually:",
+            "windows": "Windows: %APPDATA%\\com.tsuuchinoko.app\\",
+            "mac": "macOS: ~/Library/Application Support/com.tsuuchinoko.app/",
+            "linux": "Linux: ~/.local/share/com.tsuuchinoko.app/",
+            "android": "Android: Settings > Apps > Tsuuchinoko > Storage & cache > Clear Storage / Clear Cache",
+            "ios": "iOS: Settings > Tsuuchinoko > Clear App Data (or reinstall the app)"
+        }
+    },
+    "setup": {
+        "title": "First Time Setup",
+        "back": "Back",
+        "processing": "Processing...",
+        "completeSetup": "Complete Setup",
+        "failedAdminPage": "Failed to open Kintone admin page. Please try again.",
+        "fillAllFields": "Please fill in all fields",
+        "setupFailed": "Setup failed. Please try again.",
+        "step1": "1. Enter your Kintone subdomain:",
+        "subdomainPlaceholder": "your-subdomain",
+        "step2": "2. Visit your Kintone OAuth settings:",
+        "openOAuthSettings": "Open OAuth Settings",
+        "step3": "3. Click \"Add OAuth Client\" and enter:",
+        "clientName": "• Client Name: Tsuuchinoko",
+        "redirectEndpoint": "• Redirect Endpoint: https://seanbase.com/tsuuchinoko-auth",
+        "step4": "4. After registering, copy your credentials:",
+        "clientId": "Client ID",
+        "clientIdPlaceholder": "Enter your Client ID",
+        "clientSecret": "Client Secret",
+        "clientSecretPlaceholder": "Enter your Client Secret",
+        "step5": "5. TSUUCHINOKO space ID:",
+        "spaceIdPlaceholder": "Enter space ID",
+        "spaceIdHelp": "Please enter the ID of your TSUUCHINOKO space (1-3 digits)",
+        "spaceIdExample": "Example: https://{subdomain}.{domain}/k/#/space/4/ → space ID is \"4\"",
+        "yourSubdomain": "your-subdomain",
+        "readMore": "Read more about Kintone OAuth setup"
     }
 }
