@@ -32,7 +32,7 @@
         "markComplete": "タスクを完了にする",
         "copyToClipboard": "クリップボードにコピー",
         "deleteSelected": "タスクを削除する",
-        "viewInKintone": "kintoneで見る",
+        "viewInkintone": "kintoneで見る",
         "viewNotification": "元の通知をkintoneで見る"
     },
     "preferences": {
@@ -77,7 +77,7 @@
         "diagnoseApp": "アプリ診断",
         "importTasks": "タスクのインポート",
         "note": "注意",
-        "diagnoseAppDescription": "「アプリ診断」はKintoneアプリに必要なフィールドと設定があるかどうかを確認します。問題が見つかった場合、アプリを自動的に修復するオプションが提供されます。",
+        "diagnoseAppDescription": "「アプリ診断」はkintoneアプリに必要なフィールドと設定があるかどうかを確認します。問題が見つかった場合、アプリを自動的に修復するオプションが提供されます。",
         "featureComingSoon": "機能は近日公開予定",
         "importFeatureUnavailable": "タスクのインポート機能はまだ利用できません",
         "importFutureFeature": "この機能は今後のアップデートでCSVファイルからタスクをインポートできるようになります。",
@@ -109,13 +109,13 @@
     "about": {
         "aboutTsuuchinoko": "TSUUCHINOKOについて",
         "whatIsTsuuchinoko": "TSUUCHINOKOとは？",
-        "appDescription": "TSUUCHINOKOは、Kintoneユーザーの生産性を向上させるために設計された専門的なタスク管理アプリケーションです。Kintoneの通知とアクション可能なタスクの間のギャップを埋め、ユーザーが複数のデバイスで効率的にワークフローを管理できるようにします。",
+        "appDescription": "TSUUCHINOKOは、kintoneユーザーの生産性を向上させるために設計された専門的なタスク管理アプリケーションです。kintoneの通知とアクション可能なタスクの間のギャップを埋め、ユーザーが複数のデバイスで効率的にワークフローを管理できるようにします。",
         "theProblem": "問題点",
-        "problemDescription": "Kintoneでは、通知は多くの場合、フォローアップが必要なアクション項目を表しています：書類の確認、データの入力、情報の確認などです。しかし、これらの項目をタスクとして追跡する組み込みの方法はありません。",
+        "problemDescription": "kintoneでは、通知は多くの場合、フォローアップが必要なアクション項目を表しています：書類の確認、データの入力、情報の確認などです。しかし、これらの項目をタスクとして追跡する組み込みの方法はありません。",
         "theSolution": "解決策",
         "solutionDescription": "TSUUCHINOKOは、通知をタスクに変換するためのChrome拡張機能と、これらのタスクを管理するためのクロスプラットフォームデスクトップアプリケーションを組み合わせています。これにより、アクション項目の追跡と完了のためのシームレスなワークフローが作成されます。",
         "technicalDetails": "データ管理について",
-        "technicalDescription": "TSUUCHINOKOはKintoneとのOAuth認証を使用しています。トークンはハッシュ化されてご利用の端末に保存されます。タスクと通知の内容はマシンに保存されず、Kintoneにのみ保存されます。詳しくは下記の図をご確認ください。",
+        "technicalDescription": "TSUUCHINOKOはkintoneとのOAuth認証を使用しています。トークンはハッシュ化されてご利用の端末に保存されます。タスクと通知の内容はマシンに保存されず、kintoneにのみ保存されます。詳しくは下記の図をご確認ください。",
         "securityNote": "セキュリティに関する注意：",
         "securityDescription": "アプリケーションは安全な保存方法を採用していますが、機密性の高い情報を扱う環境では、物理的なアクセスを得た悪意のある攻撃者がOAuthトークンを復号化する可能性があることに注意してください。",
         "developmentStatus": "開発状況",
@@ -125,11 +125,11 @@
         "futurePlan3": "より多くのカスタマイズオプション",
         "resources": "リソース",
         "chromeExtension": "Chrome拡張機能",
-        "extensionDescription": "Kintoneの通知をタスクに変換するための連携Chrome拡張機能をインストールします。",
+        "extensionDescription": "kintoneの通知をタスクに変換するための連携Chrome拡張機能をインストールします。",
         "visitRepository": "リポジトリを訪問",
-        "kintoneDevProgram": "Kintone開発者プログラム",
-        "kintoneDevDescription": "Kintoneでのカスタマイズ、プラグイン、その他のソリューションの構築についてもっと学びましょう！",
-        "visitKintoneDev": "Kintone開発者プログラムを訪問",
+        "kintoneDevProgram": "kintone開発者プログラム",
+        "kintoneDevDescription": "kintoneでのカスタマイズ、プラグイン、その他のソリューションの構築についてもっと学びましょう！",
+        "visitkintoneDev": "kintone開発者プログラムを訪問",
         "librariesDependencies": "ライブラリと依存関係"
     },
     "taskCreate": {
@@ -235,12 +235,12 @@
         "back": "戻る",
         "processing": "処理中...",
         "completeSetup": "セットアップを完了",
-        "failedAdminPage": "Kintone管理ページを開けませんでした。もう一度お試しください。",
+        "failedAdminPage": "kintone管理ページを開けませんでした。もう一度お試しください。",
         "fillAllFields": "すべてのフィールドに入力してください",
         "setupFailed": "セットアップに失敗しました。もう一度お試しください。",
-        "step1": "1. あなたのKintoneサブドメインを入力する：",
+        "step1": "1. kintoneサブドメインを入力する：",
         "subdomainPlaceholder": "あなたのサブドメイン",
-        "step2": "2. KintoneのOAuth設定ページを開く：",
+        "step2": "2. kintoneのOAuth設定ページを開く：",
         "openOAuthSettings": "OAuth設定を開く",
         "step3": "3. 「OAuthクライアントを追加」をクリックする：",
         "clientName": "• クライアント名: Tsuuchinoko",
@@ -255,6 +255,6 @@
         "spaceIdHelp": "TSUUCHINOKOスペースのID（1〜3桁）を入力する",
         "spaceIdExample": "例: https://{subdomain}.{domain}/k/#/space/4/ → スペースIDは「4」",
         "yourSubdomain": "あなたのサブドメイン",
-        "readMore": "Kintone OAuthセットアップについて詳しく読む"
+        "readMore": "kintone OAuthセットアップについて詳しく読む"
     }
 }

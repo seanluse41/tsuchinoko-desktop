@@ -6,9 +6,7 @@ pub struct GetRecordsConfig {
     pub subdomain: String,
     pub domain: String,
     pub access_token: String,
-    pub space: String
 }
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct KintoneRecord {
     #[serde(rename = "$id")]

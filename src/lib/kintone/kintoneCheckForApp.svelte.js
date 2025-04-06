@@ -12,15 +12,13 @@ export async function getAllApps() {
         throw new Error('Not authenticated');
     }
 
-    // Ensure we have a space ID
     if (!authState.user.spaceId) {
         throw new Error('Space ID is required');
     }
 
     try {
-        // Always include the space ID in the query
         const response = await invoke("kintone_get_apps", {
-            spaceIds: [authState.user.spaceId],  // Pass as an array
+            spaceIds: [authState.user.spaceId],
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,

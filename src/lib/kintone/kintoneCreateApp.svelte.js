@@ -118,13 +118,18 @@ export async function createPreviewApp() {
     }
     
     try {
+        if (!authState.user.spaceId) {
+            console.warn("No spaceId provided, app will be created in default app group");
+        }
+        
         const response = await invoke("kintone_create_preview_app", {
             appName: "TSUUCHINOKO",
+            spaceId: authState.user.spaceId,
+            threadId: "1",
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
-                access_token: authState.token,
-                space: authState.user.spaceId
+                access_token: authState.token
             }
         });
         return response;
