@@ -161,7 +161,7 @@ pub async fn kintone_add_record(
 
 #[tauri::command]
 pub async fn kintone_get_apps(
-    spaceIds: Option<Vec<String>>,
+    spaceIds: Vec<String>,
     config: GetRecordsConfig,
 ) -> Result<GetAppsResponse, String> {
     let client = reqwest::Client::new();
@@ -172,23 +172,17 @@ pub async fn kintone_get_apps(
         config.subdomain, config.domain
     );
 
-    // Add query parameters if spaceIds is provided
-    if let Some(space_ids) = spaceIds {
-        if !space_ids.is_empty() {
-            // Start with a query marker
-            url.push('?');
-            
-            // Add each space ID as a query parameter
-            for (i, id) in space_ids.iter().enumerate() {
-                if i > 0 {
-                    url.push_str("&");
-                }
-                url.push_str(&format!("spaceIds[{}]={}", i, id));
+    // Add query parameters for space IDs
+    if !spaceIds.is_empty() {
+        url.push('?');
+        
+        for (i, id) in spaceIds.iter().enumerate() {
+            if i > 0 {
+                url.push_str("&");
             }
+            url.push_str(&format!("spaceIds[{}]={}", i, id));
         }
     }
-
-    println!("Get apps URL: {}", url);
 
     let response = client
         .get(&url)
@@ -198,14 +192,11 @@ pub async fn kintone_get_apps(
         .map_err(|e| format!("Failed to fetch apps: {}", e))?;
 
     if !response.status().is_success() {
-        let status = response.status();
-        let text = response.text().await.map_err(|e| e.to_string())?;
-        println!("Error Response Status: {}", status);
-        println!("Error Response Body: {}", text);
-
-        if status == reqwest::StatusCode::UNAUTHORIZED {
+        if response.status() == reqwest::StatusCode::UNAUTHORIZED {
             return Err("token_expired".to_string());
         }
+        
+        let text = response.text().await.map_err(|e| e.to_string())?;
         return Err(format!("API request failed: {}", text));
     }
 
@@ -218,6 +209,8 @@ pub async fn kintone_get_apps(
 #[tauri::command]
 pub async fn kintone_create_preview_app(
     app_name: String,
+    space_id: Option<String>,
+    thread_id: Option<String>,  // Add optional thread_id parameter
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
@@ -227,9 +220,32 @@ pub async fn kintone_create_preview_app(
         config.subdomain, config.domain
     );
 
-    let body = serde_json::json!({
+    // Build the request body
+    let mut body = serde_json::json!({
         "name": app_name
     });
+
+    // Add space_id if provided
+    if let Some(id) = space_id {
+        match id.parse::<i32>() {
+            Ok(space_id_int) => {
+                let body_obj = body.as_object_mut().unwrap();
+                body_obj.insert("space".to_string(), serde_json::json!(space_id_int));
+                
+                // When space is specified, thread is required
+                // If thread_id is provided, use it; otherwise use default thread (1)
+                let thread_id_int = match thread_id {
+                    Some(tid) => tid.parse::<i32>().unwrap_or(1),
+                    None => 1  // Default to thread 1 if not specified
+                };
+                
+                body_obj.insert("thread".to_string(), serde_json::json!(thread_id_int));
+            },
+            Err(_) => {
+                return Err(format!("Invalid space ID format: {}", id));
+            }
+        }
+    }
 
     let response = client
         .post(&url)
