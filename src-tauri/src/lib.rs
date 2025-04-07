@@ -101,8 +101,7 @@ pub fn run() {
             commands::kintone_update_app_settings,
             commands::kintone_get_app_settings,
             commands::kintone_get_deploy_status,
-            commands::kintone_create_space,
-            commands::kintone_get_space
+            commands::kintone_create_space
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
