@@ -584,3 +584,38 @@ pub async fn kintone_create_space(
         .await
         .map_err(|e| format!("Failed to parse response: {}", e))
 }
+
+#[tauri::command]
+pub async fn kintone_get_space(
+    space_id: String,
+    config: GetRecordsConfig,
+) -> Result<serde_json::Value, String> {
+    let client = reqwest::Client::new();
+
+    let url = format!(
+        "https://{}.{}/k/v1/space.json?id={}",
+        config.subdomain, config.domain, space_id
+    );
+
+    let response = client
+        .get(&url)
+        .header("Authorization", format!("Bearer {}", config.access_token))
+        .send()
+        .await
+        .map_err(|e| format!("Failed to get space info: {}", e))?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.map_err(|e| e.to_string())?;
+
+        if status == reqwest::StatusCode::UNAUTHORIZED {
+            return Err("token_expired".to_string());
+        }
+        return Err(format!("API request failed: {}", text));
+    }
+
+    response
+        .json::<serde_json::Value>()
+        .await
+        .map_err(|e| format!("Failed to parse response: {}", e))
+}

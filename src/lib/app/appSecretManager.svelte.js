@@ -114,7 +114,9 @@ async function loadStoredCredentials() {
                 clientId: setupCreds?.clientId || null,
                 clientSecret: setupCreds?.clientSecret || null,
                 appId: setupCreds?.appId || null,
-                username: setupCreds?.username || null // Add username to loading
+                username: setupCreds?.username || null,
+                spaceId: setupCreds?.spaceId || null,
+                defaultThreadId: setupCreds?.defaultThreadId || null
             },
             isAuthenticated: !!authCreds?.token,
             error: null
@@ -135,7 +137,8 @@ async function storeCredentials() {
         clientId: authState.user.clientId,
         clientSecret: authState.user.clientSecret,
         appId: authState.user.appId,
-        username: authState.user.username // Add username to storage
+        username: authState.user.username,
+        defaultThreadId: authState.user.defaultThreadId
     };
 
     const authCredentials = {

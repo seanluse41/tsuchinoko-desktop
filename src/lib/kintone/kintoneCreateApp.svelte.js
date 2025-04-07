@@ -6,6 +6,7 @@ import { refreshToken } from './kintoneRefreshRequest.js';
 import { secretManager } from '../app/appSecretManager.svelte.js';
 import { getRecords } from './kintoneGetRecords.svelte.js';
 import { addRecord } from './kintoneAddRecord.svelte.js';
+import { getSpace } from './kintoneGetSpace.svelte.js';
 
 export async function createTsuuchinokoApp() {
     try {
@@ -13,20 +14,20 @@ export async function createTsuuchinokoApp() {
         console.log("Creating preview app...");
         const previewResponse = await createPreviewApp();
         console.log("Preview app created:", previewResponse);
-        
+
         const appId = previewResponse.app;
         let currentRevision = previewResponse.revision || "1";
-        
+
         // Step 2: Add form fields
         console.log("Adding form fields...");
         const fieldsResponse = await addFormFields(appId, currentRevision);
         console.log("Form fields added successfully");
         currentRevision = fieldsResponse.revision;
-        
+
         // Step 3: First deployment with all fields
         console.log("Deploying app with initial fields...");
         const initialDeployment = await deployApp(appId, currentRevision);
-        
+
         if (!initialDeployment) {
             console.error("Initial app deployment failed");
             return {
@@ -35,10 +36,10 @@ export async function createTsuuchinokoApp() {
                 message: "Failed to deploy app with initial fields"
             };
         }
-        
+
         // Store app ID in authState so we can use it for API calls
         authState.user.appId = appId;
-        
+
         // Step 4: Add test record to deployed app
         console.log("Adding test record to deployed app...");
         let username = 'user';
@@ -50,17 +51,17 @@ export async function createTsuuchinokoApp() {
                 taskStatus: "registered",
                 taskMemo: "Thank you for installing Tsuuchinoko. This task was automatically created during setup to help you get started."
             };
-            
+
             const recordResponse = await addRecord(welcomeData);
             console.log("Welcome record created:", recordResponse);
-            
+
             // Step 5: Get the username from the created record
             console.log("Getting records to extract username...");
             const response = await getRecords("");
-            
+
             if (response && response.list && response.list.length > 0) {
                 const record = response.list[0];
-                
+
                 // Extract username from creator object
                 if (record.creator && record.creator.code) {
                     username = record.creator.code;
@@ -72,30 +73,30 @@ export async function createTsuuchinokoApp() {
             console.error("Error creating test record:", recordError);
             // Continue with default username
         }
-        
+
         // Step 6: Update system fields (record number field and creator field)
         console.log("Updating system fields...");
         const systemFieldsResponse = await updateSystemFields(appId, currentRevision);
         console.log("System fields updated successfully");
         currentRevision = systemFieldsResponse.revision;
-        
+
         // Step 7: Update app name with username
         console.log("Updating app name with username:", username);
         const nameResponse = await updateAppName(appId, username, currentRevision);
         console.log("App name updated successfully");
         currentRevision = nameResponse.revision || currentRevision;
-        
+
         // Step 8: Final deployment with field code and name changes
         console.log("Performing final deployment...");
         const finalDeployment = await deployApp(appId, currentRevision);
-        
+
         if (!finalDeployment) {
             console.warn("Final deployment had issues, but app is functional");
         }
-        
+
         // Save credentials once at the end
         await secretManager.storeCredentials();
-        
+
         return {
             success: true,
             appId,
@@ -116,16 +117,45 @@ export async function createPreviewApp() {
     if (!authState.isAuthenticated || !authState.token) {
         throw new Error('Not authenticated');
     }
-    
+
     try {
+        // Ensure we have a space ID
         if (!authState.user.spaceId) {
             console.warn("No spaceId provided, app will be created in default app group");
+            // Create app without space ID
+            const response = await invoke("kintone_create_preview_app", {
+                appName: "TSUUCHINOKO",
+                config: {
+                    subdomain: authState.user.subdomain,
+                    domain: authState.user.domain,
+                    access_token: authState.token
+                }
+            });
+            return response;
         }
-        
+
+        // Get space information to get the default thread ID
+        if (!authState.user.defaultThreadId) {
+            try {
+                const spaceInfo = await getSpace(authState.user.spaceId);
+
+                if (!spaceInfo.defaultThread) {
+                    throw new Error('Default thread ID not found in space information');
+                }
+
+                authState.user.defaultThreadId = spaceInfo.defaultThread;
+                console.log(`Got default thread ID: ${authState.user.defaultThreadId} for space: ${authState.user.spaceId}`);
+            } catch (err) {
+                console.error("Failed to get default thread ID:", err);
+                throw new Error(`Failed to get default thread ID: ${err.message}`);
+            }
+        }
+
+        // Create preview app with space ID and thread ID
         const response = await invoke("kintone_create_preview_app", {
             appName: "TSUUCHINOKO",
             spaceId: authState.user.spaceId,
-            threadId: "1",
+            threadId: authState.user.defaultThreadId,
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,
@@ -149,7 +179,7 @@ export async function addFormFields(appId, revision) {
 
     try {
         const fields = getFieldDefinitions();
-        
+
         return await invoke("kintone_add_form_fields", {
             appId,
             fields,
@@ -179,10 +209,10 @@ export async function updateSystemFields(appId, revision) {
         console.log("Getting form fields for system field updates...");
         const formFields = await getFormFields(appId);
         const currentRevision = revision || formFields.revision;
-        
+
         // Create an object to hold the fields we want to update
         const updateProperties = {};
-        
+
         // Find and update the record number field
         for (const [fieldCode, field] of Object.entries(formFields.properties)) {
             if (field.type === 'RECORD_NUMBER') {
@@ -192,7 +222,7 @@ export async function updateSystemFields(appId, revision) {
                     label: "Task ID"
                 };
             }
-            
+
             // Find and update the creator field
             if (field.type === 'CREATOR') {
                 updateProperties[fieldCode] = {
@@ -202,11 +232,11 @@ export async function updateSystemFields(appId, revision) {
                 };
             }
         }
-        
+
         if (Object.keys(updateProperties).length === 0) {
             return { revision: currentRevision };
         }
-        
+
         return await invoke("kintone_update_form_fields", {
             appId,
             properties: updateProperties,
@@ -252,7 +282,7 @@ export async function getFormFields(appId) {
 async function deployApp(appId, revision) {
     try {
         const deployData = revision ? [{ app: appId, revision }] : [{ app: appId }];
-        
+
         await invoke("kintone_deploy_app", {
             apps: deployData,
             config: {
@@ -261,7 +291,7 @@ async function deployApp(appId, revision) {
                 access_token: authState.token
             }
         });
-        
+
         // Wait for deployment to completed
         return await waitForDeployment(appId);
     } catch (error) {
@@ -275,12 +305,12 @@ async function deployApp(appId, revision) {
 
 async function waitForDeployment(appId, maxRetries = 20, delay = 1000) {
     console.log(`Waiting for app ${appId} deployment to complete...`);
-    
+
     for (let i = 0; i < maxRetries; i++) {
         try {
             // Wait before checking
             await new Promise(resolve => setTimeout(resolve, delay));
-            
+
             // Check deployment status
             const response = await invoke("kintone_get_deploy_status", {
                 appIds: [appId],
@@ -290,17 +320,17 @@ async function waitForDeployment(appId, maxRetries = 20, delay = 1000) {
                     access_token: authState.token
                 }
             });
-            
+
             // Look for the app status in the response
             const appStatus = response.apps?.find(app => app.app === appId);
-            
+
             if (!appStatus) {
-                console.log(`Status check ${i+1}/${maxRetries}: No status found for app ${appId}`);
+                console.log(`Status check ${i + 1}/${maxRetries}: No status found for app ${appId}`);
                 continue;
             }
-            
-            console.log(`Status check ${i+1}/${maxRetries}: ${appStatus.status}`);
-            
+
+            console.log(`Status check ${i + 1}/${maxRetries}: ${appStatus.status}`);
+
             // If deployment completed (either success or failure)
             if (appStatus.status === 'SUCCESS') {
                 console.log(`App ${appId} deployment completed successfully!`);
@@ -309,14 +339,14 @@ async function waitForDeployment(appId, maxRetries = 20, delay = 1000) {
                 console.error(`App ${appId} deployment failed with status: ${appStatus.status}`);
                 return false;
             }
-            
+
             // Continue polling if still processing
         } catch (error) {
             console.warn(`Error checking deployment status: ${error}`);
             // Continue with next retry
         }
     }
-    
+
     console.warn(`App ${appId} deployment wait timed out after ${maxRetries} attempts`);
     return false;
 }
@@ -329,16 +359,16 @@ async function updateAppName(appId, username, revision) {
     try {
         // Get current app settings first
         const currentSettings = await getAppSettings(appId);
-        
+
         // Prepare the new app name
         const newAppName = `TSUUCHINOKO - ${username}`;
-        
+
         // Prepare update payload
         const updatePayload = {
             app: appId,
             name: newAppName
         };
-        
+
         // Keep other current settings if available
         if (currentSettings) {
             // Copy relevant fields we want to preserve
@@ -347,7 +377,7 @@ async function updateAppName(appId, username, revision) {
             if (currentSettings.theme) updatePayload.theme = currentSettings.theme;
             if (currentSettings.titleField) updatePayload.titleField = currentSettings.titleField;
         }
-        
+
         // Update app settings
         console.log("Updating app name to:", newAppName);
         const response = await invoke("kintone_update_app_settings", {
@@ -358,7 +388,7 @@ async function updateAppName(appId, username, revision) {
                 access_token: authState.token
             }
         });
-        
+
         return response;
     } catch (error) {
         console.error("Error updating app name:", error);
