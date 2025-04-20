@@ -6,7 +6,6 @@ import { refreshToken } from './kintoneRefreshRequest.js';
 import { secretManager } from '../app/appSecretManager.svelte.js';
 import { getRecords } from './kintoneGetRecords.svelte.js';
 import { addRecord } from './kintoneAddRecord.svelte.js';
-import { getSpace } from './kintoneGetSpace.svelte.js';
 
 export async function createTsuuchinokoApp() {
     try {
@@ -57,9 +56,10 @@ export async function createTsuuchinokoApp() {
 
             // Step 5: Get the username from the created record
             console.log("Getting records to extract username...");
-            const response = await getRecords("");
+            const response = await getRecords();
+            console.log(response)
 
-            if (response && response.list && response.list.length > 0) {
+            if (response && response.list.length > 0) {
                 const record = response.list[0];
 
                 // Extract username from creator object
@@ -119,43 +119,10 @@ export async function createPreviewApp() {
     }
 
     try {
-        // Ensure we have a space ID
-        if (!authState.user.spaceId) {
-            console.warn("No spaceId provided, app will be created in default app group");
-            // Create app without space ID
-            const response = await invoke("kintone_create_preview_app", {
-                appName: "TSUUCHINOKO",
-                config: {
-                    subdomain: authState.user.subdomain,
-                    domain: authState.user.domain,
-                    access_token: authState.token
-                }
-            });
-            return response;
-        }
-
-        // Get space information to get the default thread ID
-        if (!authState.user.defaultThreadId) {
-            try {
-                const spaceInfo = await getSpace(authState.user.spaceId);
-
-                if (!spaceInfo.defaultThread) {
-                    throw new Error('Default thread ID not found in space information');
-                }
-
-                authState.user.defaultThreadId = spaceInfo.defaultThread;
-                console.log(`Got default thread ID: ${authState.user.defaultThreadId} for space: ${authState.user.spaceId}`);
-            } catch (err) {
-                console.error("Failed to get default thread ID:", err);
-                throw new Error(`Failed to get default thread ID: ${err.message}`);
-            }
-        }
-
-        // Create preview app with space ID and thread ID
         const response = await invoke("kintone_create_preview_app", {
             appName: "TSUUCHINOKO",
             spaceId: authState.user.spaceId,
-            threadId: authState.user.defaultThreadId,
+            threadId: authState.user.threadId,
             config: {
                 subdomain: authState.user.subdomain,
                 domain: authState.user.domain,

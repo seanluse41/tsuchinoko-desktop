@@ -255,6 +255,10 @@
         "spaceIdHelp": "TSUUCHINOKOスペースのID（1〜3桁）を入力する",
         "spaceIdExample": "例: https://{subdomain}.{domain}/k/#/space/4/ → スペースIDは「4」",
         "yourSubdomain": "あなたのサブドメイン",
+        "step6": "6. スレッドID：",
+        "threadIdPlaceholder": "スレッドIDを入力",
+        "threadIdHelp": "TSUUCHINOKOスペース内のスレッドのID（1〜3桁）を入力する",
+        "threadIdExample": "例: https://{subdomain}.{domain}/k/#/space/4/thread/6 → スレッドIDは「6」",
         "readMore": "kintone OAuthセットアップについて詳しく読む"
     }
 }

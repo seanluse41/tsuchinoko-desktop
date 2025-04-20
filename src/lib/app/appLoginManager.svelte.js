@@ -14,6 +14,6 @@ export const authState = $state({
       appId: null,
       username: null,
       spaceId: null,
-      defaultThreadId: null
+      threadId: null
   }
 });

@@ -19,7 +19,7 @@
         EyeOutline,
         EyeSlashOutline,
         ArrowLeftOutline,
-        LanguageOutline
+        LanguageOutline,
     } from "flowbite-svelte-icons";
     import { _, locale } from "svelte-i18n";
     import { open } from "@tauri-apps/plugin-shell";
@@ -45,6 +45,7 @@
         clientId,
         clientSecret,
         spaceId,
+        threadId
     } = $state(authState.user);
     let showSecret = $state(false);
 
@@ -59,7 +60,9 @@
             authState.isLoading,
     );
     let buttonText = $derived(
-        authState.isLoading ? $_("setup.processing") : $_("setup.completeSetup")
+        authState.isLoading
+            ? $_("setup.processing")
+            : $_("setup.completeSetup"),
     );
 
     async function openKintoneAdmin() {
@@ -73,7 +76,13 @@
 
     async function handleSubmit() {
         try {
-            if (!subdomain || !clientId || !clientSecret || !spaceId) {
+            if (
+                !subdomain ||
+                !clientId ||
+                !clientSecret ||
+                !spaceId ||
+                !threadId
+            ) {
                 authState.error = $_("setup.fillAllFields");
                 authState.isLoading = false;
                 return;
@@ -88,6 +97,7 @@
                     clientId,
                     clientSecret,
                     spaceId,
+                    threadId,
                 },
             });
 
@@ -120,7 +130,9 @@
                 class="border border-slate-300"
             >
                 <LanguageOutline class="h-5 w-5 text-white" />
-                <span class="ml-2 text-white">{currentLocale === "en" ? "日本語" : "English"}</span>
+                <span class="ml-2 text-white"
+                    >{currentLocale === "en" ? "日本語" : "English"}</span
+                >
             </Button>
         </div>
 
@@ -194,14 +206,18 @@
                     <P class="font-bold text-slate-700">{$_("setup.step3")}</P>
                     <div class="ml-4 mt-2 space-y-2">
                         <P class="text-slate-700">{$_("setup.clientName")}</P>
-                        <P class="text-slate-700">{$_("setup.redirectEndpoint")}</P>
+                        <P class="text-slate-700"
+                            >{$_("setup.redirectEndpoint")}</P
+                        >
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <P class="font-bold">{$_("setup.step4")}</P>
                     <div class="space-y-4">
-                        <Label for="client-id" class="mb-1">{$_("setup.clientId")}</Label>
+                        <Label for="client-id" class="mb-1"
+                            >{$_("setup.clientId")}</Label
+                        >
                         <Input
                             id="client-id"
                             bind:value={clientId}
@@ -209,7 +225,9 @@
                             class="w-full"
                         />
                         <div>
-                            <Label for="client-secret" class="mb-1">{$_("setup.clientSecret")}</Label>
+                            <Label for="client-secret" class="mb-1"
+                                >{$_("setup.clientSecret")}</Label
+                            >
                             <ButtonGroup class="w-full">
                                 <InputAddon>
                                     <button
@@ -231,7 +249,9 @@
                                     id="client-secret"
                                     bind:value={clientSecret}
                                     type={showSecret ? "text" : "password"}
-                                    placeholder={$_("setup.clientSecretPlaceholder")}
+                                    placeholder={$_(
+                                        "setup.clientSecretPlaceholder",
+                                    )}
                                     autocomplete="new-password"
                                 />
                             </ButtonGroup>
@@ -241,24 +261,57 @@
 
                 <!-- Space ID Input -->
                 <div class="flex flex-col gap-2">
-                    <Label for="space-id" class="font-bold">{$_("setup.step5")}</Label>
+                    <Label for="space-id" class="font-bold"
+                        >{$_("setup.step5")}</Label
+                    >
                     <Input
                         id="space-id"
                         type="text"
                         bind:value={spaceId}
                         placeholder={$_("setup.spaceIdPlaceholder")}
                         maxlength="3"
-                        pattern="[0-9]{1,3}"
+                        pattern="[0-9]{(1, 3)}"
                         required
                         class="w-full"
                     />
                     <div class="text-xs text-slate-500 space-y-1 mt-1">
                         <p>{$_("setup.spaceIdHelp")}</p>
                         <p>
-                            {$_("setup.spaceIdExample", { values: { 
-                                subdomain: subdomain || $_("setup.yourSubdomain"), 
-                                domain: domain 
-                            }})}
+                            {$_("setup.spaceIdExample", {
+                                values: {
+                                    subdomain:
+                                        subdomain || $_("setup.yourSubdomain"),
+                                    domain: domain,
+                                },
+                            })}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <Label for="thread-id" class="font-bold"
+                        >{$_("setup.step6")}</Label
+                    >
+                    <Input
+                        id="thread-id"
+                        type="text"
+                        bind:value={threadId}
+                        placeholder={$_("setup.threadIdPlaceholder")}
+                        maxlength="3"
+                        pattern="[0-9]{(1, 3)}"
+                        required
+                        class="w-full"
+                    />
+                    <div class="text-xs text-slate-500 space-y-1 mt-1">
+                        <p>{$_("setup.threadIdHelp")}</p>
+                        <p>
+                            {$_("setup.threadIdExample", {
+                                values: {
+                                    subdomain:
+                                        subdomain || $_("setup.yourSubdomain"),
+                                    domain: domain,
+                                },
+                            })}
                         </p>
                     </div>
                 </div>

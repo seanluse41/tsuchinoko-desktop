@@ -45,6 +45,7 @@ export async function getRecords(query = '') {
 }
 
 function transformRecords(records, appId) {
+    console.log(records)
     return {
         list: records.map(record => {
             // Extract creator info - only check the default field names

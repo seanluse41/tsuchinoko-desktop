@@ -209,8 +209,8 @@ pub async fn kintone_get_apps(
 #[tauri::command]
 pub async fn kintone_create_preview_app(
     app_name: String,
-    space_id: Option<String>,
-    thread_id: Option<String>,  // Add optional thread_id parameter
+    space_id: String,
+    thread_id: String,
     config: GetRecordsConfig,
 ) -> Result<serde_json::Value, String> {
     let client = reqwest::Client::new();
@@ -220,32 +220,19 @@ pub async fn kintone_create_preview_app(
         config.subdomain, config.domain
     );
 
-    // Build the request body
-    let mut body = serde_json::json!({
-        "name": app_name
-    });
+    // Parse space_id and thread_id to integers
+    let space_id_int = space_id.parse::<i32>()
+        .map_err(|_| format!("Invalid space ID format: {}", space_id))?;
+    
+    let thread_id_int = thread_id.parse::<i32>()
+        .map_err(|_| format!("Invalid thread ID format: {}", thread_id))?;
 
-    // Add space_id if provided
-    if let Some(id) = space_id {
-        match id.parse::<i32>() {
-            Ok(space_id_int) => {
-                let body_obj = body.as_object_mut().unwrap();
-                body_obj.insert("space".to_string(), serde_json::json!(space_id_int));
-                
-                // When space is specified, thread is required
-                // If thread_id is provided, use it; otherwise use default thread (1)
-                let thread_id_int = match thread_id {
-                    Some(tid) => tid.parse::<i32>().unwrap_or(1),
-                    None => 1  // Default to thread 1 if not specified
-                };
-                
-                body_obj.insert("thread".to_string(), serde_json::json!(thread_id_int));
-            },
-            Err(_) => {
-                return Err(format!("Invalid space ID format: {}", id));
-            }
-        }
-    }
+    // Build the request body with both space and thread
+    let body = serde_json::json!({
+        "name": app_name,
+        "space": space_id_int,
+        "thread": thread_id_int
+    });
 
     let response = client
         .post(&url)
